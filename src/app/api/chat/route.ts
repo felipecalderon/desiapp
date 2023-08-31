@@ -1,7 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { configs } from '@/app/api/utils/openai';
+import { openai } from '@/app/api/utils/openai';
+import { iniciaChat } from '../utils/chatFlow';
+export const GET = async () => {
+	const chat = await iniciaChat('hola como estás')
 
-export const GET = () => {
-    return NextResponse.json({
-        msje: 'Holaa'
-    })
-}
+	console.log(chat);
+
+	return NextResponse.json(chat);
+};
