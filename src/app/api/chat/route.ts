@@ -1,11 +1,11 @@
+import { iniciaChat } from '@/utils/chatFlow';
 import { NextResponse } from 'next/server';
-import { configs } from '@/app/api/utils/openai';
-import { openai } from '@/app/api/utils/openai';
-import { iniciaChat } from '../utils/chatFlow';
 export const GET = async () => {
-	const chat = await iniciaChat('hola como estás')
-
-	console.log(chat);
-
-	return NextResponse.json(chat);
+	try {		
+		// if(!mensaje) return NextResponse.json({error: 'Debe ingresar un mensaje'})
+		const chat = await iniciaChat('hola como estás')
+		return NextResponse.json(chat);
+	} catch (error) {
+		return NextResponse.json(error)
+	}
 };
