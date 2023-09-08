@@ -18,6 +18,11 @@ const fetchWooData = async () => {
   try {
     console.log(configs.baseURL_CURRENT);
     const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`);
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('Response text:', text);
+      throw new Error('Error de conexión a la api de Woocommerce');
+    }
     const data: ProductoConsignacion[] = await response.json();
     return data;
   } catch (error) {
