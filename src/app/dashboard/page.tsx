@@ -1,13 +1,28 @@
+import TablaProductos from "@/components/ProductTable";
+import { configs, method } from "@/config/constants";
+import { ProductoConsignacion } from "@/config/interfaces";
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-    title: 'Dashboard'
-  }
+  title: 'Dashboard'
+}
 
 const Dashboard = async () => {
+  const data = await fetchWooData()
+
   return (
-    <div>Dash</div>
+  <TablaProductos productos={data} />
   )
 }
 
-export default Dashboard
+const fetchWooData = async () => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/woo`);
+    const data: ProductoConsignacion[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching the data', error);
+    throw 'Conexión a la tienda d3si.cl fallida';
+  }
+}
+export default Dashboard;
