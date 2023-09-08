@@ -16,6 +16,7 @@ const Dashboard = async () => {
 
 const fetchWooData = async () => {
   try {
+    console.log(configs.baseURL_CURRENT);
     const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`);
     const data: ProductoConsignacion[] = await response.json();
     return data;
