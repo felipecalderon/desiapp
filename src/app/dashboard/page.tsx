@@ -1,5 +1,5 @@
 import TablaProductos from "@/components/ProductTable";
-import { configs, method } from "@/config/constants";
+import { configs } from "@/config/constants";
 import { ProductoConsignacion } from "@/config/interfaces";
 import { Metadata } from "next"
 
@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 
 const Dashboard = async () => {
   const data = await fetchWooData()
-
   return (
   <TablaProductos productos={data} />
   )
@@ -17,7 +16,7 @@ const Dashboard = async () => {
 
 const fetchWooData = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/woo`);
+    const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`);
     const data: ProductoConsignacion[] = await response.json();
     return data;
   } catch (error) {

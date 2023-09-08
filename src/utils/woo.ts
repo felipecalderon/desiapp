@@ -6,7 +6,7 @@ export const connectWoo = async (path: string) => {
 	try {
 		const auth = createBase64Access(configs.wordpressKey, configs.wordpressSecret);
         
-		const data: Response = await fetch(`${configs.baseURL}/${path}`, {
+		const data: Response = await fetch(`${configs.baseURL_API}/${path}`, {
 			method: method.GET,
 			headers: {
 				Authorization: `Basic ${auth}`,
