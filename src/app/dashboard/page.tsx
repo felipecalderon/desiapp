@@ -1,3 +1,4 @@
+'use client'
 import TablaProductos from "@/components/ProductTable";
 import { configs } from "@/config/constants";
 import { ProductoConsignacion } from "@/config/interfaces";
@@ -22,9 +23,7 @@ const Dashboard = async () => {
 const fetchWooData = async () => {
   try {
     const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`, {
-      next: {
-        revalidate: 30,
-      }
+      cache: 'no-store'
     });
     if (!response.ok) {
       const text = await response.text();
