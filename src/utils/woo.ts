@@ -8,6 +8,9 @@ export const connectWoo = async (path: string) => {
         
 		const data: Response = await fetch(`${configs.baseURL_API}/${path}`, {
             cache: 'no-store',
+            next: {
+                revalidate: 30
+            },
 			method: method.GET,
 			headers: {
 				Authorization: `Basic ${auth}`,
