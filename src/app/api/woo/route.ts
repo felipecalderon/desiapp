@@ -52,7 +52,7 @@ const cleanProducts = async (productos: ProductoWooBase[]): Promise<ProductoCons
     return productosMap.filter(({ status }) => status === 'publish');
 }
 
-export const cleanTallas = async (productoId: number) => {
+const cleanTallas = async (productoId: number) => {
     const tallas: VariacionesWoo[] = await connectWoo(`products/${productoId}/variations`);
     const parseTallas = tallas.map((variacion: VariacionesWoo) => {
         // Asumiendo que siempre habrá exactamente un atributo y que será la talla
