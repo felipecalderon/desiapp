@@ -49,7 +49,7 @@ export const cleanTallas = async (productoId: number) => {
         // Asumiendo que siempre habrá exactamente un atributo y que será la talla
         const numero = variacion.attributes?.[0].option || "Desconocido"; 
         return {
-            numero,  // Agrega la propiedad numero aquí
+            numero, 
             price: variacion.price,
             regular_price: variacion.regular_price,
             sku: variacion.sku,

@@ -3,7 +3,6 @@ import { configs } from "@/config/constants";
 import { ProductoConsignacion } from "@/config/interfaces";
 import { Metadata } from "next"
 
-export const revalidate = 30
 export const metadata: Metadata = {
   title: 'Dashboard'
 }
@@ -23,7 +22,10 @@ const Dashboard = async () => {
 const fetchWooData = async () => {
   try {
     const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`, {
-      cache: 'no-store'
+      cache: 'no-store',
+      next: {
+        revalidate: 30,
+      }
     });
     if (!response.ok) {
       const text = await response.text();
