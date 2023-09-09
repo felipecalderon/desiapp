@@ -3,20 +3,26 @@ import { configs } from "@/config/constants";
 import { ProductoConsignacion } from "@/config/interfaces";
 import { Metadata } from "next"
 
+export const revalidate = 30
 export const metadata: Metadata = {
   title: 'Dashboard'
 }
 
 const Dashboard = async () => {
-  const data = await fetchWooData()
-  return (
-  <TablaProductos productos={data} />
-  )
+  try {    
+    const data = await fetchWooData()
+    return (
+    <TablaProductos productos={data} />
+    )
+  } catch (error) {
+    console.log(error);
+    return <TablaProductos productos={[]} />
+  }
 }
 
 const fetchWooData = async () => {
   try {
-    const response = await fetch(`${configs.baseURL_CURRENT}1/api/woo`);
+    const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`);
     if (!response.ok) {
       const text = await response.text();
       throw 'Error de conexión a la api de Woocommerce'
@@ -24,8 +30,7 @@ const fetchWooData = async () => {
     const data: ProductoConsignacion[] = await response.json();
     return data;
   } catch (error) {
-    console.log('Error en api interna:', configs.baseURL_CURRENT);
-    return [];
+    throw `Error en api interna: ${configs.baseURL_CURRENT}`;
   }
 }
 export default Dashboard;
