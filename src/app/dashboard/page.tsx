@@ -16,18 +16,16 @@ const Dashboard = async () => {
 
 const fetchWooData = async () => {
   try {
-    console.log(configs.baseURL_CURRENT);
-    const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`);
+    const response = await fetch(`${configs.baseURL_CURRENT}1/api/woo`);
     if (!response.ok) {
       const text = await response.text();
-      console.error('Response text:', text);
-      throw new Error('Error de conexión a la api de Woocommerce');
+      throw 'Error de conexión a la api de Woocommerce'
     }
     const data: ProductoConsignacion[] = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching the data', error);
-    throw 'Conexión a la tienda d3si.cl fallida';
+    console.log('Error en api interna:', configs.baseURL_CURRENT);
+    return [];
   }
 }
 export default Dashboard;
