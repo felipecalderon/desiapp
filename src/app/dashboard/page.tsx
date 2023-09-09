@@ -22,7 +22,6 @@ const Dashboard = async () => {
 const fetchWooData = async () => {
   try {
     const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`, {
-      cache: 'no-store',
       next: {
         revalidate: 30,
       }
