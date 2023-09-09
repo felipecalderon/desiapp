@@ -2,11 +2,6 @@
 import TablaProductos from "@/components/ProductTable";
 import { configs } from "@/config/constants";
 import { ProductoConsignacion } from "@/config/interfaces";
-import { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: 'Dashboard'
-}
 
 const Dashboard = async () => {
   try {    
