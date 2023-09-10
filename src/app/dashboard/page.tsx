@@ -1,31 +1,21 @@
-'use client'
 import TablaProductos from "@/components/ProductTable";
 import { configs } from "@/config/constants";
 import { ProductoConsignacion } from "@/config/interfaces";
+import { cleanProducts, connectWoo } from "@/utils/woo";
 
-const Dashboard = async () => {
-  try {    
+const Dashboard = async () => { 
     const data = await fetchWooData()
     return (
     <TablaProductos productos={data} />
     )
-  } catch (error) {
-    console.log(error);
-    return <TablaProductos productos={[]} />
-  }
 }
 
 const fetchWooData = async () => {
   try {
-    const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`, {
-      cache: 'no-store'
-    });
-    if (!response.ok) {
-      const text = await response.text();
-      throw 'Error de conexión a la api de Woocommerce'
-    }
-    const data: ProductoConsignacion[] = await response.json();
-    return data;
+    const consultaProductos = await connectWoo('products?per_page=99')
+    const productosConsignacion = await cleanProducts(consultaProductos)
+    if(!productosConsignacion) return []
+    return productosConsignacion;
   } catch (error) {
     throw `Error en api interna: ${configs.baseURL_CURRENT}`;
   }
