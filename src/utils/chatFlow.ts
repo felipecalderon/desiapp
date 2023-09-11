@@ -1,4 +1,4 @@
-import { openai } from '@/utils/openai';
+import { openai } from '@/services/openai';
 import { transformar_producto } from './functionsGPT'; 
 import { ChatCompletion } from 'openai/resources/chat/index.mjs';
 export const iniciaChat = async (mensaje: string) => {

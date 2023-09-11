@@ -22,7 +22,10 @@ const Dashboard = async () => {
 
 const fetchWooData = async () => {
   try {
-    const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`);
+    //haciendo fetch en mismo backend de next
+    const response = await fetch(`${configs.baseURL_CURRENT}/api/woo`, {
+      cache: 'no-store',
+    });
     if (!response.ok) {
       const text = await response.text();
       throw 'Error de conexión a la api de Woocommerce'

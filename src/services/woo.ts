@@ -1,6 +1,6 @@
 import { configs, method } from '@/config/constants';
 import { ProductoConsignacion, ProductoWooBase, VariacionesWoo } from '@/config/interfaces';
-import { createBase64Access } from './auth';
+import { createBase64Access } from '../utils/auth';
 
 export const connectWoo = async (path: string) => {
 	try {
