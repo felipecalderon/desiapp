@@ -25,6 +25,21 @@ const menu = [
     nombre: 'Productos',
     url: '/productos'
   },
+  {
+    id: '4',
+    nombre: 'Vender',
+    url: '/vender'
+  },
+  {
+    id: '5',
+    nombre: 'Productos',
+    url: '/productos'
+  },
+  {
+    id: '6',
+    nombre: 'Productos',
+    url: '/productos'
+  },
 ]
 export default function RootLayout({
   children,

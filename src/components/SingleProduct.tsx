@@ -1,10 +1,13 @@
 'use client'
 import { SingleProduct } from '@/config/interfaces';
+import useStore from '@/services/storeZustand';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-export default function SingleProduct({ sku }: { sku: string }) {
-    const [producto, setProducto] = useState<SingleProduct | null>(null)
+export default function SingleProduct() {
+    const sku = useStore((state) => state.value);
+    const isSend = useStore((state) => state.isSend);
+    const [producto, setProducto] = useState<SingleProduct | string>('')
     const [mensaje, setMensaje] = useState('No hay productos')
     const [baseURL, setBaseURL] = useState('');
 
@@ -15,6 +18,9 @@ export default function SingleProduct({ sku }: { sku: string }) {
     useEffect(() => {
         const fetchWooData = async () => {
             try {
+                if (sku === '') {
+                    return setMensaje('Por favor escanee un código de barra o escriba SKU')
+                }
                 setMensaje('Buscando el sku en tienda...')
                 const response = await fetch(`${baseURL}/api/woo/${sku}`, {
                     cache: 'no-store',
@@ -23,6 +29,11 @@ export default function SingleProduct({ sku }: { sku: string }) {
                     throw new Error('Error de conexión a la API de Woocommerce');
                 }
                 const data = await response.json();
+                console.log(data.length);
+                if (Object.keys(data).length === 0 || data.length === 0) {
+                    setMensaje('Sku no identificado')
+                    return setProducto('');
+                }
                 setMensaje('Producto encontrado')
                 setProducto(data);
             } catch (error) {
@@ -34,10 +45,10 @@ export default function SingleProduct({ sku }: { sku: string }) {
         if (baseURL) {
             fetchWooData();
         }
-    }, [baseURL]);
+    }, [baseURL, isSend]);
 
-    if (typeof producto !== 'object') return <div><ul><p>{mensaje}</p></ul></div>
-    return (
+    if (producto === '') return <div><ul><i>{mensaje}</i></ul></div>
+    if (typeof producto === 'object') return (
         <div className="dark:bg-gray-700 dark:text-white p-4 rounded-md shadow-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex justify-center items-center">
