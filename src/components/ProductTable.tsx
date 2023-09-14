@@ -41,12 +41,13 @@ const TablaProductos = () => {
                 <table className="min-w-full table-auto">
                     <thead>
                         <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
+                            <th className="py-3 px-6 text-center">SKU</th>
                             <th className="py-3 px-3 text-left">Imagen</th>
                             <th className="py-3 px-3 text-left">Nombre</th>
-                            <th className="py-3 px-6 text-left">Talla</th>
                             <th className="py-3 px-6 text-center">Precio</th>
-                            <th className="py-3 px-6 text-center">SKU</th>
-                            <th className="py-3 px-6 text-center">Stock</th>
+                            <th className="py-3 px-6 text-center">Costo</th>
+                            <th className="py-3 px-2 text-center">Talla</th>
+                            <th className="py-3 px-2 text-center">Stock</th>
                         </tr>
                     </thead>
                     <DataTable productos={productos} message={message} />

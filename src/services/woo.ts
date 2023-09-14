@@ -13,7 +13,6 @@ export const connectWoo = async (path: string) => {
 				Authorization: `Basic ${auth}`,
 			},
 		});
-
 		if (data.status !== 200) throw 'Error conectando a la tienda';
 		const fetchData = await data.json();
 		return fetchData;
@@ -24,8 +23,9 @@ export const connectWoo = async (path: string) => {
 };
 
 export const cleanProducts = async (productos: ProductoWooBase[]): Promise<ProductoConsignacion[]> => {
+    if(productos.length === 0) return []
     const productosMapPromises: Promise<ProductoConsignacion>[] = productos.map(async (producto: ProductoWooBase) => {
-        const tallas = await cleanTallas(producto.id);
+        const tallas = await getVariations(producto.id);
         return {
             id: producto.id,
             name: producto.name,
@@ -40,7 +40,7 @@ export const cleanProducts = async (productos: ProductoWooBase[]): Promise<Produ
     return productosMap.filter(({ status }) => status === 'publish');
 }
 
-export const cleanTallas = async (productoId: number) => {
+export const getVariations = async (productoId: number) => {
     const tallas: VariacionesWoo[] = await connectWoo(`products/${productoId}/variations`);
     const parseTallas = tallas.map((variacion: VariacionesWoo) => {
         // Asumiendo que siempre habrá exactamente un atributo y que será la talla
