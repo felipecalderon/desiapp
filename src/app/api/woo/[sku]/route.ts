@@ -15,6 +15,7 @@ export const GET = async (_request: Request, { params }: { params: { sku: string
         imagen: productoWoo.images[0].src,
         talla: productoWoo.attributes[0].option,
         stock: productoWoo.stock_quantity,
+        price: productoWoo.price
     }
     return NextResponse.json(producto)
 }

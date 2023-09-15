@@ -53,4 +53,5 @@ export interface SingleProduct {
     imagen: string
     talla: string
     stock: number
+    price: string
 }

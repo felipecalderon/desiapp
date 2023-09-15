@@ -1,5 +1,5 @@
 'use client'
-import useStore from '@/services/storeZustand';
+import useStore from '@/stores/codigoBarra';
 
 function Input() {
     const value = useStore((state) => state.value);

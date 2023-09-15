@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Navbar({ menu }: { menu: { nombre: string, url: string, id: string }[] }) {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <nav className="bg-gray-800 text-white w-64 h-screen p-4 dark:bg-gray-900 block lg:flex lg:flex-col lg:items-start">
+        <nav className="bg-gray-800 text-white h-auto p-4 dark:bg-gray-900 block lg:flex lg:flex-col lg:items-start">
           <button 
             className="lg:hidden block mb-4 bg-gray-700 hover:bg-gray-600 p-2 rounded"
             onClick={() => setIsOpen(!isOpen)}
