@@ -6,7 +6,7 @@ interface Producto {
 	precio: number;
 }
 
-interface VentaProductos {
+interface ListaPedido {
 	pedido: Producto[];
 	setPedido: (pedido: Producto) => void;
 	removePedido: (sku: string) => void;
@@ -14,7 +14,7 @@ interface VentaProductos {
 	updateCantidad: (sku: string, cantidad: number) => void;
 }
 
-const useStore = create<VentaProductos>((set) => ({
+const useStore = create<ListaPedido>((set) => ({
 	pedido: [],
 
 	setPedido: (pedido) =>

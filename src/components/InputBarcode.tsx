@@ -1,5 +1,5 @@
 'use client'
-import useStore from '@/stores/codigoBarra';
+import useStore from '@/stores/store.barcode';
 
 function Input() {
     const value = useStore((state) => state.value);

@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import storeBarcode from '@/stores/codigoBarra';
-import useStore from '@/stores/listaVentas';
+import storeBarcode from '@/stores/store.barcode';
+import useStore from '@/stores/store.pedido';
 import { formatoPrecio } from '@/utils/price';
 import { SingleProduct } from '@/config/interfaces';
 

@@ -17,13 +17,8 @@ const menu = [
   },
   {
     id: '2',
-    nombre: 'Panel Admin',
+    nombre: 'Panel Consignado',
     url: '/dashboard'
-  },
-  {
-    id: '3',
-    nombre: 'Productos',
-    url: '/productos'
   },
   {
     id: '4',
@@ -32,12 +27,7 @@ const menu = [
   },
   {
     id: '5',
-    nombre: 'Productos',
-    url: '/productos'
-  },
-  {
-    id: '6',
-    nombre: 'Productos',
+    nombre: 'Listado productos',
     url: '/productos'
   },
 ]
@@ -48,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es_ES" className="dark">
-      <body className="flex flex-col lg:flex-row">
+      <body className="h-screen flex flex-col lg:flex-row">
         <Navbar menu={menu} />
         <main className="flex-1 bg-gray-100 dark:bg-gray-800 p-4">
           {children}
