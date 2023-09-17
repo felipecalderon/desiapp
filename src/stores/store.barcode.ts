@@ -1,16 +1,16 @@
 import {create} from 'zustand';
 
 interface CodigodeBarra {
-  value: string
+  sku: string
   isSend: boolean
-  setValue: (value: string) => void
+  setValue: (sku: string) => void
   changeSend: (isSend: boolean) => void
 }
 
 const useStore = create<CodigodeBarra>((set) => ({
-  value: '',
+  sku: '',
   isSend: false,
-  setValue: (value: string) => set({ value }),
+  setValue: (sku: string) => set({ sku }),
   changeSend: (isSend: boolean) => set({
     isSend: !isSend
   })

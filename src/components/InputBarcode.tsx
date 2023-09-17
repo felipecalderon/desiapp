@@ -1,28 +1,25 @@
 'use client'
 import useStore from '@/stores/store.barcode';
 
-function Input() {
-    const value = useStore((state) => state.value);
-    const setValue = useStore((state) => state.setValue);
-    const changeSend = useStore((state) => state.changeSend);
-    const isSend = useStore((state) => state.isSend);
+export default function Input() {
+    const {sku, changeSend, isSend, setValue} = useStore();
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         if (e.relatedTarget === null || (e.relatedTarget && !(e.currentTarget.contains(e.relatedTarget as Node)))) {
             changeSend(isSend)
           }
-    };
+    }
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             changeSend(isSend)
         }
-    };
+    }
     return (
         <>
             <input
                 type="text"
-                value={value}
+                value={sku}
                 onChange={(e) => setValue(e.target.value)}
                 onBlur={handleBlur}
                 onKeyPress={handleKeyPress}
@@ -30,7 +27,5 @@ function Input() {
                 placeholder="Ingresa el código de barra / sku"
             />
         </>
-    );
+    )
 }
-
-export default Input;

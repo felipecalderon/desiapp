@@ -1,34 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# D3SI App
 
-## Getting Started
+Bienvenido a **D3SI App**, la aplicación revolucionaria diseñada para facilitar y optimizar la gestión de ventas en las franquicias de zapatos. Esta aplicación actúa como un sistema de punto de venta (POS) integral, permitiendo a los vendedores llevar un registro meticuloso de las ventas mensuales por sucursal.
 
-First, run the development server:
+## Índice
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- [Características](#características)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Contribuciones](#contribuciones)
+- [Contacto](#contacto)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Características
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Gestión de Ventas
+- **Registro de Ventas Mensuales**: Lleva un registro detallado de todas las ventas realizadas mensualmente en cada sucursal.
+- **Inventario en Tiempo Real**: Mantente al tanto del estado actual de tu inventario, facilitando la planificación y evitando desabastecimientos.
+- **Reportes Detallados**: Genera reportes detallados para evaluar el rendimiento de las ventas y tomar decisiones informadas.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Experiencia del Usuario
+- **Interfaz Amigable**: Una interfaz sencilla y fácil de usar que permite a los vendedores realizar sus tareas de manera eficiente.
+- **Accesibilidad**: Diseñado con accesibilidad en mente, garantizando que la aplicación sea utilizable por todos los franquiciados.
+- **Soporte Técnico**: Un equipo de soporte técnico dedicado para ayudar con cualquier problema o consulta.
 
-## Learn More
+## Instalación
 
-To learn more about Next.js, take a look at the following resources:
+Para instalar y configurar la **D3SI App**, sigue los siguientes pasos:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. (Instrucciones para descargar la aplicación)
+2. (Instrucciones para instalar la aplicación)
+3. (Instrucciones para configurar la aplicación)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Uso
 
-## Deploy on Vercel
+Para empezar a usar la **D3SI App**, sigue los siguientes pasos:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. (Instrucciones para iniciar sesión o registrarse)
+2. (Instrucciones para navegar y utilizar las principales características de la aplicación)
+3. (Instrucciones para generar reportes y analizar datos)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Contribuciones
+
+Agradecemos cualquier contribución que ayude a mejorar y expandir la **D3SI App**. Para contribuir, por favor:
+
+1. (Instrucciones para forkear el repositorio)
+2. (Instrucciones para crear una nueva rama)
+3. (Instrucciones para enviar un pull request)
+
+## Contacto
+
+Para cualquier consulta o soporte, no dudes en ponerte en contacto con soporte IT a través de:
+
+- Correo Electrónico: webmaster@d3si.cl
+
+¡Gracias por elegir la **D3SI App**, hecho para optimizar tu negocio!

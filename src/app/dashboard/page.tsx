@@ -1,3 +1,4 @@
+import BienvenidaDashboard from "@/components/Bienvenida";
 import TablaProductos from "@/components/ProductTable";
 import { Metadata } from "next"
 
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
 
 const Dashboard = async () => { 
     return (
-    <TablaProductos/>
+    <BienvenidaDashboard/>
     )
 }
 
