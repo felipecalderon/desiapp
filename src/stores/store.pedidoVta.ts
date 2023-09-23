@@ -1,10 +1,5 @@
+import { Producto } from '@/config/interfaces';
 import { create } from 'zustand';
-
-interface Producto {
-	sku: string;
-	cantidad: number;
-	precio: number;
-}
 
 interface ListaPedido {
 	pedido: Producto[];

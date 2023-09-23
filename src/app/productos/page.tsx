@@ -1,4 +1,4 @@
-import TablaProductos from "@/components/ProductTable";
+import TablaProductos from "@/components/tablas/ProductTable";
 
 export default function Productos() {
   return (

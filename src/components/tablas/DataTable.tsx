@@ -25,7 +25,6 @@ export default function DataTable({ productos, message }: { productos: ProductoC
                                 <tr className="border-b border-gray-200 dark:border-gray-700" key={talla.sku}>
                                     <td 
                                         className="py-3 px-6 text-center hover:bg-gray-100 dark:hover:bg-gray-800"
-                                        onClick={() => buttonClic(talla.sku)}
                                     >
                                         <span>{talla.sku}</span>
                                     </td>

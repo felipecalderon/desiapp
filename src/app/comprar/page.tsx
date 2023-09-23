@@ -1,18 +1,18 @@
 import Input from "@/components/InputBarcode"
-import TablaVentasProductos from "@/components/tablas/SalesTable"
 import SingleProduct from "@/components/SingleProduct"
 import { Metadata } from "next"
+import TablaCompraProductos from "@/components/tablas/CompraTable"
 
 export const metadata: Metadata = {
-  title: 'Módulo ventas'
+  title: 'Módulo compras'
 }
 
-export default async function Producto() {
+export default async function Comprar() {
     return (
     <>
       <Input />
       <SingleProduct />
-      <TablaVentasProductos />
+      <TablaCompraProductos />
     </>
     )
   }

@@ -2,11 +2,9 @@
 import { configs } from '@/config/constants';
 import { useEffect, useState } from 'react';
 import useStore from '@/stores/store.barcode';
-import ProductoDetalle from './SingleProductDetail';
+import ProductoDetalle from './ProductSection';
 
 const fetchSingleProduct = async (sku: string) => {
-    console.log({sku: configs.baseURL_CURRENT});
-    
     if (sku !== '') {
         const response = await fetch(`${configs.baseURL_CURRENT}/api/woo/${sku}`, { cache: 'no-store' });
         if (!response.ok) {
@@ -24,18 +22,22 @@ const fetchSingleProduct = async (sku: string) => {
 export default function SingleProductComponent() {
     const {sku, isSend} = useStore();
     const [producto, setProducto] = useState(null);
+    const [mensaje, setMensaje] = useState('Ingrese código de barra para buscar stock')
   
     useEffect(() => {
       if (sku) {
-        fetchSingleProduct(sku).then((data) => setProducto(data))
-            .catch((error) => console.error(error))
+        setMensaje('Buscando producto en base de datos...')
+        fetchSingleProduct(sku)
+            .then((data) => {
+                if(!data){
+                    setMensaje('No se encontró el producto en la base de datos :(')
+                    return setProducto(null)
+                } 
+                setProducto(data)
+            })
+            .catch(() => setMensaje('Hubo un error al consultar productos.. refresque la página'))
       }
     }, [isSend]);
-  
-    return (
-    <>
-        <div>SKU: {sku}</div>
-        <ProductoDetalle producto={producto} />
-    </>
-    )
+    if(producto) return <ProductoDetalle producto={producto} />
+    else return mensaje
   }

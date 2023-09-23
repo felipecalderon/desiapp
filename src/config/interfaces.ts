@@ -44,6 +44,7 @@ export interface VariacionesWoo {
   stock_quantity: number;
 }
 
+//estructura producto individual
 export interface SingleProduct {
     id: number
     sku: string
@@ -54,4 +55,11 @@ export interface SingleProduct {
     talla: string
     stock: number
     price: string
+}
+
+//esctructura del producto cuando se añade en compras/ventas
+export interface Producto {
+	sku: string;
+	cantidad: number;
+	precio: number;
 }
