@@ -3,6 +3,7 @@ import { configs } from '@/config/constants';
 import { useEffect, useState } from 'react';
 import useStore from '@/stores/store.barcode';
 import ProductoDetalle from './ProductSection';
+import { barcodeFunction } from '@/utils/barcode';
 
 const fetchSingleProduct = async (sku: string) => {
     if (sku !== '') {
@@ -26,10 +27,12 @@ export default function SingleProductComponent() {
   
     useEffect(() => {
       if (sku) {
+        const codigo = barcodeFunction(sku)
         setMensaje('Buscando producto en base de datos...')
-        fetchSingleProduct(sku)
+        fetchSingleProduct(codigo)
             .then((data) => {
                 if(!data){
+                    console.log(data)
                     setMensaje('No se encontró el producto en la base de datos :(')
                     return setProducto(null)
                 } 

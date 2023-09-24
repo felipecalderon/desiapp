@@ -9,7 +9,7 @@ interface ListaPedido {
 	updateCantidad: (sku: string, cantidad: number) => void;
 }
 
-const useStore = create<ListaPedido>((set) => ({
+const storeVta = create<ListaPedido>((set) => ({
 	pedido: [],
 
 	setPedido: (pedido) =>
@@ -36,4 +36,4 @@ const useStore = create<ListaPedido>((set) => ({
 		}),
 }));
 
-export default useStore;
+export default storeVta;

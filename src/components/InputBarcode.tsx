@@ -1,5 +1,6 @@
 'use client'
 import useStore from '@/stores/store.barcode';
+import { barcodeFunction } from '@/utils/barcode';
 
 export default function Input() {
     const {sku, changeSend, isSend, setValue} = useStore();

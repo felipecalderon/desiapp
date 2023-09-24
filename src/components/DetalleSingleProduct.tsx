@@ -1,14 +1,15 @@
 'use client'
 
 import { SingleProduct } from "@/config/interfaces";
-import useStore from "@/stores/store.pedidoVta";
+import storeVta from "@/stores/store.pedidoVta";
 import { formatoPrecio } from "@/utils/price";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 function DetallesProducto({ producto }: { producto: SingleProduct }) {
-    const { pedido, setPedido, updateCantidad, removePedido } = useStore();
-
+    const { pedido, setPedido, updateCantidad, removePedido } = storeVta();
+    const path = usePathname()
+    console.log({path});
     const [cantidad, setCantidad] = useState(1);
 
     const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,11 +34,10 @@ function DetallesProducto({ producto }: { producto: SingleProduct }) {
     return (
         <div>
             <h2 className="text-xl font-semibold mb-2">{producto.name}</h2>
+            <div className="w-12 h-12 bg-red-600 flex justify-center items-center">{producto.talla}</div>
             <ul className="list-disc list-inside">
                 <li>SKU: {producto.sku}</li>
-                <li>Precio lista: {formatoPrecio(producto.price)}</li>
-                <li>Precio vta neto: {formatoPrecio(Number(producto.price)/1.8)}</li>
-                <li>Talla: {producto.talla}</li>
+                <li>Precio Venta: {formatoPrecio(producto.price)}</li>
                 <li>Stock: {producto.stock}</li>
             </ul>
             <hr className='opacity-20 my-1'/>
