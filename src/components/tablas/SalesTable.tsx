@@ -3,8 +3,8 @@ import useStore from '@/stores/store.pedidoVta';
 import { formatoPrecio } from '@/utils/price';
 
 const TablaVentasProductos = () => {
-    const { pedido } = useStore();
-    if(!pedido || pedido.length === 0) return null
+    const { pedidoVta } = useStore();
+    if(!pedidoVta || pedidoVta.length === 0) return null
     return (
         <div className="container mx-auto p-4 dark:bg-gray-800">
             <div className="bg-white dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
@@ -17,7 +17,7 @@ const TablaVentasProductos = () => {
                             <th className="py-3 px-6 text-center">Subtotal</th>
                         </tr>
                     </thead>
-                    {pedido.map((item) => {
+                    {pedidoVta.map((item) => {
                         return (
                         <tr className="border-b border-gray-200 dark:border-gray-700" key={item.sku}>
                             <td className="py-3 px-6 text-center hover:bg-gray-100 dark:hover:bg-gray-800">
