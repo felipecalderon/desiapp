@@ -2,7 +2,7 @@ import { Producto } from '@/config/interfaces';
 import { create } from 'zustand';
 
 interface ListaPedido {
-	pedido: Producto[];
+	pedidoVta: Producto[];
 	setPedido: (pedido: Producto) => void;
 	removePedido: (sku: string) => void;
 	clearPedido: () => void;
@@ -10,29 +10,29 @@ interface ListaPedido {
 }
 
 const storeVta = create<ListaPedido>((set) => ({
-	pedido: [],
+	pedidoVta: [],
 
 	setPedido: (pedido) =>
 		set((state) => ({
-			pedido: [...state.pedido, pedido],
+			pedidoVta: [...state.pedidoVta, pedido],
 		})),
 
 	removePedido: (sku) =>
 		set((state) => ({
-			pedido: state.pedido.filter((item) => item.sku !== sku),
+			pedidoVta: state.pedidoVta.filter((item) => item.sku !== sku),
 		})),
 
 	clearPedido: () =>
 		set(() => ({
-			pedido: [],
+			pedidoVta: [],
 		})),
 
 	updateCantidad: (sku: string, cantidad: number) =>
 		set((state) => {
-			const pedido = state.pedido.map((item) =>
+			const pedidoVta = state.pedidoVta.map((item) =>
 				item.sku === sku ? { ...item, cantidad } : item
 			);
-			return { pedido };
+			return { pedidoVta };
 		}),
 }));
 

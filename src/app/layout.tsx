@@ -41,7 +41,7 @@ const menu = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es_ES" className="dark">
-      <body className="h-screen flex flex-col lg:flex-row">
+      <body className="h-auto flex flex-col lg:flex-row">
         <Navbar menu={menu} />
         <main className="flex-1 bg-gray-100 dark:bg-gray-800 p-4">
           {children}

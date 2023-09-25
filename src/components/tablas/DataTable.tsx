@@ -23,11 +23,6 @@ export default function DataTable({ productos, message }: { productos: ProductoC
                         {productos.map((item) => {
                             return item.tallas?.map((talla, index) => (
                                 <tr className="border-b border-gray-200 dark:border-gray-700" key={talla.sku}>
-                                    <td 
-                                        className="py-3 px-6 text-center hover:bg-gray-100 dark:hover:bg-gray-800"
-                                    >
-                                        <span>{talla.sku}</span>
-                                    </td>
                                     {index === 0 && (
                                         <>
                                             <td rowSpan={item.tallas?.length} className="py-3 px-3 text-left">
@@ -40,6 +35,11 @@ export default function DataTable({ productos, message }: { productos: ProductoC
                                             </td>
                                         </>
                                     )}
+                                    <td 
+                                        className="py-3 px-6 text-center hover:bg-gray-100 dark:hover:bg-gray-800"
+                                    >
+                                        <span>{talla.sku}</span>
+                                    </td>
                                     <td className="py-3 px-6 text-center hover:bg-gray-100 dark:hover:bg-gray-800">
                                         <span>{formatoPrecio(talla.price)}</span>
                                     </td>
