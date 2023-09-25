@@ -1,31 +1,16 @@
 import { configs, method } from '@/config/constants';
 import { ProductoConsignacion, ProductoWooBase, VariacionesWoo } from '@/config/interfaces';
-import { createBase64Access } from '@/utils/auth';
-import { NextResponse } from 'next/server';
-
-export const getProducts = async () => {
-    try {
-        const consultaProductos = await connectWoo('products?per_page=99')
-        const productosConsignacion = await cleanProducts(consultaProductos)
-        if(!productosConsignacion) return NextResponse.json([])
-        return NextResponse.json(productosConsignacion)
-    } catch (error) {
-        return NextResponse.json({ error })
-    }
-}
+import { createBase64Access } from '../utils/auth';
 
 export const connectWoo = async (path: string) => {
 	try {
 		const auth = createBase64Access(configs.wordpressKey, configs.wordpressSecret);
-        
 		const data: Response = await fetch(`${configs.baseURL_API}/${path}`, {
-            cache: 'no-store',
 			method: method.GET,
 			headers: {
 				Authorization: `Basic ${auth}`,
 			},
 		});
-
 		if (data.status !== 200) throw 'Error conectando a la tienda';
 		const fetchData = await data.json();
 		return fetchData;
@@ -36,8 +21,12 @@ export const connectWoo = async (path: string) => {
 };
 
 export const cleanProducts = async (productos: ProductoWooBase[]): Promise<ProductoConsignacion[]> => {
+    if(productos.length === 0) return []
     const productosMapPromises: Promise<ProductoConsignacion>[] = productos.map(async (producto: ProductoWooBase) => {
-        const tallas = await cleanTallas(producto.id);
+        const tallas = await getVariations(producto.id);
+        const dividirName = producto.name.split(' ')
+        const nombre = dividirName
+        console.log(nombre);
         return {
             id: producto.id,
             name: producto.name,
@@ -52,7 +41,7 @@ export const cleanProducts = async (productos: ProductoWooBase[]): Promise<Produ
     return productosMap.filter(({ status }) => status === 'publish');
 }
 
-export const cleanTallas = async (productoId: number) => {
+export const getVariations = async (productoId: number) => {
     const tallas: VariacionesWoo[] = await connectWoo(`products/${productoId}/variations`);
     const parseTallas = tallas.map((variacion: VariacionesWoo) => {
         // Asumiendo que siempre habrá exactamente un atributo y que será la talla

@@ -3,7 +3,7 @@ export const configs = {
     wordpressKey: process.env.WP_APIKEY as string,
     wordpressSecret: process.env.WP_APISECRET as string,
     baseURL_API: process.env.BASE_API_URL as string,
-    baseURL_CURRENT: process.env.BASE_CURRENT as string,
+    baseURL_CURRENT: process.env.NEXT_PUBLIC_BASE_CURRENT as string,
 
 }
 

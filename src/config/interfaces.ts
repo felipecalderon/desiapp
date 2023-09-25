@@ -1,16 +1,18 @@
 // asi vienen los productos desde woo
 export interface ProductoWooBase {
     id: number;
+    sku: string;
     name: string;
     slug: string;
     permalink: string;
     description: string;
     short_description: string;
     price: string;
+    regular_price: string
     stock_quantity: number;
     categories: {id: number, name: string}[]
     images: { src: string, name: string, alt: string }[];
-    attributes: { name: string, options: string[] }[];
+    attributes: { name: string, options: string[], option: string }[];
     variations: number[];
     status: string;
 }
@@ -40,4 +42,24 @@ export interface VariacionesWoo {
   regular_price: string;
   sku: string;
   stock_quantity: number;
+}
+
+//estructura producto individual
+export interface SingleProduct {
+    id: number
+    sku: string
+    name: string
+    status: string
+    url: string
+    imagen: string
+    talla: string
+    stock: number
+    price: string
+}
+
+//esctructura del producto cuando se añade en compras/ventas
+export interface Producto {
+	sku: string;
+	cantidad: number;
+	precio: number;
 }
