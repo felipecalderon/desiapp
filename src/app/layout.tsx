@@ -22,6 +22,11 @@ const menu = [
     url: '/dashboard'
   },
   {
+    id: '6',
+    nombre: 'Stock',
+    url: '/productos'
+  },
+  {
     id: '4',
     nombre: 'Vender',
     url: '/vender'
@@ -31,19 +36,14 @@ const menu = [
     nombre: 'Comprar',
     url: '/comprar'
   },
-  {
-    id: '6',
-    nombre: 'Listado productos',
-    url: '/productos'
-  },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es_ES" className="dark">
-      <body className="h-auto flex flex-col lg:flex-row">
+      <body className="flex flex-col lg:flex-row min-h-screen h-auto">
         <Navbar menu={menu} />
-        <main className="flex-1 bg-gray-100 dark:bg-gray-800 p-4">
+        <main className="flex-1 bg-gray-100 dark:bg-gray-800 py-0 px-4">
           {children}
         </main>
       </body>

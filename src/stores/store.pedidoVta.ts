@@ -30,7 +30,7 @@ const storeVta = create<ListaPedido>((set) => ({
 	updateCantidad: (sku: string, cantidad: number) =>
 		set((state) => {
 			const pedidoVta = state.pedidoVta.map((item) =>
-				item.sku === sku ? { ...item, cantidad } : item
+				item.sku === sku ? { ...item, cantidad, subtotal: item.precio*cantidad } : item
 			);
 			return { pedidoVta };
 		}),

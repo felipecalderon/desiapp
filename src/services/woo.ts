@@ -24,9 +24,6 @@ export const cleanProducts = async (productos: ProductoWooBase[]): Promise<Produ
     if(productos.length === 0) return []
     const productosMapPromises: Promise<ProductoConsignacion>[] = productos.map(async (producto: ProductoWooBase) => {
         const tallas = await getVariations(producto.id);
-        const dividirName = producto.name.split(' ')
-        const nombre = dividirName
-        console.log(nombre);
         return {
             id: producto.id,
             name: producto.name,

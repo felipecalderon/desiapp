@@ -32,7 +32,6 @@ export default function SingleProductComponent() {
         fetchSingleProduct(codigo)
             .then((data) => {
                 if(!data){
-                    console.log(data)
                     setMensaje('No se encontró el producto en la base de datos :(')
                     return setProducto(null)
                 } 

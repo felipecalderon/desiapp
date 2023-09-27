@@ -1,65 +1,64 @@
-// asi vienen los productos desde woo
+// Así vienen los productos desde WooCommerce
 export interface ProductoWooBase {
-    id: number;
-    sku: string;
-    name: string;
-    slug: string;
-    permalink: string;
-    description: string;
-    short_description: string;
-    price: string;
-    regular_price: string
-    stock_quantity: number;
-    categories: {id: number, name: string}[]
-    images: { src: string, name: string, alt: string }[];
-    attributes: { name: string, options: string[], option: string }[];
-    variations: number[];
-    status: string;
-}
-  
-//asi parsearé los productos para consignación
- export interface ProductoConsignacion {
-    id: number;
-    name: string;
-    variations: number[];
-    image: string;
-    status: string;
-    tallas?: VariacionesWoo[]
+	id: number;
+	sku: string;
+	name: string;
+	slug: string;
+	permalink: string;
+	description: string;
+	short_description: string;
+	price: string;
+	regular_price: string;
+	stock_quantity: number;
+	categories: { id: number; name: string }[];
+	images: { src: string; name: string; alt: string }[];
+	attributes: { name: string; options: string[]; option: string }[];
+	variations: number[];
+	status: string;
 }
 
-//asi se definen los atributos, ej: {id: 1, name: "talla", option: "3"}
+// Así parsearé los productos para consignación
+export interface ProductoConsignacion extends Partial<ProductoWooBase> {
+	image: string;
+	tallas?: VariacionesWoo[];
+}
+
+// Así se definen los atributos, ej: {id: 1, name: "talla", option: "3"}
 export interface AtributosdelProducto {
-    id: number;
-    name: string;
-    option: string;
+	id: number;
+	name: string;
+	option: string;
 }
 
-//así se definen las variaciones que tiene cada producto
+// Así se definen las variaciones que tiene cada producto
 export interface VariacionesWoo {
-  attributes?: AtributosdelProducto[];  
-  numero?: string; 
-  price: string;
-  regular_price: string;
-  sku: string;
-  stock_quantity: number;
+	attributes?: AtributosdelProducto[];
+	numero?: string;
+	price: string;
+	regular_price: string;
+	sku: string;
+	stock_quantity: number;
 }
 
-//estructura producto individual
+// Estructura producto individual
 export interface SingleProduct {
-    id: number
-    sku: string
-    name: string
-    status: string
-    url: string
-    imagen: string
-    talla: string
-    stock: number
-    price: string
+	id: number;
+	sku: string;
+	name: string;
+	status: string;
+	url: string;
+	imagen: string;
+	talla: string;
+	stock: number;
+	price: string;
 }
 
-//esctructura del producto cuando se añade en compras/ventas
+// Estructura del producto cuando se añade en compras/ventas
 export interface Producto {
+	nombre: string;
+	talla: string;
 	sku: string;
 	cantidad: number;
 	precio: number;
+	subtotal: number;
 }

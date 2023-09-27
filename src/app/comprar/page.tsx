@@ -1,18 +1,12 @@
-import Input from "@/components/InputBarcode"
-import SingleProduct from "@/components/SingleProduct"
-import { Metadata } from "next"
-import TablaCompraProductos from "@/components/tablas/CompraTable"
+'use client'
+import TablaProductos from '@/components/tablas/ProductTable';
+import TablaPedidosCompraVenta from '@/components/tablas/TablaPedidos';
+import storeCpra from '@/stores/store.pedidCpra';
 
-export const metadata: Metadata = {
-  title: 'Módulo compras'
-}
-
-export default async function Comprar() {
-    return (
-    <>
-      <Input />
-      <SingleProduct />
-      <TablaCompraProductos />
+export default function TablaVentasProductos() {
+    const { pedidoCompra } = storeCpra();
+    return <>
+      <TablaProductos />
+      <TablaPedidosCompraVenta pedidos={pedidoCompra}/>
     </>
-    )
-  }
+}

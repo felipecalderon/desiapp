@@ -6,10 +6,17 @@ import { useRouter } from "next/navigation";
 export default function DataTable({ productos, message }: { productos: ProductoConsignacion[], message: string }) {
     const router = useRouter();
     const buttonClic = (id: string) => {
-        console.log(id);
         router.push(`/productos/${id}`);
     }
-
+    const handleDivClick = async (sku: string) => {
+        try {
+            // Copiar el contenido al portapapeles
+            await navigator.clipboard.writeText(sku);
+            console.log('Contenido copiado al portapapeles:', sku);
+        } catch (error) {
+            console.error('Error al copiar al portapapeles:', error);
+        }
+    }
     if (!productos || productos.length === 0) return (
         <tbody className="text-gray-600 dark:text-gray-400">
             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -22,7 +29,11 @@ export default function DataTable({ productos, message }: { productos: ProductoC
         <tbody className="text-gray-600 dark:text-gray-400 text-sm font-light">
                         {productos.map((item) => {
                             return item.tallas?.map((talla, index) => (
-                                <tr className="border-b border-gray-200 dark:border-gray-700" key={talla.sku}>
+                                <tr 
+                                    className="border-b border-gray-200 dark:border-gray-700" 
+                                    key={talla.sku}
+                                    onClick={() => handleDivClick(talla.sku)}
+                                >
                                     {index === 0 && (
                                         <>
                                             <td rowSpan={item.tallas?.length} className="py-3 px-3 text-left">

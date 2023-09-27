@@ -1,42 +1,52 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import DataTable from "./DataTable";
+import { useEffect, useRef, useState } from 'react'
+import DataTable from "./DataTable"
 
 const TablaProductos = () => {
-  const [productos, setProductos] = useState([]);
-  const [baseURL, setBaseURL] = useState('');
-  const [message, setMessage] = useState('Cargando productos...')
+    const [productos, setProductos] = useState([])
+    const [baseURL, setBaseURL] = useState('')
+    const [message, setMessage] = useState('Cargando productos...')
+    const isMounted = useRef(true)
 
-  useEffect(() => {
-    setBaseURL(`${window.location.protocol}//${window.location.host}`);
-  }, []);
+    useEffect(() => {
+        isMounted.current = true
+        setBaseURL(`${window.location.protocol}//${window.location.host}`)
 
-  useEffect(() => {
-    const fetchWooData = async () => {
-      try {
-        setMessage('Consultando productos en tienda...')
-        const response = await fetch(`${baseURL}/api/woo`, {
-          cache: 'no-store',
-        });
-        if (!response.ok) {
-          throw new Error('Error de conexión a la API de Woocommerce');
+        return () => {
+            isMounted.current = false
         }
-        const data = await response.json();
-        setProductos(data);
-      } catch (error) {
-        setMessage('No fue posible obtener productos, contacte al administrador')
-        setProductos([]);
-      }
-    };
+    }, [])
 
-    if (baseURL) {
-      fetchWooData();
-    }
-  }, [baseURL]);
+    useEffect(() => {
+        const fetchWooData = async () => {
+            try {
+                setMessage('Consultando productos en tienda...')
+                const response = await fetch(`${baseURL}/api/woo`, {
+                    cache: 'no-store',
+                })
+                if (!response.ok) {
+                    throw new Error('Error de conexión a la API de Woocommerce')
+                }
+                const data = await response.json()
+                if (isMounted.current) {
+                    setProductos(data)
+                }
+            } catch (error) {
+                if (isMounted.current) {
+                    setMessage('No fue posible obtener productos, contacte al administrador')
+                    setProductos([])
+                }
+            }
+        }
 
-  return (
-        <div className="container mx-auto p-4 dark:bg-gray-800">
+        if (baseURL) {
+            fetchWooData()
+        }
+    }, [baseURL])
+
+    return (
+        <div className="container mx-auto p-2 dark:bg-gray-800">
             <div className="bg-white dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
                 <table className="min-w-full table-auto">
                     <thead>
@@ -54,7 +64,7 @@ const TablaProductos = () => {
                 </table>
             </div>
         </div>
-    );
+    )
 }
 
 export default TablaProductos
