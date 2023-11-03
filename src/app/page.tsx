@@ -1,28 +1,17 @@
-import AdminDash from '@/components/dashboard/AdminDash'
+'use client'
+import Dashboard from '@/components/dashboard/AdminDash'
 import SellerDash from '@/components/dashboard/SellerDash'
+import { User } from '@/config/interfaces'
 
 export default function Home() {
-  const user = {
-    "userID": "b056ef29-b129-4e62-bb56-adf691712f88",
-    "name": "Alejandro",
-    "email": "alejandro@avocco.com",
-    "role": "admin",
-    "userImg": "https://res.cloudinary.com/duwncbe8p/image/upload/v1698887845/h8pz27rqyyljivmhw5bo.jpg",
-    "iat": 1698944021,
-    "exp": 1698947620
-  }
+  const userJSON = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
 
-  if (!user) return null
+  if (userJSON == null) return null
+  const user: User = JSON.parse(userJSON);
   return (
-    <div>
       <main className='p-20 pt-10'>
-            {
-              user.role === 'admin'
-                ? <AdminDash />
-                : <SellerDash />
-            }
+            <Dashboard user={user}/>
       </main>
-    </div>
   )
 }
 

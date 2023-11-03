@@ -48,7 +48,7 @@ export default function LoginForm() {
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
           localStorage.setItem('token', token)
           localStorage.setItem('user', JSON.stringify(decodeToken))
-          return route.push('/dashboard')
+          return route.push('/')
         }
       } else {
         const {error} = data

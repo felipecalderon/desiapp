@@ -62,3 +62,41 @@ export interface Producto {
 	precio: number;
 	subtotal: number;
 }
+
+export enum IUserRole {
+	Admin = 'admin',
+	Supplier = 'supplier',
+	StoreManager = 'store_manager',
+	StoreSeller = 'store_seller',
+}
+
+export interface Store {
+	storeID: string;
+	name: string;
+	storeImg: string | null;
+	location: string;
+	rut: string;
+	phone: string;
+	address: string;
+	city: string;
+	isAdminStore: boolean;
+	Users: UserStore[];
+}
+
+export interface User {
+	userID: string
+	role: IUserRole
+	name: string
+	email: string
+	userImg: string
+	stores: Store[]
+	exp: number
+  }
+interface UserStore {
+	userID: string;
+	UserStore: {
+		UserStoreID: string;
+		userID: string;
+		storeID: string;
+	};
+}
