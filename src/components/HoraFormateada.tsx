@@ -2,12 +2,18 @@
 import { useState, useEffect } from 'react';
 
 const HoraFormateada = () => {
-    const [fecha, setFecha] = useState(new Date());
+    const fecha = new Date(); // Genera la fecha en el cliente
+    const [newDate, setNewDate] = useState(fecha); // Inicializa con la fecha en el cliente
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            setFecha(new Date());
-        }, 1000);
+        setNewDate(fecha);
+
+        const updateDate = () => {
+            const now = new Date();
+            setNewDate(now);
+        };
+
+        const intervalId = setInterval(updateDate, 1000);
 
         return () => {
             clearInterval(intervalId);
@@ -20,7 +26,7 @@ const HoraFormateada = () => {
         second: '2-digit'
     };
 
-    const horaFormateada = fecha.toLocaleTimeString('es-ES', opcionesHora);
+    const horaFormateada = newDate.toLocaleTimeString('es-ES', opcionesHora);
 
     return horaFormateada
 };

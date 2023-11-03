@@ -1,9 +1,9 @@
 import Navbar from '@/components/Navbar'
 import './globals.css'
 import type { Metadata } from 'next'
-import { Nunito } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 
-const font = Nunito({ subsets: ['latin'] })
+const font = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'D3SI App',
