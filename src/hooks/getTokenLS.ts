@@ -1,16 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from 'react';
 
 export default function useTokenLS() {
-    const [localUser, setLocalUser] = useState<string | null>(null);
+  const [token, setLocalTKN] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        // Verifica entorno del navegador antes de acceder al localStorage
-        if (typeof window !== 'undefined') {
-            // obtener la información del token
-            const localTokenData = localStorage.getItem('token');
-            if (localTokenData) setLocalUser(localTokenData)
-        }
-    }, []);
+  // función para actualizar el token que puede ser llamada externamente
+  const updateToken = useCallback(() => {
+    const localTokenData = localStorage.getItem('token');
+    setLocalTKN(localTokenData);
+    setIsLoading(false);
+  }, []);
 
-    return localUser;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      updateToken(); // Usar la función para establecer el token
+    }
+  }, [updateToken]);
+
+  return { token, isLoading, updateToken }; 
 }

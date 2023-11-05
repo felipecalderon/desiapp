@@ -76,7 +76,7 @@ const ProfileMenu = () => {
                     </div>
                 </div>
             }
-            <p>¡Hola {user.name}!</p>
+            <p className="py-2 text-lg">¡Hola {user.name}!</p>
         </>
     )
 }

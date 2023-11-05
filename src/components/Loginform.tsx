@@ -18,7 +18,7 @@ export default function LoginForm() {
   });
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
-  const token = useTokenLS()
+  const {updateToken} = useTokenLS()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,10 +48,10 @@ export default function LoginForm() {
           if(error) setError(null)
           const decodeToken: any = decodeJWT(token)
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
-          localStorage.setItem('token', token)
           localStorage.setItem('user', JSON.stringify(decodeToken))
-          route.push('/')
-          return route.refresh()
+          localStorage.setItem('token', token); // Guardar el token en localStorage
+          updateToken(); // Actualizar el estado del token inmediatamente después de guardarlo
+          route.push('/');
         }
       } else {
         const {error} = data
@@ -62,9 +62,6 @@ export default function LoginForm() {
     }
   }
 
-  useEffect(() => {
-    if(token) route.push('/')
-  }, [token])
   return (
     <section className='p-8 shadow-md w-96 md:w-1/2 lg:w-1/3'>
       {error && <p className='bg-red-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1'>{error}</p>}

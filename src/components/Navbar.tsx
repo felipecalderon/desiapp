@@ -10,23 +10,16 @@ import { useRouter } from "next/navigation";
 export default function Navbar({ menu }: { menu: { nombre: string, url: string, id: string }[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const token = useTokenLS()
+  const { token, isLoading } = useTokenLS()
 
-  useEffect(() => {
-    if (token == null) {
-      // Si el token aún no se ha verificado en localStorage, espere y vuelva a verificar.
-      const checkToken = async () => {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Esperar 1 segundo
-        checkToken();
-      };
-      checkToken();
+  useEffect(() => { 
+    if (!isLoading && !token) {
+      // Si la carga ha terminado y no hay token, redirigir al login
       router.push('/login');
-      router.refresh()
     }
-  }, [token]);
+  }, [token, isLoading]);
 
-  if (!token) return null
-  return (
+  if (token && !isLoading) return (
     <nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center dark:bg-gray-900 lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">
       <Image src='/media/two-brands.png' alt="logo" width={200} height={100} />
       <button
