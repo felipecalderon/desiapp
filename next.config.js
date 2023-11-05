@@ -5,8 +5,12 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'www.d3si.cl'
+            },
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com'
             }
-        ]
+        ],
     }
 }
 

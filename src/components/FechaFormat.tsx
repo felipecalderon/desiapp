@@ -10,5 +10,5 @@ export default function FechaFormateada(){
 
     const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
 
-    return fechaFormateada
+    return <span suppressHydrationWarning={true}>{fechaFormateada}</span>
 };

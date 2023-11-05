@@ -1,7 +1,8 @@
 'use client'
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import { decodeJWT, isTokenExpired } from '@/utils/jwt';
+import useTokenLS from '@/hooks/getTokenLS';
 
 // tipo para el estado del formulario
 type FormState = {
@@ -17,6 +18,7 @@ export default function LoginForm() {
   });
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const token = useTokenLS()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,7 +50,8 @@ export default function LoginForm() {
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
           localStorage.setItem('token', token)
           localStorage.setItem('user', JSON.stringify(decodeToken))
-          return route.push('/')
+          route.push('/')
+          return route.refresh()
         }
       } else {
         const {error} = data
@@ -59,6 +62,9 @@ export default function LoginForm() {
     }
   }
 
+  useEffect(() => {
+    if(token) route.push('/')
+  }, [token])
   return (
     <section className='p-8 shadow-md w-96 md:w-1/2 lg:w-1/3'>
       {error && <p className='bg-red-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1'>{error}</p>}
@@ -70,6 +76,7 @@ export default function LoginForm() {
           </label>
           <input
             type="text"
+            autoComplete='off'
             id="email"
             name="email"
             value={form.email}
@@ -84,6 +91,7 @@ export default function LoginForm() {
           </label>
           <input
             type="password"
+            autoComplete='off'
             id="password"
             name="password"
             value={form.password}

@@ -28,7 +28,7 @@ const HoraFormateada = () => {
 
     const horaFormateada = newDate.toLocaleTimeString('es-ES', opcionesHora);
 
-    return horaFormateada
+    return <span suppressHydrationWarning={true}>{horaFormateada}</span>
 };
 
 export default HoraFormateada;
