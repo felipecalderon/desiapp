@@ -3,6 +3,7 @@ import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import { decodeJWT, isTokenExpired } from '@/utils/jwt';
 import useTokenLS from '@/hooks/getTokenLS';
+import storeAuth from '@/stores/store.auth';
 
 // tipo para el estado del formulario
 type FormState = {
@@ -11,6 +12,7 @@ type FormState = {
 };
 
 export default function LoginForm() {
+  const {isLogged, setIsLogged} = storeAuth()
   const route = useRouter()
   const [form, setForm] = useState<FormState>({
     email: '',
@@ -48,13 +50,15 @@ export default function LoginForm() {
           if(error) setError(null)
           const decodeToken: any = decodeJWT(token)
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
-          localStorage.setItem('user', JSON.stringify(decodeToken))
+          localStorage.setItem('user', JSON.stringify(decodeToken ))
           localStorage.setItem('token', token); // Guardar el token en localStorage
-          updateToken(); // Actualizar el estado del token inmediatamente después de guardarlo
+          setIsLogged(true); // Actualizar el estado del token inmediatamente después de guardarlo
           route.push('/');
         }
       } else {
         const {error} = data
+        if(typeof error === 'string') setError(error)
+        if(typeof error === 'object') setError(error.message)
         return console.error('Rechazado en auth', error);
       }
     } catch (error) {

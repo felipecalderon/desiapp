@@ -6,20 +6,24 @@ import Image from "next/image";
 import ProfileMenu from "./ProfileMenu";
 import useTokenLS from "@/hooks/getTokenLS";
 import { useRouter } from "next/navigation";
+import storeAuth from "@/stores/store.auth";
 
 export default function Navbar({ menu }: { menu: { nombre: string, url: string, id: string }[] }) {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+  const {isLogged, setIsLogged} = storeAuth()
   const { token, isLoading } = useTokenLS()
-
+  const router = useRouter();
   useEffect(() => { 
     if (!isLoading && !token) {
-      // Si la carga ha terminado y no hay token, redirigir al login
+      setIsLogged(false)
       router.push('/login');
+    }
+    if(token){
+      setIsLogged(true)
     }
   }, [token, isLoading]);
 
-  if (token && !isLoading) return (
+  if (isLogged) return (
     <nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center dark:bg-gray-900 lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">
       <Image src='/media/two-brands.png' alt="logo" width={200} height={100} />
       <button
