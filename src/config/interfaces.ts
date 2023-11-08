@@ -19,8 +19,9 @@ export interface ProductoWooBase {
 
 // Así parsearé los productos para consignación
 export interface ProductoConsignacion extends Partial<ProductoWooBase> {
+	productID: string
 	image: string;
-	tallas?: VariacionesWoo[];
+	ProductVariations?: VariacionesWoo[];
 }
 
 // Así se definen los atributos, ej: {id: 1, name: "talla", option: "3"}
@@ -38,6 +39,11 @@ export interface VariacionesWoo {
 	regular_price: string;
 	sku: string;
 	stock_quantity: number;
+	variationID: string
+	sizeNumber: number,
+	priceList: number,
+	priceCost: number,
+	stockQuantity: number
 }
 
 // Estructura producto individual

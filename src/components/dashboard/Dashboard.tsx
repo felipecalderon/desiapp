@@ -17,7 +17,7 @@ const DashBoard = () => {
     if (!user) return null
     if (user.role === 'admin') return (
         <>
-            <div className='flex flex-col justify-center items-center p-16 gap-8 rounded-3xl'>
+            <div className='flex flex-col justify-center items-center p-20 gap-8 rounded-3xl'>
                 <Icon className="text-9xl text-blue-500" />
                 <div className='flex flex-col gap-3 items-center'></div>
                 <div className='text-center'>

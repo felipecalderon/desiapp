@@ -1,28 +1,27 @@
 'use client'
-
 import { useEffect, useRef, useState } from 'react'
 import DataTable from "./DataTable"
+import { url } from '@/config/constants'
+import useUserLS from '@/hooks/getItemLocalStorage'
+import { useRouter } from 'next/navigation'
 
 const TablaProductos = () => {
     const [productos, setProductos] = useState([])
-    const [baseURL, setBaseURL] = useState('')
     const [message, setMessage] = useState('Cargando productos...')
     const isMounted = useRef(true)
+    const {user, isLoadingUser} = useUserLS()
+    const route = useRouter()
 
     useEffect(() => {
-        isMounted.current = true
-        setBaseURL(`${window.location.protocol}//${window.location.host}`)
-
-        return () => {
-            isMounted.current = false
+        if(!isLoadingUser && !user){
+            route.push('/login')
         }
-    }, [])
-
+    }, [user, isLoadingUser])
     useEffect(() => {
         const fetchWooData = async () => {
             try {
                 setMessage('Consultando productos en tienda...')
-                const response = await fetch(`${baseURL}/api/woo`, {
+                const response = await fetch(`${url.backend}/products`, {
                     cache: 'no-store',
                 })
                 if (!response.ok) {
@@ -33,17 +32,15 @@ const TablaProductos = () => {
                     setProductos(data)
                 }
             } catch (error) {
+                console.log({error});
                 if (isMounted.current) {
                     setMessage('No fue posible obtener productos, contacte al administrador')
                     setProductos([])
                 }
             }
         }
-
-        if (baseURL) {
-            fetchWooData()
-        }
-    }, [baseURL])
+    fetchWooData()
+    }, [])
 
     return (
         <div className="container mx-auto p-2 dark:bg-gray-800">
