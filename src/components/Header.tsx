@@ -1,14 +1,14 @@
 'use client'
-import useUserLS from '@/hooks/getItemLocalStorage'
+
 import FechaFormateada from './FechaFormat'
 import HoraFormateada from './HoraFormateada'
 import storeAuth from '@/stores/store.auth'
 
 const Header = () => {
-    const user = useUserLS()
-    const {isLogged, setIsLogged} = storeAuth()
-    
-    if(isLogged && user) return (
+    const {user} = storeAuth()
+
+    if(!user) return null
+    return (
         <section className='flex justify-between px-10 pt-10'>
             <div className='text-left'>
                 <h1 className='text-xl font-semibold'>Welcome to Central D3SI AVOCCO</h1>

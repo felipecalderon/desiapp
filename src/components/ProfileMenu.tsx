@@ -3,7 +3,7 @@ import useUserLS from "@/hooks/getItemLocalStorage";
 import Image from "next/image";
 
 const ProfileMenu = () => {
-    const user = useUserLS()
+    const {user} = useUserLS()
 
     // Función para manejar el clic en la imagen
     const handleImageClick = () => {
@@ -64,14 +64,14 @@ const ProfileMenu = () => {
         <>
             {
                 user.userImg &&
-                <div className='mx-auto w-20 h-20 rounded-full overflow-hidden' onClick={handleImageClick}>
+                <div className='md:mx-auto rounded-sm w-10 h-10 md:w-20 md:h-20 md:rounded-full overflow-hidden' onClick={handleImageClick}>
                     <div className='relative w-full h-full'>
                         <Image
                             src={user?.userImg}
                             alt={user.name}
                             layout='fill'
                             objectFit='cover'
-                            className='rounded-full'
+                            className='block'
                         />
                     </div>
                 </div>

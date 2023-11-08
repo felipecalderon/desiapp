@@ -1,3 +1,4 @@
+import { User } from '@/config/interfaces';
 import {create} from 'zustand';
 
 export type Menu = {
@@ -12,6 +13,8 @@ export interface AuthState {
   storeManagerMenu: Menu[],
   storeSellerMenu: Menu[],
   supplierMenu: Menu[],
+  user: User | null,
+  setUser: (user: User | null) => void
 }
 
 const storeAuth = create<AuthState>((set) => ({
@@ -28,7 +31,7 @@ const storeAuth = create<AuthState>((set) => ({
         { name: 'Settings', path: '/settings' },
         { name: 'Legal', path: '/legales' }
       ],
-      supplierMenu: [
+    supplierMenu: [
         { name: 'Home', path: '/' },
         { name: 'Stock', path: '/stock' },
         { name: 'Invoice', path: '/facturacion' },
@@ -52,7 +55,9 @@ const storeAuth = create<AuthState>((set) => ({
     storeSellerMenu: [
         { name: 'Comprar', path: '/comprar' },
         { name: 'Historial', path: '/historial' }
-      ]
+      ],
+    user: null,
+    setUser: (user) => set({user})
 }));
 
 export default storeAuth;

@@ -1,26 +1,20 @@
-import { User } from "@/config/interfaces";
-import { useEffect, useState } from "react";
+'use client';
+import { useState, useEffect, useMemo } from 'react';
+import storeAuth from '@/stores/store.auth'
 
 export default function useUserLS() {
-    const [localUser, setLocalUser] = useState<User | null>(null);
+	const {user, setUser} = storeAuth()
+    const [isLoadingUser, setLoading] = useState(true); // estado de carga
 
     useEffect(() => {
-        // Verifica entorno del navegador antes de acceder al localStorage
         if (typeof window !== 'undefined') {
-            // obtener la información del usuario
             const localUserData = localStorage.getItem('user');
-
             if (localUserData) {
-                try {
-                    // Si hay datos en el localStorage, analizarlos como JSON
-                    const parsedUser = JSON.parse(localUserData);
-                    setLocalUser(parsedUser); 
-                } catch (error) {
-                    console.error('Error al analizar los datos del usuario:', error);
-                }
+                setUser(JSON.parse(localUserData));
             }
+            setLoading(false); // Establecer la carga como falsa independientemente de si se encontraron datos o no
         }
     }, []);
 
-    return localUser;
+    return { user, isLoadingUser };
 }

@@ -1,8 +1,7 @@
 'use client'
-import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation'
 import { decodeJWT, isTokenExpired } from '@/utils/jwt';
-import useTokenLS from '@/hooks/getTokenLS';
 import storeAuth from '@/stores/store.auth';
 import { url } from '@/config/constants';
 
@@ -21,10 +20,10 @@ export default function LoginForm() {
   });
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
-  const {updateToken} = useTokenLS()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if(name === 'email') value = value.toLowerCase()
     setForm({ ...form, [name]: value });
   };
 
