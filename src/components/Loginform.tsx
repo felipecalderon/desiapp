@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { decodeJWT, isTokenExpired } from '@/utils/jwt';
 import useTokenLS from '@/hooks/getTokenLS';
 import storeAuth from '@/stores/store.auth';
+import { url } from '@/config/constants';
 
 // tipo para el estado del formulario
 type FormState = {
@@ -34,7 +35,7 @@ export default function LoginForm() {
 
   const loginUser = async () => {
     try {
-      const response = await fetch('https://desi-back-production.up.railway.app/auth/login/', {
+      const response = await fetch(`${url.backend}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ export default function LoginForm() {
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
           localStorage.setItem('user', JSON.stringify(decodeToken ))
           localStorage.setItem('token', token); // Guardar el token en localStorage
-          setIsLogged(true); // Actualizar el estado del token inmediatamente después de guardarlo
+          setIsLogged(true); 
           route.push('/');
         }
       } else {

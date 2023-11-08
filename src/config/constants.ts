@@ -7,6 +7,10 @@ export const configs = {
 
 }
 
+export const url = {
+    backend: process.env.NEXT_PUBLIC_BACKEND_URL as string
+}
+
 export const method = {
     GET: 'GET',
     POST: 'POST',

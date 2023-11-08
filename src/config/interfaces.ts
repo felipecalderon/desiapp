@@ -63,11 +63,11 @@ export interface Producto {
 	subtotal: number;
 }
 
-export enum IUserRole {
+export enum Role {
 	Admin = 'admin',
-	Supplier = 'supplier',
-	StoreManager = 'store_manager',
-	StoreSeller = 'store_seller',
+	Proveedor = 'supplier',
+	Franquiciado = 'store_manager',
+	NO_Franquiciado = 'store_seller',
 }
 
 export interface Store {
@@ -85,7 +85,7 @@ export interface Store {
 
 export interface User {
 	userID: string
-	role: IUserRole
+	role: Role
 	name: string
 	email: string
 	userImg: string

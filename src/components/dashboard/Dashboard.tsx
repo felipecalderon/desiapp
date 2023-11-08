@@ -2,17 +2,16 @@
 import {Suspense} from 'react'
 import { FaCashRegister as Icon } from 'react-icons/fa'
 import useUserLS from '@/hooks/getItemLocalStorage'
+import { Role } from '@/config/interfaces'
+import FechaFormateada from '../FechaFormat'
+import HoraFormateada from '../HoraFormateada'
 
 const DashBoard = () => {
     const user = useUserLS()
 
     if (!user) return null
     if (user.role === 'admin') return (
-        <Suspense fallback={<p>Cargando home...</p>}>
-            <div className='text-left'>
-                <h1 className='text-xl font-semibold'>Welcome to Central D3SI AVOCCO</h1>
-                <h2 suppressHydrationWarning={true} className='text-lg font-light'>You are at D3SI AVOCCO HQ | {user.name} </h2>
-            </div>
+        <>
             <div className='flex flex-col justify-center items-center p-16 gap-8 rounded-3xl'>
                 <div>
                     {/* <FechaFormateada /> / <HoraFormateada /> */}
@@ -31,10 +30,10 @@ const DashBoard = () => {
                     </h2>
                 </div>
             </div>
-        </Suspense>
+        </>
     )
     if (user.role === 'store_manager') return (
-        <Suspense fallback={<p>Cargando home...</p>}>
+        <>
             <div className='text-left'>
                 <h1 className='text-xl font-semibold'>Bienvenido al portal D3SI</h1>
                 <h2 suppressHydrationWarning={true} className='text-lg font-light'>{user.name}, usted posee contrato de franquiciado.</h2>
@@ -53,7 +52,7 @@ const DashBoard = () => {
                     </h2>
                 </div>
             </div>
-        </Suspense>
+        </>
     )
 }
 
