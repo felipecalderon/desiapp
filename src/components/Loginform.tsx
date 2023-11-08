@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { decodeJWT, isTokenExpired } from '@/utils/jwt';
 import storeAuth from '@/stores/store.auth';
 import { url } from '@/config/constants';
+import Image from 'next/image';
 
 // tipo para el estado del formulario
 type FormState = {
@@ -67,7 +68,9 @@ export default function LoginForm() {
   }
 
   return (
-    <section className='p-8 shadow-md w-96 md:w-1/2 lg:w-1/3'>
+    <div className='bg-gray-100 dark:bg-gray-900 py-10 mt-20'>
+    <section className='shadow-md px-10'>
+      <Image src='/media/two-brands.png' alt="logo" width={200} height={100} className='mx-auto'/>
       {error && <p className='bg-red-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1'>{error}</p>}
       {message && <p className='bg-green-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1'>{message}</p>}
       <form onSubmit={handleSubmit}>
@@ -83,7 +86,7 @@ export default function LoginForm() {
             value={form.email}
             onChange={handleChange}
             className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-gray-300"
-          />
+            />
         </div>
 
         <div className="mb-4">
@@ -98,16 +101,17 @@ export default function LoginForm() {
             value={form.password}
             onChange={handleChange}
             className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-gray-300"
-          />
+            />
         </div>
         <button
           type="submit"
           className="w-full bg-blue-500 text-white p-2 rounded-md hover-bg-blue-600 focus:outline-none focus:bg-blue-600"
-        >
+          >
           Entrar
         </button>
       </form>
     </section>
+  </div>
   );
 }
 
