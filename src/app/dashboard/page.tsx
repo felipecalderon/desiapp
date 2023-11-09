@@ -1,4 +1,4 @@
-import BienvenidaDashboard from "@/components/Bienvenida";
+import BienvenidaDashboard from "@/components/Bienvenida"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -11,4 +11,4 @@ const Dashboard = async () => {
     )
 }
 
-export default Dashboard;
+export default Dashboard

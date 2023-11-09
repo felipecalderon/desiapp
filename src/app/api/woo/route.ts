@@ -1,5 +1,5 @@
-import { cleanProducts, connectWoo } from '@/services/woo';
-import { NextResponse } from 'next/server';
+import { cleanProducts, connectWoo } from '@/services/woo'
+import { NextResponse } from 'next/server'
 
 export const GET = async () => {
     try {

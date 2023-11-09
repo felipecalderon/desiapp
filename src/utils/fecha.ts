@@ -1,15 +1,15 @@
 export const getFecha = () => {
-	const fecha = new Date();
+	const fecha = new Date()
 	const opciones: Intl.DateTimeFormatOptions = {
 		weekday: 'long',
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
-	};
+	}
 
-	const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+	const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones)
 
-	return fechaFormateada;
-};
+	return fechaFormateada
+}
 
 

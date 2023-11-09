@@ -1,4 +1,4 @@
-import {create} from 'zustand';
+import {create} from 'zustand'
 
 interface CodigodeBarra {
   sku: string
@@ -14,6 +14,6 @@ const useStore = create<CodigodeBarra>((set) => ({
   changeSend: (isSend: boolean) => set({
     isSend: !isSend
   })
-}));
+}))
 
-export default useStore;
+export default useStore

@@ -6,9 +6,9 @@ export default function FechaFormateada(){
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    };
+    }
 
-    const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+    const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones)
 
     return <span suppressHydrationWarning={true}>{fechaFormateada}</span>
-};
+}

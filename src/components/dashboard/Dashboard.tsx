@@ -36,10 +36,6 @@ const DashBoard = () => {
     )
     if (user.role === 'store_manager') return (
         <>
-            <div className='text-left'>
-                <h1 className='text-xl font-semibold'>Bienvenido al portal D3SI</h1>
-                <h2 suppressHydrationWarning={true} className='text-lg font-light'>{user.name}, usted posee contrato de franquiciado.</h2>
-            </div>
             <div className='flex flex-col justify-center items-center p-16 gap-8 rounded-3xl'>
                 <Icon className="text-9xl text-blue-500" />
                 <div className='text-center'>

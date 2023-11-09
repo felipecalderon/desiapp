@@ -1,5 +1,5 @@
-import FechaFormateada from "./FechaFormat";
-import HoraFormateada from "./HoraFormateada";
+import FechaFormateada from "./FechaFormat"
+import HoraFormateada from "./HoraFormateada"
 
 const BienvenidaDashboard = () => {
     return (
@@ -10,7 +10,7 @@ const BienvenidaDashboard = () => {
             <h2 className="text-lg text-gray-800 dark:text-white">Ventas del mes: 12</h2>
             <h2 className="text-lg text-gray-800 dark:text-white">Total: $1.500.000 IVA Inc.</h2>            
         </div>
-    );
-};
+    )
+}
 
-export default BienvenidaDashboard;
+export default BienvenidaDashboard

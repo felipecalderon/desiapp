@@ -1,21 +1,21 @@
 'use client'
 import Link from "next/link"
-import { useEffect, useState } from "react";
-import Logout from "@/components/Logout";
-import Image from "next/image";
-import ProfileMenu from "./ProfileMenu";
-import useTokenLS from "@/hooks/getTokenLS";
-import { usePathname, useRouter } from "next/navigation";
-import storeAuth, { Menu } from "@/stores/store.auth";
-import useUserLS from "@/hooks/getItemLocalStorage";
-import { Role } from "@/config/interfaces";
+import { useEffect, useState } from "react"
+import Logout from "@/components/Logout"
+import Image from "next/image"
+import ProfileMenu from "./ProfileMenu"
+import useTokenLS from "@/hooks/getTokenLS"
+import { usePathname, useRouter } from "next/navigation"
+import storeAuth, { Menu } from "@/stores/store.auth"
+import useUserLS from "@/hooks/getItemLocalStorage"
+import { Role } from "@/config/interfaces"
 
 export default function Navbar() {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState(false)
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
 	const { isLogged, setIsLogged, adminMenu, storeManagerMenu, storeSellerMenu, supplierMenu, user } = storeAuth()
 	const { token, isLoading } = useTokenLS()
-	const router = useRouter();
+	const router = useRouter()
 	const currentPath = usePathname()
 
 	useEffect(() => {

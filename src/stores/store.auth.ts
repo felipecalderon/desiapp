@@ -1,5 +1,5 @@
-import { User } from '@/config/interfaces';
-import {create} from 'zustand';
+import { User } from '@/config/interfaces'
+import {create} from 'zustand'
 
 export type Menu = {
   name: string
@@ -58,6 +58,6 @@ const storeAuth = create<AuthState>((set) => ({
       ],
     user: null,
     setUser: (user) => set({user})
-}));
+}))
 
-export default storeAuth;
+export default storeAuth

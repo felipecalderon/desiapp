@@ -1,6 +1,6 @@
 'use client'
-import useUserLS from "@/hooks/getItemLocalStorage";
-import Image from "next/image";
+import useUserLS from "@/hooks/getItemLocalStorage"
+import Image from "next/image"
 
 const ProfileMenu = () => {
     const {user} = useUserLS()
@@ -26,21 +26,21 @@ const ProfileMenu = () => {
     // Función para cargar la imagen al backend
     const uploadImage = async (file: File) => {
         try {
-            const formData = new FormData();
-            formData.append('uploadFile', file);
+            const formData = new FormData()
+            formData.append('uploadFile', file)
 
             // Subir la imagen
             const uploadResponse = await fetch('/upload', {
                 method: 'POST',
                 body: formData,
-            });
+            })
 
             if (!uploadResponse.ok) {
-                throw new Error('La carga de la imagen falló');
+                throw new Error('La carga de la imagen falló')
             }
 
-            const uploadData = await uploadResponse.json();
-            const img = uploadData.url;
+            const uploadData = await uploadResponse.json()
+            const img = uploadData.url
 
             // Actualizar la imagen del usuario
             const userUpdateResponse = await fetch(`/users/${user?.email}`, {
@@ -49,13 +49,13 @@ const ProfileMenu = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ userImg: img }),
-            });
+            })
 
             if (!userUpdateResponse.ok) {
-                throw new Error('La actualización del usuario falló');
+                throw new Error('La actualización del usuario falló')
             }
         } catch (error) {
-            console.error('Error de red', error);
+            console.error('Error de red', error)
         }
     }
 

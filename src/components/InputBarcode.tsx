@@ -1,10 +1,10 @@
 'use client'
-import useStore from '@/stores/store.barcode';
-import { useEffect, useRef } from 'react';
+import useStore from '@/stores/store.barcode'
+import { useEffect, useRef } from 'react'
 
 export default function Input() {
-    const {sku, changeSend, isSend, setValue} = useStore();
-    const inputRef = useRef<HTMLInputElement | null>(null);
+    const {sku, changeSend, isSend, setValue} = useStore()
+    const inputRef = useRef<HTMLInputElement | null>(null)
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         if (e.relatedTarget === null || (e.relatedTarget && !(e.currentTarget.contains(e.relatedTarget as Node)))) {
@@ -21,38 +21,38 @@ export default function Input() {
     const handleClick = async () => {
         try {
             // Obtener el contenido del portapapeles
-            const clipboardContents = await navigator.clipboard.readText();
+            const clipboardContents = await navigator.clipboard.readText()
             // Si es un string, actualizar el valor del input
             if (typeof clipboardContents === 'string') {
-                setValue(clipboardContents);
+                setValue(clipboardContents)
             }
         } catch (error) {
-            console.error('Error al acceder al portapapeles:', error);
+            console.error('Error al acceder al portapapeles:', error)
         }
     }
 
     useEffect(() => {
         // Enfoca el input cuando se monta el componente
-        inputRef.current?.focus();
+        inputRef.current?.focus()
 
         // Pegar el contenido del portapapeles en el input
         const pasteFromClipboard = async () => {
             try {
                 // Obtener el contenido del portapapeles
-                const clipboardContents = await navigator.clipboard.readText();
+                const clipboardContents = await navigator.clipboard.readText()
                 // Si es un string, actualizar el valor del input
                 if (typeof clipboardContents === 'string') {
-                    setValue(clipboardContents);
+                    setValue(clipboardContents)
                 }
                 return changeSend(isSend)
             } catch (error) {
-                console.error('Error al acceder al portapapeles:', error);
+                console.error('Error al acceder al portapapeles:', error)
             }
         }
 
         // Ejecuta la función al montar el componente
-        pasteFromClipboard();
-    }, []);
+        pasteFromClipboard()
+    }, [])
 
     return (
         <>

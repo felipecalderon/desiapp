@@ -1,35 +1,35 @@
 'use client'
 
-import { SingleProduct } from "@/config/interfaces";
-import storeVta from "@/stores/store.pedidoVta";
-import { formatoPrecio } from "@/utils/price";
-import { useState } from "react";
+import { SingleProduct } from "@/config/interfaces"
+import storeVta from "@/stores/store.pedidoVta"
+import { formatoPrecio } from "@/utils/price"
+import { useState } from "react"
 
 function DetallesProducto({ producto }: { producto: SingleProduct }) {
-    const { pedidoVta, setPedido, updateCantidad, removePedido } = storeVta();
-    const [cantidad, setCantidad] = useState(1);
+    const { pedidoVta, setPedido, updateCantidad, removePedido } = storeVta()
+    const [cantidad, setCantidad] = useState(1)
 
     const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // Se pasa el evento a un numero para poder hacer cálculo despues
-        const nuevaCantidad = parseInt(e.target.value, 10);
+        const nuevaCantidad = parseInt(e.target.value, 10)
         if (!isNaN(nuevaCantidad)) {
-            setCantidad(nuevaCantidad);
+            setCantidad(nuevaCantidad)
         }
-    };
+    }
 
     const handleAgregarAlPedido = () => {
-        const buscarPedido = pedidoVta.find(({ sku }) => sku === producto.sku);
+        const buscarPedido = pedidoVta.find(({ sku }) => sku === producto.sku)
 
         // Si la cantidad es 0 y el producto ya está en el pedido, se saca
         if (cantidad === 0 && buscarPedido) {
-            removePedido(producto.sku);
-            return; // Sal del manejador
+            removePedido(producto.sku)
+            return // Sal del manejador
         }
 
         // Si la cantidad no es 0 y el producto ya está en el pedido, se actualiza la cantidad
         if (buscarPedido && cantidad !== 0) {
-            updateCantidad(producto.sku, cantidad);
-            return; // Sal del manejador
+            updateCantidad(producto.sku, cantidad)
+            return // Sal del manejador
         }
 
         // Si el producto no está en el pedido, se agrega
@@ -41,9 +41,9 @@ function DetallesProducto({ producto }: { producto: SingleProduct }) {
                 nombre: producto.name,
                 subtotal: Number(producto.price) * cantidad,
                 talla: producto.talla
-            });
+            })
         }
-    };
+    }
 
     return (
         <div>
@@ -77,7 +77,7 @@ function DetallesProducto({ producto }: { producto: SingleProduct }) {
                 Agregar al Pedido
             </button>
         </div>
-    );
+    )
 }
 
 export default DetallesProducto

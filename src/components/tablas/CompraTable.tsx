@@ -1,9 +1,9 @@
 'use client'
-import useStore from '@/stores/store.pedidCpra';
-import { formatoPrecio } from '@/utils/price';
+import useStore from '@/stores/store.pedidCpra'
+import { formatoPrecio } from '@/utils/price'
 
 const TablaCompraProductos = () => {
-    const { pedidoCompra } = useStore();
+    const { pedidoCompra } = useStore()
     if(!pedidoCompra || pedidoCompra.length === 0) return null
     return (
         <div className="container mx-auto p-4 dark:bg-gray-800">
@@ -39,7 +39,7 @@ const TablaCompraProductos = () => {
                 </table>
             </div>
         </div>
-    );
+    )
 }
 
 export default TablaCompraProductos

@@ -1,6 +1,6 @@
-import { SingleProduct } from "@/config/interfaces";
-import DetallesProducto from "@/components/DetalleSingleProduct";
-import ImagenProducto from "@/components/ImageProduct";
+import { SingleProduct } from "@/config/interfaces"
+import DetallesProducto from "@/components/DetalleSingleProduct"
+import ImagenProducto from "@/components/ImageProduct"
 
 export default function ProductoDetalle({ producto }: { producto: SingleProduct | null}) {
     if(!producto) return <p>Producto no encontrado</p>
@@ -11,5 +11,5 @@ export default function ProductoDetalle({ producto }: { producto: SingleProduct 
                 <DetallesProducto producto={producto} />
             </div>
         </div>
-    );
+    )
 }

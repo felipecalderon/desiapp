@@ -1,19 +1,19 @@
 'use client'
-import storeAuth from '@/stores/store.auth';
-import { useRouter } from 'next/navigation';
+import storeAuth from '@/stores/store.auth'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { FaSignOutAlt } from 'react-icons/fa'
 const Logout = () => {
     const { setIsLogged, setUser } = storeAuth()
-    const router = useRouter();
+    const router = useRouter()
     const handleLogout = () => {
         if (typeof window !== 'undefined') {
-            localStorage.clear();
+            localStorage.clear()
         }
         setUser(null)
         setIsLogged(false)
-        router.push('/login');
-    };
+        router.push('/login')
+    }
 
     return (
         <button

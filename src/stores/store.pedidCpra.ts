@@ -1,12 +1,12 @@
-import { Producto } from '@/config/interfaces';
-import { create } from 'zustand';
+import { Producto } from '@/config/interfaces'
+import { create } from 'zustand'
 
 interface ListaPedidoCompra {
-	pedidoCompra: Producto[];
-	setPedido: (pedido: Producto) => void;
-	removePedido: (sku: string) => void;
-	clearPedido: () => void;
-	updateCantidad: (sku: string, cantidad: number) => void;
+	pedidoCompra: Producto[]
+	setPedido: (pedido: Producto) => void
+	removePedido: (sku: string) => void
+	clearPedido: () => void
+	updateCantidad: (sku: string, cantidad: number) => void
 }
 
 const storeCpra = create<ListaPedidoCompra>((set) => ({
@@ -31,9 +31,9 @@ const storeCpra = create<ListaPedidoCompra>((set) => ({
 		set((state) => {
 			const pedidoCompra = state.pedidoCompra.map((item) =>
 				item.sku === sku ? { ...item, cantidad } : item
-			);
-			return { pedidoCompra };
+			)
+			return { pedidoCompra }
 		}),
-}));
+}))
 
-export default storeCpra;
+export default storeCpra

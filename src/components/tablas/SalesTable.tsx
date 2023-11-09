@@ -1,9 +1,9 @@
 'use client'
-import useStore from '@/stores/store.pedidoVta';
-import { formatoPrecio } from '@/utils/price';
+import useStore from '@/stores/store.pedidoVta'
+import { formatoPrecio } from '@/utils/price'
 
 const TablaVentasProductos = () => {
-    const { pedidoVta } = useStore();
+    const { pedidoVta } = useStore()
     if(!pedidoVta || pedidoVta.length === 0) return null
     return (
         <div className="container mx-auto p-4 dark:bg-gray-800">
@@ -43,7 +43,7 @@ const TablaVentasProductos = () => {
                 </table>
             </div>
         </div>
-    );
+    )
 }
 
 export default TablaVentasProductos

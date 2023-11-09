@@ -1,13 +1,13 @@
 'use client'
-import { Producto } from '@/config/interfaces';
-import { formatoPrecio } from '@/utils/price';
+import { Producto } from '@/config/interfaces'
+import { formatoPrecio } from '@/utils/price'
 
 interface TablaPedidosCompraVentaProps {
-    pedidos: Producto[];
+    pedidos: Producto[]
 }
 
 const TablaPedidosCompraVenta: React.FC<TablaPedidosCompraVentaProps> = ({ pedidos }) => {
-    if (!pedidos || pedidos.length === 0) return null;
+    if (!pedidos || pedidos.length === 0) return null
     
     return (
         <div className="container mx-auto p-4 dark:bg-gray-800">
@@ -47,7 +47,7 @@ const TablaPedidosCompraVenta: React.FC<TablaPedidosCompraVentaProps> = ({ pedid
                 </table>
             </div>
         </div>
-    );
+    )
 }
 
-export default TablaPedidosCompraVenta;
+export default TablaPedidosCompraVenta

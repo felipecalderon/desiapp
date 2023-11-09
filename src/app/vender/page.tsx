@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 }
 
 export default function Producto() {
-  const { pedidoVta } = storeVta();
+  const { pedidoVta } = storeVta()
     return (
     <>
       <Input />

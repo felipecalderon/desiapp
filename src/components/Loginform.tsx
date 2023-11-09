@@ -1,16 +1,16 @@
 'use client'
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { decodeJWT, isTokenExpired } from '@/utils/jwt';
-import storeAuth from '@/stores/store.auth';
-import { url } from '@/config/constants';
-import Image from 'next/image';
+import { decodeJWT, isTokenExpired } from '@/utils/jwt'
+import storeAuth from '@/stores/store.auth'
+import { url } from '@/config/constants'
+import Image from 'next/image'
 
 // tipo para el estado del formulario
 type FormState = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 export default function LoginForm() {
   const {isLogged, setIsLogged} = storeAuth()
@@ -18,20 +18,20 @@ export default function LoginForm() {
   const [form, setForm] = useState<FormState>({
     email: '',
     password: '',
-  });
+  })
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target;
+    let { name, value } = e.target
     if(name === 'email') value = value.toLowerCase()
-    setForm({ ...form, [name]: value });
-  };
+    setForm({ ...form, [name]: value })
+  }
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     loginUser()
-  };
+  }
 
   const loginUser = async () => {
     try {
@@ -41,7 +41,7 @@ export default function LoginForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(form)
-      });
+      })
       const data = await response.json()
       if (response.ok) {
         const resToken = response.headers.get('authorization')
@@ -52,18 +52,18 @@ export default function LoginForm() {
           const decodeToken: any = decodeJWT(token)
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
           localStorage.setItem('user', JSON.stringify(decodeToken ))
-          localStorage.setItem('token', token); // Guardar el token en localStorage
-          setIsLogged(true); 
-          route.push('/');
+          localStorage.setItem('token', token) // Guardar el token en localStorage
+          setIsLogged(true) 
+          route.push('/')
         }
       } else {
         const {error} = data
         if(typeof error === 'string') setError(error)
         if(typeof error === 'object') setError(error.message)
-        return console.error('Rechazado en auth', error);
+        return console.error('Rechazado en auth', error)
       }
     } catch (error) {
-      return console.error('Error en la solicitud:', error);
+      return console.error('Error en la solicitud:', error)
     }
   }
 
@@ -112,6 +112,6 @@ export default function LoginForm() {
       </form>
     </section>
   </div>
-  );
+  )
 }
 

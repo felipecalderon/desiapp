@@ -1,28 +1,28 @@
 'use client'
-import { configs } from '@/config/constants';
-import { useEffect, useState } from 'react';
-import useStore from '@/stores/store.barcode';
-import ProductoDetalle from './ProductSection';
-import { barcodeFunction } from '@/utils/barcode';
+import { configs } from '@/config/constants'
+import { useEffect, useState } from 'react'
+import useStore from '@/stores/store.barcode'
+import ProductoDetalle from './ProductSection'
+import { barcodeFunction } from '@/utils/barcode'
 
 const fetchSingleProduct = async (sku: string) => {
     if (sku !== '') {
-        const response = await fetch(`${configs.baseURL_CURRENT}/api/woo/${sku}`, { cache: 'no-store' });
+        const response = await fetch(`${configs.baseURL_CURRENT}/api/woo/${sku}`, { cache: 'no-store' })
         if (!response.ok) {
-            throw new Error('Error de conexión a la API de Woocommerce');
+            throw new Error('Error de conexión a la API de Woocommerce')
         }
-        const data = await response.json();
+        const data = await response.json()
         if (!data || data.length === 0) {
-            return null;
+            return null
         }
-        return data;
+        return data
     }
-    return null;
+    return null
 }
 
 export default function SingleProductComponent() {
-    const {sku, isSend} = useStore();
-    const [producto, setProducto] = useState(null);
+    const {sku, isSend} = useStore()
+    const [producto, setProducto] = useState(null)
     const [mensaje, setMensaje] = useState('Ingrese código de barra para buscar stock')
   
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function SingleProductComponent() {
             })
             .catch(() => setMensaje('Hubo un error al consultar productos.. refresque la página'))
       }
-    }, [isSend]);
+    }, [isSend])
     if(producto) return <ProductoDetalle producto={producto} />
     else return mensaje
   }
