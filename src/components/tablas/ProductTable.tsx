@@ -18,30 +18,6 @@ const TablaProductos = () => {
             route.push('/login')
         }
     }, [user, isLoadingUser])
-    useEffect(() => {
-        const fetchWooData = async () => {
-            try {
-                setMessage('Consultando productos en tienda...')
-                const response = await fetch(`${url.backend}/products`, {
-                    cache: 'no-store',
-                })
-                if (!response.ok) {
-                    throw new Error('Error de conexión a la API de Woocommerce')
-                }
-                const data = await response.json()
-                if (isMounted.current) {
-                    setProducts(data)
-                }
-            } catch (error) {
-                console.log({error})
-                if (isMounted.current) {
-                    setMessage('No fue posible obtener productos, contacte al administrador')
-                    setProducts([])
-                }
-            }
-        }
-    fetchWooData()
-    }, [])
 
     return (
         <div className="container mx-auto px-10 dark:bg-gray-800">
