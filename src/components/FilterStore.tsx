@@ -32,7 +32,7 @@ const SelectStore = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch(`${url.backend}/store`)
+          const response = await fetch(`${url.backend}/store/`)
           const data = await response.json()
           setStores(data)
         } catch (error) {
