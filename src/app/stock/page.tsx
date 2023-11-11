@@ -1,6 +1,6 @@
 import SelectStore from "@/components/FilterStore"
 import InfoTotalStock from "@/components/InfoTotalStock"
-import TablaProductos from "@/components/tablas/ProductTable"
+import GenerarTablaStock from "@/components/tablas/GenerarTabla"
 
 export default function Productos() {
   return (
@@ -10,7 +10,7 @@ export default function Productos() {
         <SelectStore />
         <InfoTotalStock />
       </div>
-      <TablaProductos />
+      <GenerarTablaStock />
     </>
   )
 }

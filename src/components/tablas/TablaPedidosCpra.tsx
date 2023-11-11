@@ -2,7 +2,7 @@
 import storeVta from '@/stores/store.pedidoVta'
 import { formatoPrecio } from '@/utils/price'
 
-const TablaPedidosVenta = () => {
+const TablaPedidosCompra = () => {
     const { pedidoVta } = storeVta()
     if (!pedidoVta || pedidoVta.length === 0) return null
     return (
@@ -33,7 +33,7 @@ const TablaPedidosVenta = () => {
                                 <span>{stockQuantity}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
-                                <span>{formatoPrecio(priceList)}</span>
+                                <span>{formatoPrecio(priceCost)}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
                                 <span>{formatoPrecio(priceList)}</span>
@@ -47,4 +47,4 @@ const TablaPedidosVenta = () => {
     )
 }
 
-export default TablaPedidosVenta
+export default TablaPedidosCompra

@@ -1,7 +1,7 @@
 import { Producto } from '@/config/interfaces'
 import { create } from 'zustand'
 
-interface ListaPedidoCompra {
+interface ListaPedido {
 	pedidoCompra: Producto[]
 	setPedido: (pedido: Producto) => void
 	removePedido: (sku: string) => void
@@ -9,9 +9,9 @@ interface ListaPedidoCompra {
 	updateCantidad: (sku: string, cantidad: number) => void
 }
 
-const storeCpra = create<ListaPedidoCompra>((set) => ({
+const storeCpra = create<ListaPedido>((set) => ({
 	pedidoCompra: [],
-
+	
 	setPedido: (pedido) =>
 		set((state) => ({
 			pedidoCompra: [...state.pedidoCompra, pedido],
@@ -19,21 +19,27 @@ const storeCpra = create<ListaPedidoCompra>((set) => ({
 
 	removePedido: (sku) =>
 		set((state) => ({
-			pedidoCompra: state.pedidoCompra.filter((item) => item.sku !== sku),
+			pedidoCompra: state.pedidoCompra.filter(({ProductVariations}) => ProductVariations.some(({sku: skuVar}) => skuVar === sku)),
 		})),
 
-	clearPedido: () =>
-		set(() => ({
-			pedidoCompra: [],
-		})),
+	clearPedido: () => set({ pedidoCompra: [] }),
 
-	updateCantidad: (sku: string, cantidad: number) =>
-		set((state) => {
-			const pedidoCompra = state.pedidoCompra.map((item) =>
-				item.sku === sku ? { ...item, cantidad } : item
-			)
-			return { pedidoCompra }
-		}),
+	updateCantidad: (sku, cantidad) =>
+		  set((state) => {
+			const index = state.pedidoCompra.findIndex(
+			  ({ ProductVariations }) => ProductVariations?.some(({ sku: skuVar }) => skuVar === sku)
+			);
+	  
+			if (index !== -1) {
+			  const updatedPedido = { ...state.pedidoCompra[index], cantidad };
+			  const updatedPedidos = [...state.pedidoCompra];
+			  updatedPedidos[index] = updatedPedido;
+	  
+			  return { pedidoCompra: updatedPedidos };
+			}
+	  
+			return state;
+		  }),
 }))
 
 export default storeCpra

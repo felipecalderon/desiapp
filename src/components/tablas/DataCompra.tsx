@@ -1,26 +1,9 @@
 'use client'
 import { Producto, Role } from "@/config/interfaces"
-import storeAuth from "@/stores/store.auth"
-import storeProduct from "@/stores/store.product"
 import { formatoPrecio } from "@/utils/price"
 import { useEffect } from "react"
 
-export default function DataTable({ message, products }: { message: string, products: Producto[] }) {
-	const { user } = storeAuth()
-  const { setTotal } = storeProduct()
-  useEffect(() => {
-    const newTotal = products.reduce((acc, producto) => {
-      const totalPorProducto = producto.ProductVariations?.reduce((accVariation, variation) => {
-        return accVariation + (variation.stockQuantity || 0)
-      }, 0)
-      if (totalPorProducto) return acc + totalPorProducto
-      else return acc
-    }, 0)
-    setTotal(newTotal)
-    return () => {
-      setTotal(0)
-    }
-  }, [products])
+export default function DataCompra({ message, products }: { message: string, products: Producto[] }) {
 
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
@@ -48,18 +31,23 @@ export default function DataTable({ message, products }: { message: string, prod
               </>
             )}
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
-            {user && user.role===Role.Admin && <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>}            
-            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceList)}</td>
+            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
+            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
             {
               variation.stockQuantity === 0
                 ? <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                     <span className='text-red-500'>{variation.stockQuantity}</span>
                   </td>
                 : <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                    <span className='font-bold text-green-600'>{variation.stockQuantity}</span>
+                    <span className='font-bold text-green-600'>{variation.stockQuantity >= 10 ? '+10' : variation.stockQuantity}</span>
                   </td>
             }
-            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
+            <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                <input min="0" type="number" name="pedido" className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1" />
+            </td>
+            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                $99999
+            </td>
           </tr>
         })
       }
