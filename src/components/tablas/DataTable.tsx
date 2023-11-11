@@ -1,10 +1,13 @@
 'use client'
+import { Role } from "@/config/interfaces"
+import storeAuth from "@/stores/store.auth"
 import storeProduct from "@/stores/store.product"
 import { formatoPrecio } from "@/utils/price"
 import { useEffect } from "react"
 
 export default function DataTable({ message }: { message: string }) {
   const { products, setTotal } = storeProduct()
+	const { user } = storeAuth()
 
   useEffect(() => {
     const newTotal = products.reduce((acc, producto) => {
@@ -45,8 +48,8 @@ export default function DataTable({ message }: { message: string }) {
                 </td>
               </>
             )}
+            {user && user.role===Role.Admin && <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>}            
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceList)}</td>
-            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
             {
               variation.stockQuantity === 0

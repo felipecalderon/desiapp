@@ -1,32 +1,21 @@
+import { Producto } from '@/config/interfaces'
 import { create } from 'zustand'
 
-interface ProductVariationInterface {
-	variationID: string
-	sizeNumber: number
-	priceList: number
-	priceCost: number
-	sku: string
-	stockQuantity: number
-}
-
-interface ProductInterface {
-	productID: string
-	name: string
-	image: string
-	ProductVariations: ProductVariationInterface[]
-}
-
 interface DataProduct {
-	products: ProductInterface[]
+	products: Producto[]
+	product: Producto | null
 	total: number
-	setProducts: (products: ProductInterface[]) => void
+	setProduct: (product: Producto) => void
+	setProducts: (products: Producto[]) => void
 	setTotal: (total: number) => void
 }
 
 const storeProduct = create<DataProduct>((set) => ({
 	products: [],
+	product: null,
 	total: 0,
-	setProducts: (products: ProductInterface[]) => set({ products }),
+	setProduct: (product: Producto) => set({product}),
+	setProducts: (products: Producto[]) => set({ products }),
 	setTotal: (totalInput: number) => set({ total: totalInput }),
 }))
 

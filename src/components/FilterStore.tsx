@@ -1,9 +1,8 @@
 'use client'
-import { url } from '@/config/constants'
 import { Role, Store } from '@/config/interfaces'
-// import useUserLS from '@/hooks/getItemLocalStorage'
 import storeAuth from '@/stores/store.auth'
 import storeProduct from '@/stores/store.product'
+import { fetchData } from '@/utils/fetchData'
 import { ChangeEvent, useEffect, useState } from 'react'
 
 const SelectStore = () => {
@@ -17,17 +16,6 @@ const SelectStore = () => {
         setProducts( await fetchData('products'))
       }else {
         setProducts(await fetchData(`products/?storeID=${valorSeleccionado}`))
-      }
-    }
-
-    const fetchData = async (path: string) => {
-      try {
-        const response = await fetch(`${url.backend}/${path}`)
-        const data = await response.json()
-        if(data) return data
-        return null
-      } catch (error) {
-        console.error('Error fetching:', error)
       }
     }
     
@@ -56,7 +44,7 @@ const SelectStore = () => {
 
     return (
       <select 
-        className="text-gray-800 w-48 bg-white border border-gray-300 rounded-md px-4 py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+        className="text-gray-800 w-1/2 h-fit bg-white border border-gray-300 rounded-md px-4 py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
         onChange={seleccionarOpcion}
       >
       {(user && user.role === Role.Admin) && <option value="" className="text-gray-500 italic">

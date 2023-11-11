@@ -14,11 +14,15 @@ export interface AuthState {
   storeSellerMenu: Menu[],
   supplierMenu: Menu[],
   user: User | null,
-  setUser: (user: User | null) => void
+  setUser: (user: User | null) => void,
+  isLoadingUser: boolean,
+  setIsLoading: (isLoadingUser: boolean) => void
 }
 
 const storeAuth = create<AuthState>((set) => ({
     isLogged: false,
+    isLoadingUser: true,
+    setIsLoading: (isLoadingUser: boolean) => set({isLoadingUser}),
     setIsLogged: (isLogged) => set({isLogged}),
     adminMenu: [
         { name: 'Home', path: '/' },

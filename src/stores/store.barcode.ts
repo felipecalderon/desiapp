@@ -7,7 +7,7 @@ interface CodigodeBarra {
   changeSend: (isSend: boolean) => void
 }
 
-const useStore = create<CodigodeBarra>((set) => ({
+const useBarcode = create<CodigodeBarra>((set) => ({
   sku: '',
   isSend: false,
   setValue: (sku: string) => set({ sku }),
@@ -16,4 +16,4 @@ const useStore = create<CodigodeBarra>((set) => ({
   })
 }))
 
-export default useStore
+export default useBarcode

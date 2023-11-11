@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 
 export default function useTokenLS() {
   const [token, setLocalTKN] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingToken, setIsLoading] = useState(true)
 
   // función para actualizar el token que puede ser llamada externamente
   const updateToken = useCallback(() => {
@@ -17,5 +17,5 @@ export default function useTokenLS() {
     }
   }, [updateToken])
 
-  return { token, isLoading, updateToken } 
+  return { token, isLoadingToken, updateToken } 
 }

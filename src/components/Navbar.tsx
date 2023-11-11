@@ -7,31 +7,42 @@ import ProfileMenu from "./ProfileMenu"
 import useTokenLS from "@/hooks/getTokenLS"
 import { usePathname, useRouter } from "next/navigation"
 import storeAuth, { Menu } from "@/stores/store.auth"
-import useUserLS from "@/hooks/getItemLocalStorage"
 import { Role } from "@/config/interfaces"
+import { isTokenExpired } from "@/utils/jwt"
+import useUserLS from "@/hooks/getItemLocalStorage"
 
 export default function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
-	const { isLogged, setIsLogged, adminMenu, storeManagerMenu, storeSellerMenu, supplierMenu, user } = storeAuth()
-	const { token, isLoading } = useTokenLS()
-	const router = useRouter()
+	const { setIsLogged, adminMenu, storeManagerMenu, storeSellerMenu, supplierMenu, setUser } = storeAuth()
+    const { user, isLoadingUser } = useUserLS()
+	const { token, isLoadingToken } = useTokenLS()
 	const currentPath = usePathname()
+	const route = useRouter()
 
 	useEffect(() => {
-		if (token) {
-			setIsLogged(true)
+		if (user && token) {
+			if(isTokenExpired(token)){
+				setIsLogged(false)
+				setUser(null)
+			}
+			else setIsLogged(true)
 		}else{
 			setIsLogged(false)
 		}
-
 		if (user?.role === Role.Admin) setUserMenu(adminMenu)
 		else if (user?.role === Role.Franquiciado) setUserMenu(storeManagerMenu)
 		else if (user?.role === Role.NO_Franquiciado) setUserMenu(storeSellerMenu)
 		else if (user?.role === Role.Proveedor) setUserMenu(supplierMenu)
 
-	}, [user, token, isLoading])
+	}, [user, token, isLoadingToken])
 
+	useEffect(() => {
+        if(!user && !isLoadingUser){
+            route.push('/login')
+        }
+    }, [user, isLoadingUser])
+	
 	if (!user) return null
 	return (
 		<nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center dark:bg-gray-900 lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">

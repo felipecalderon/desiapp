@@ -1,19 +1,9 @@
 'use client'
-import { useEffect } from 'react'
 import { FaCashRegister as Icon } from 'react-icons/fa'
 import useUserLS from '@/hooks/getItemLocalStorage'
-import { useRouter } from 'next/navigation'
 
 const DashBoard = () => {
-    const {user, isLoadingUser} = useUserLS()
-    const route = useRouter()
-
-    useEffect(() => {
-        if(!isLoadingUser && !user){
-            route.push('/login')
-        }
-    }, [user, isLoadingUser])
-
+    const {user} = useUserLS()
     if (!user) return null
     if (user.role === 'admin') return (
         <>

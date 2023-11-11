@@ -11,7 +11,7 @@ interface ListaPedido {
 
 const storeVta = create<ListaPedido>((set) => ({
 	pedidoVta: [],
-
+	
 	setPedido: (pedido) =>
 		set((state) => ({
 			pedidoVta: [...state.pedidoVta, pedido],
@@ -19,21 +19,27 @@ const storeVta = create<ListaPedido>((set) => ({
 
 	removePedido: (sku) =>
 		set((state) => ({
-			pedidoVta: state.pedidoVta.filter((item) => item.sku !== sku),
+			pedidoVta: state.pedidoVta.filter(({ProductVariations}) => ProductVariations.some(({sku: skuVar}) => skuVar === sku)),
 		})),
 
-	clearPedido: () =>
-		set(() => ({
-			pedidoVta: [],
-		})),
+	clearPedido: () => set({ pedidoVta: [] }),
 
-	updateCantidad: (sku: string, cantidad: number) =>
-		set((state) => {
-			const pedidoVta = state.pedidoVta.map((item) =>
-				item.sku === sku ? { ...item, cantidad, subtotal: item.precio*cantidad } : item
-			)
-			return { pedidoVta }
-		}),
+	updateCantidad: (sku, cantidad) =>
+		  set((state) => {
+			const index = state.pedidoVta.findIndex(
+			  ({ ProductVariations }) => ProductVariations?.some(({ sku: skuVar }) => skuVar === sku)
+			);
+	  
+			if (index !== -1) {
+			  const updatedPedido = { ...state.pedidoVta[index], cantidad };
+			  const updatedPedidos = [...state.pedidoVta];
+			  updatedPedidos[index] = updatedPedido;
+	  
+			  return { pedidoVta: updatedPedidos };
+			}
+	  
+			return state;
+		  }),
 }))
 
 export default storeVta

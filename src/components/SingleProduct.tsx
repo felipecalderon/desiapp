@@ -4,42 +4,14 @@ import { useEffect, useState } from 'react'
 import useStore from '@/stores/store.barcode'
 import ProductoDetalle from './ProductSection'
 import { barcodeFunction } from '@/utils/barcode'
-
-const fetchSingleProduct = async (sku: string) => {
-    if (sku !== '') {
-        const response = await fetch(`${configs.baseURL_CURRENT}/api/woo/${sku}`, { cache: 'no-store' })
-        if (!response.ok) {
-            throw new Error('Error de conexión a la API de Woocommerce')
-        }
-        const data = await response.json()
-        if (!data || data.length === 0) {
-            return null
-        }
-        return data
-    }
-    return null
-}
+import storeProduct from '@/stores/store.product'
+import useBarcode from '@/stores/store.barcode'
 
 export default function SingleProductComponent() {
-    const {sku, isSend} = useStore()
-    const [producto, setProducto] = useState(null)
-    const [mensaje, setMensaje] = useState('Ingrese código de barra para buscar stock')
-  
+    const {products, product} = storeProduct()
     useEffect(() => {
-      if (sku) {
-        const codigo = barcodeFunction(sku)
-        setMensaje('Buscando producto en base de datos...')
-        fetchSingleProduct(codigo)
-            .then((data) => {
-                if(!data){
-                    setMensaje('No se encontró el producto en la base de datos :(')
-                    return setProducto(null)
-                } 
-                setProducto(data)
-            })
-            .catch(() => setMensaje('Hubo un error al consultar productos.. refresque la página'))
-      }
-    }, [isSend])
-    if(producto) return <ProductoDetalle producto={producto} />
-    else return mensaje
+        console.log({product});
+    }, [product])
+    if(product) return <ProductoDetalle producto={product} />
+    else return <p>Ingrese código de barra para buscar stock</p>
   }
