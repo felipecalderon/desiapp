@@ -21,7 +21,7 @@ export default function Navbar() {
 	const route = useRouter()
 
 	useEffect(() => {
-		if (user && token) {
+		if (user && token && !isLoadingUser) {
 			if(isTokenExpired(token)){
 				setIsLogged(false)
 				setUser(null)
@@ -40,6 +40,7 @@ export default function Navbar() {
 	useEffect(() => {
         if(!user && !isLoadingUser){
             route.push('/login')
+			localStorage.clear()
         }
     }, [user, isLoadingUser])
 	

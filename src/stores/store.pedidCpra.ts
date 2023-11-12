@@ -1,45 +1,50 @@
-import { Producto } from '@/config/interfaces'
-import { create } from 'zustand'
-
-interface ListaPedido {
-	pedidoCompra: Producto[]
-	setPedido: (pedido: Producto) => void
-	removePedido: (sku: string) => void
-	clearPedido: () => void
-	updateCantidad: (sku: string, cantidad: number) => void
+import { Producto } from '@/config/interfaces';
+import { create } from 'zustand';
+interface ProductosCompra {
+	variationID: string;
+	quantityOrdered: number;
 }
 
-const storeCpra = create<ListaPedido>((set) => ({
-	pedidoCompra: [],
-	
-	setPedido: (pedido) =>
+interface ListaCompra {
+	storeID: string | null;
+	userID: string | null;
+	productos: ProductosCompra[];
+	setPedido: (variacion: ProductosCompra) => void;
+	removePedido: (sku: string) => void;
+	clearPedido: () => void;
+	updateCantidad: (sku: string, cantidad: number) => void;
+}
+
+const storeCpra = create<ListaCompra>((set) => ({
+	productos: [],
+	storeID: null,
+	userID: null,
+
+	setPedido: (variacion) =>
 		set((state) => ({
-			pedidoCompra: [...state.pedidoCompra, pedido],
+			...state,
+			productos: [...state.productos, variacion],
 		})),
 
-	removePedido: (sku) =>
+	removePedido: (variationID) =>
 		set((state) => ({
-			pedidoCompra: state.pedidoCompra.filter(({ProductVariations}) => ProductVariations.some(({sku: skuVar}) => skuVar === sku)),
+			...state,
+			productos: state.productos.filter(
+				(producto) => producto.variationID !== variationID
+			),
 		})),
 
-	clearPedido: () => set({ pedidoCompra: [] }),
+	clearPedido: () => set({ productos: [], storeID: null, userID: null }),
 
-	updateCantidad: (sku, cantidad) =>
-		  set((state) => {
-			const index = state.pedidoCompra.findIndex(
-			  ({ ProductVariations }) => ProductVariations?.some(({ sku: skuVar }) => skuVar === sku)
-			);
-	  
-			if (index !== -1) {
-			  const updatedPedido = { ...state.pedidoCompra[index], cantidad };
-			  const updatedPedidos = [...state.pedidoCompra];
-			  updatedPedidos[index] = updatedPedido;
-	  
-			  return { pedidoCompra: updatedPedidos };
-			}
-	  
-			return state;
-		  }),
-}))
+	updateCantidad: (variationID, cantidad) =>
+		set((state) => ({
+			...state,
+			productos: state.productos.map((producto) =>
+				producto.variationID === variationID
+					? { ...producto, quantityOrdered: cantidad }
+					: producto
+			),
+		})),
+}));
 
-export default storeCpra
+export default storeCpra;
