@@ -1,9 +1,9 @@
 'use client'
-import useStore from '@/stores/store.pedidCpra';
-import { formatoPrecio } from '@/utils/price';
+import useStore from '@/stores/store.pedidCpra'
+import { formatoPrecio } from '@/utils/price'
 
 const TablaCompraProductos = () => {
-    const { pedidoCompra } = useStore();
+    const { pedidoCompra } = useStore()
     if(!pedidoCompra || pedidoCompra.length === 0) return null
     return (
         <div className="container mx-auto p-4 dark:bg-gray-800">
@@ -17,9 +17,10 @@ const TablaCompraProductos = () => {
                             <th className="py-3 px-6 text-center">Subtotal</th>
                         </tr>
                     </thead>
+                    <tbody>
                     {pedidoCompra.map((item) => {
                         return (
-                        <tr className="border-b border-gray-200 dark:border-gray-700" key={item.sku}>
+                            <tr className="border-b border-gray-200 dark:border-gray-700" key={item.sku}>
                             <td className="py-3 px-6 text-center hover:bg-gray-100 dark:hover:bg-gray-800">
                                 <span>{item.sku}</span>
                             </td>
@@ -34,10 +35,11 @@ const TablaCompraProductos = () => {
                             </td>
                         </tr>)
                     })}
+                    </tbody>
                 </table>
             </div>
         </div>
-    );
+    )
 }
 
 export default TablaCompraProductos

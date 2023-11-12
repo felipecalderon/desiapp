@@ -1,9 +1,9 @@
 'use client'
 import storeAuth from "@/stores/store.auth"
-import DataTable from "./DataTable"
 import { Producto, Role } from '@/config/interfaces'
+import DataCompra from "./DataCompra"
 
-const TablaProductos = ({ products }: { products: Producto[] }) => {
+const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
 	const { user } = storeAuth()
     
     if(user) return (
@@ -13,15 +13,15 @@ const TablaProductos = ({ products }: { products: Producto[] }) => {
                             <th className="py-3 px-3 text-left">Imagen</th>
                             <th className="py-3 px-3 text-left">Nombre</th>
                             <th className="py-3 px-6 text-center">Código EAN</th>
-                            {user?.role === Role.Admin && <th className="py-3 px-6 text-center">Precio Costo</th>}
-                            <th className="py-3 px-6 text-center">Precio Plaza</th>
-                            <th className="py-3 px-2 text-center">Stock</th>
                             <th className="py-3 px-2 text-center">Talla</th>
+                            <th className="py-3 px-6 text-center">Costo</th>
+                            <th className="py-3 px-2 text-center">Disponible</th>
+                            <th className="py-3 px-2 text-center">Pedido</th>
                         </tr>
                     </thead>
-                    <DataTable products={products} message={'Cargando productos...'} />
+                    <DataCompra products={products} message={'Cargando productos...'} />
                 </table>
     )
 }
 
-export default TablaProductos
+export default TablaProductosCompra

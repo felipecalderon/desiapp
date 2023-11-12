@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/image"
 
 export default function ImagenProducto({ imagen, nombre }: { imagen: string; nombre: string }) {
     return (
@@ -7,5 +7,5 @@ export default function ImagenProducto({ imagen, nombre }: { imagen: string; nom
                 <Image src={imagen} alt={nombre || 'Producto'} width={300} height={300} className="rounded-md object-cover" />
             )}
         </div>
-    );
+    )
 }

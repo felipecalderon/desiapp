@@ -1,28 +1,34 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 
 const HoraFormateada = () => {
-    const [fecha, setFecha] = useState(new Date());
+    const fecha = new Date() // Genera la fecha en el cliente
+    const [newDate, setNewDate] = useState(fecha) // Inicializa con la fecha en el cliente
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            setFecha(new Date());
-        }, 1000);
+        setNewDate(fecha)
+
+        const updateDate = () => {
+            const now = new Date()
+            setNewDate(now)
+        }
+
+        const intervalId = setInterval(updateDate, 1000)
 
         return () => {
-            clearInterval(intervalId);
-        };
-    }, []);
+            clearInterval(intervalId)
+        }
+    }, [])
 
     const opcionesHora: Intl.DateTimeFormatOptions = {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
-    };
+    }
 
-    const horaFormateada = fecha.toLocaleTimeString('es-ES', opcionesHora);
+    const horaFormateada = newDate.toLocaleTimeString('es-ES', opcionesHora)
 
-    return horaFormateada
-};
+    return <span suppressHydrationWarning={true}>{horaFormateada}</span>
+}
 
-export default HoraFormateada;
+export default HoraFormateada
