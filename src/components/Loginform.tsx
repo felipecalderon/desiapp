@@ -1,5 +1,5 @@
 'use client'
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { decodeJWT, isTokenExpired } from '@/utils/jwt'
 import storeAuth from '@/stores/store.auth'
@@ -66,7 +66,11 @@ export default function LoginForm() {
       return console.error('Error en la solicitud:', error)
     }
   }
-
+  useEffect(() => {
+    if(!user){
+      route.refresh()
+    }
+  }, [])
   return (
     <div className='bg-blue-900 dark:bg-gray-900 py-10 mt-20'>
     <section className='shadow-md px-10'>
