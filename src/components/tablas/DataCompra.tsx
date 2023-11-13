@@ -2,12 +2,12 @@
 import { Producto } from "@/config/interfaces"
 import storeCpra from "@/stores/store.pedidCpra"
 import { formatoPrecio } from "@/utils/price"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function DataCompra({ message, products }: { message: string, products: Producto[] }) {
-  const { productos, setPedido, updateCantidad, removePedido } = storeCpra()
+  const { productos, setPedido, updateCantidad, removePedido, clearPedido } = storeCpra()
   const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
-  const handleAgregarAlPedido = (variationID: string, cantidad: number) => {
+  const handleAgregarAlPedido = (variationID: string, cantidad: number, price: number) => {
     const existingVariation = productos.find((producto) => producto.variationID === variationID);
   
     if (existingVariation) {
@@ -15,10 +15,11 @@ export default function DataCompra({ message, products }: { message: string, pro
       updateCantidad(variationID, cantidad);
     } else {
       // Si la variación no existe, agrégala al estado
-      setPedido({ variationID, quantityOrdered: cantidad });
+      setPedido({ variationID, quantityOrdered: cantidad, price });
     }
   };
-
+  //efecto al desmontar componente
+  
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
       <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -34,7 +35,7 @@ export default function DataCompra({ message, products }: { message: string, pro
           const variationID = variation.variationID;
           const cantidad = cantidades[variationID] || 0;
           const subtotal = variation.priceCost * cantidad;
-          return <tr key={variation.variationID} className="border-b border-gray-200 dark:border-gray-700">
+          return <tr key={variation.variationID} className="border-b text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300">
             {index === 0 && (
               <>
                 <td rowSpan={producto.ProductVariations?.length} className="py-3 px-3 text-left">
@@ -66,7 +67,7 @@ export default function DataCompra({ message, products }: { message: string, pro
                   const newCantidad = parseInt(e.target.value, 10);
                   setCantidades((prevCantidades) => ({ ...prevCantidades, [variationID]: newCantidad }));
                   if (newCantidad > 0) {
-                    handleAgregarAlPedido(variation.variationID, newCantidad);
+                    handleAgregarAlPedido(variation.variationID, newCantidad, variation.priceCost);
                   }else removePedido(variation.variationID)
                 }}
                 className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1" />

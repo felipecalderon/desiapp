@@ -17,6 +17,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
                             <th className="py-3 px-6 text-center">Costo</th>
                             <th className="py-3 px-2 text-center">Disponible</th>
                             <th className="py-3 px-2 text-center">Pedido</th>
+                            <th className="py-3 px-2 text-center">Subtotal</th>
                         </tr>
                     </thead>
                     <DataCompra products={products} message={'Cargando productos...'} />

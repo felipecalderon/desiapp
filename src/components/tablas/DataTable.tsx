@@ -34,7 +34,7 @@ export default function DataTable({ message, products }: { message: string, prod
     <tbody className="text-gray-600 dark:text-gray-200 text-sm font-light">
       {products.map((producto) => {
         return producto.ProductVariations?.map((variation, index) => {
-          return <tr key={variation.variationID} className="border-b border-gray-200 dark:border-gray-700">
+          return <tr key={variation.variationID} className="border-b text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300">
             {index === 0 && (
               <>
                 <td rowSpan={producto.ProductVariations?.length} className="py-3 px-3 text-left">

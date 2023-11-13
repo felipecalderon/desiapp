@@ -13,7 +13,7 @@ type FormState = {
 }
 
 export default function LoginForm() {
-  const {isLogged, setIsLogged} = storeAuth()
+  const {isLogged, setIsLogged, user, isLoadingUser} = storeAuth()
   const route = useRouter()
   const [form, setForm] = useState<FormState>({
     email: '',
@@ -68,14 +68,14 @@ export default function LoginForm() {
   }
 
   return (
-    <div className='bg-gray-100 dark:bg-gray-900 py-10 mt-20'>
+    <div className='bg-blue-900 dark:bg-gray-900 py-10 mt-20'>
     <section className='shadow-md px-10'>
       <Image src='/media/two-brands.png' alt="logo" width={200} height={100} className='mx-auto'/>
       {error && <p className='bg-red-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1'>{error}</p>}
       {message && <p className='bg-green-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1'>{message}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-200 dark:text-gray-400 mb-2">
             Usuario:
           </label>
           <input
@@ -90,7 +90,7 @@ export default function LoginForm() {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-200 dark:text-gray-400 mb-2">
             Contraseña:
           </label>
           <input

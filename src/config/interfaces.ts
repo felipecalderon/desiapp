@@ -54,3 +54,28 @@ interface UserStore {
 		storeID: string
 	}
 }
+
+export interface ProductosdeOrden {
+	variationID: string
+    productID: string
+    sizeNumber: number
+    priceList: number
+    priceCost: number
+    sku: number
+    stockQuantity:number
+    quantityOrdered: number
+    subtotal: number
+    name: string
+    image: string
+}
+
+export interface OrdendeCompra {
+	orderID: string;
+	storeID: string;
+	userID: string;
+	total: number;
+	status: string;
+	createdAt: Date;
+	updatedAt: Date;
+	ProductVariations: ProductosdeOrden[];
+}
