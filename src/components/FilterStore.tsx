@@ -48,7 +48,7 @@ const SelectStore = () => {
         onChange={seleccionarOpcion}
       >
       {(user && user.role === Role.Admin) && <option value="" className="text-gray-500 italic">
-        Stock total
+        Stock central
       </option>}
 
       {/* Opciones de las tiendas */}

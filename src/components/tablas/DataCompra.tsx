@@ -60,6 +60,9 @@ export default function DataCompra({ message, products }: { message: string, pro
                     <span className='font-bold text-green-600'>{variation.stockQuantity >= 10 ? '+10' : variation.stockQuantity}</span>
                   </td>
             }
+            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                    <span className='text-red-500'>{variation.stockQuantity}</span>
+                  </td>
             <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                 <input min="0" max={variation.stockQuantity} type="number" 
                 name={variation.sku} 

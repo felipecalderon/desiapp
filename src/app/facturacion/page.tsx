@@ -31,47 +31,7 @@ export default function Facturacion() {
                         <p>Fecha</p>
                     </div>
                 </header>
-                <div className='flex gap-14'>
-                    <section className='flex flex-col gap-4'>
-                        <main className='calendar-options bg-[#f5f5f5] rounded-md w-[280px]'>
-                            <div>
-                                <p>ENERO</p>
-                            </div>
-                            <div>
-                                <p>FEBRERO</p>
-                            </div>
-                            <div>
-                                <p>MARZO</p>
-                            </div>
-                            <div>
-                                <p>ABRIL</p>
-                            </div>
-                            <div>
-                                <p>MAYO</p>
-                            </div>
-                            <div>
-                                <p>JUNIO</p>
-                            </div>
-                            <div>
-                                <p>JULIO</p>
-                            </div>
-                            <div>
-                                <p>AGOSTO</p>
-                            </div>
-                            <div>
-                                <p>SEPTIEMBRE</p>
-                            </div>
-                            <div>
-                                <p className='active'>OCTUBRE</p>
-                            </div>
-                            <div>
-                                <p>NOVIEMBRE</p>
-                            </div>
-                            <div>
-                                <p>DICIEMBRE</p>
-                            </div>
-                        </main>
-                    </section>
+                <div className='flex'>
                     <section className='bg-[#f5f5f5] border border-[#ccc] rounded-md'>
                         <main className='h-full'>
                             <div className='h-full flex flex-col justify-center items-center text-center gap-6 p-8'>
@@ -82,7 +42,6 @@ export default function Facturacion() {
                                                 <th className="border px-4 py-2">Fecha</th>
                                                 <th className="border px-4 py-2">Status</th>
                                                 <th className="border px-4 py-2">Total</th>
-                                                {/* Add more headers as needed */}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -93,7 +52,6 @@ export default function Facturacion() {
                                                     <td className="border px-4 py-2 hover:bg-slate-200">{fecha?.fecha}</td>
                                                     <td className="border px-4 py-2 hover:bg-slate-200">{order.status}</td>
                                                     <td className="border px-4 py-2 hover:bg-slate-200">{formatoPrecio(order.total*1.19)}</td>
-                                                    {/* Add more cells as needed */}
                                                 </tr>
                                             })}
                                         </tbody>

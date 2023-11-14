@@ -33,6 +33,8 @@ export interface Store {
 	address: string
 	city: string
 	isAdminStore: boolean
+	createdAt: Date
+	updatedAt: Date
 	Users: UserStore[]
 }
 
