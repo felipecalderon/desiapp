@@ -1,4 +1,5 @@
-export const formatoRut = (rut: string) => {
+export const formatoRut = (rut?: string) => {
+    if(!rut) return null
     // Eliminar cualquier punto existente
     rut = rut.replace(/\./g, '');
 

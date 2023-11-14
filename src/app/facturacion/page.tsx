@@ -1,11 +1,11 @@
 'use client'
-import SelectStore from "@/components/SelectStore"
-import storeCpra from "@/stores/store.pedidCpra"
 import { getFecha } from "@/utils/fecha"
 import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
+import storeAuth from "@/stores/store.auth"
+import storeDataStore from "@/stores/store.dataStore"
 interface Orders {
     orderID: string
     status: string
@@ -14,17 +14,17 @@ interface Orders {
 }
 export default function Facturacion() {
     const route = useRouter()
-    const { storeID, userID } = storeCpra()
+    const { user } = storeAuth()
+    const { store } = storeDataStore()
     const [orders, setOrders] = useState<Orders[] | null>(null)
     useEffect(() => {
-        if (storeID && userID) {
-            fetchData(`order/?storeID=${storeID}`)
+        if (store && user) {
+            fetchData(`order/?storeID=${store.storeID}`)
                 .then(res => setOrders(res))
         }
-    }, [storeID])
+    }, [store])
     if (orders) return (
         <div>
-            <SelectStore />
             <div className='flex flex-col items-start gap-5'>
                 <header className='rounded-md py-2 w-[280px]'>
                     <div>

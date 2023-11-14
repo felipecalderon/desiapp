@@ -1,10 +1,12 @@
 'use client'
 import useUserLS from "@/hooks/getItemLocalStorage"
 import Image from "next/image"
+import SelectStore from "./SelectStore"
+import storeDataStore from "@/stores/store.dataStore"
 
 const ProfileMenu = () => {
-    const {user} = useUserLS()
-
+    const { user } = useUserLS()
+    const { store } = storeDataStore()
     // Función para manejar el clic en la imagen
     const handleImageClick = () => {
         // Abrir el explorador de archivos al hacer clic en la imagen
@@ -76,7 +78,8 @@ const ProfileMenu = () => {
                     </div>
                 </div>
             }
-            <p className="py-2 text-lg">¡Hola {user.name}!</p>
+            <p className="py-2 text-lg text-center">¡Hola <br />{user.name}!</p>
+            <SelectStore />
         </>
     )
 }

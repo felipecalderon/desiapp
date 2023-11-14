@@ -30,12 +30,12 @@ const Header = () => {
             </div>
         )
     }
-    if (store) return (
+    return (
         <div className='flex flex-row justify-between items-center w-full px-4 pt-8'>
             <div className='text-left'>
                 <h1 className='text-3xl font-semibold'>Bienvenido al portal D3SI</h1>
-                <p>RUT: {formatoRut(store.rut)}</p>
-                <p>Tienda de {store.location}, {store.city}</p>
+                <p>RUT: {formatoRut(store?.rut)}</p>
+                <p>Tienda de {store?.location}, {store?.city}</p>
                 <p className='italic'><FechaFormateada /> | <HoraFormateada /></p>
             </div>
             <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>

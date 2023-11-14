@@ -4,7 +4,7 @@ import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
 import storeProduct from '@/stores/store.product'
 import { fetchData } from '@/utils/fetchData'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
 
 const SelectStore = () => {
     const [stores, setStores] = useState<Store[]>([]);
@@ -18,9 +18,17 @@ const SelectStore = () => {
         setProducts(productos as Producto[]);
     };
 
-    const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement>) => {
-        const valorSeleccionado = evento.target.value;
+    const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement, MouseEvent>) => {
+        let valorSeleccionado: any;
 
+        if ('target' in evento) {
+            // Es un evento ChangeEvent
+            valorSeleccionado = (evento as ChangeEvent<HTMLSelectElement>).target.value;
+        } else {
+            // Es un evento MouseEvent
+            valorSeleccionado = (evento as MouseEvent<HTMLSelectElement, MouseEvent>).currentTarget.value;
+        }
+    
         if (valorSeleccionado === '' || valorSeleccionado === 'Stock total') {
             cargarProductos();
         } else {
@@ -46,6 +54,8 @@ const SelectStore = () => {
                 // Cargar productos al montar el componente para el usuario admin
                 if (user.role === Role.Admin) {
                     cargarProductos();
+                }else{
+                    setStore(data[0])
                 }
             }
         };
@@ -53,9 +63,16 @@ const SelectStore = () => {
         cargarDatosIniciales();
     }, [user]);
 
+    useEffect(() => {
+        if(stores){
+            const storeID = (stores[0]?.storeID)
+            cargarProductos(storeID)
+        }
+    }, [stores])
     return (
         <select
-            className="text-gray-800 w-1/2 h-fit bg-white border border-gray-300 rounded-md px-4 py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+            className="text-gray-800 mb-3 h-fit bg-white border border-gray-300 rounded-md px-4 py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+            name="selectStore"
             onChange={seleccionarOpcion}
         >
             {(user && user.role === Role.Admin)
