@@ -26,39 +26,29 @@ export default function Facturacion() {
         }
     }, [store])
     if (orders) return (
-        <div>
-            <div className='flex flex-col items-start gap-5'>
-                <div className='flex'>
-                    <section className='bg-[#f5f5f5] dark:bg-slate-500 border border-[#ccc] rounded-md'>
-                        <main className='h-full'>
-                            <div className='h-full flex flex-col justify-center items-center text-center gap-6 px-8'>
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full table-auto">
-                                        <thead>
-                                            <tr>
-                                                <th className="border px-4 py-2">Fecha</th>
-                                                <th className="border px-4 py-2">Status</th>
-                                                <th className="border px-4 py-2">Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {orders.map((order) => {
+        <div className='flex flex-col justify-start items-center text-center gap-6 px-8 pt-10'>
+            <div className="overflow-x-auto">
+                <table className="table-auto">
+                    <thead>
+                        <tr>
+                            <th className="border px-4 py-2">Fecha</th>
+                            <th className="border px-4 py-2">Status</th>
+                            <th className="border px-4 py-2">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {orders.map((order) => {
 
-                                                const fecha = getFecha(order.createdAt)
-                                                return <tr className="cursor-pointer" key={order.orderID}>
-                                                    <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{fecha?.fecha}</td>
-                                                    <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{order.status}</td>
-                                                    <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{formatoPrecio(order.total*1.19)}</td>
-                                                    { user?.role === Role.Admin && <td><UploadComponent id={order.orderID}/></td>}
-                                                </tr>
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </main>
-                    </section>
-                </div>
+                            const fecha = getFecha(order.createdAt)
+                            return <tr className="cursor-pointer" key={order.orderID}>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{fecha?.fecha}</td>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{order.status}</td>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{formatoPrecio(order.total * 1.19)}</td>
+                                {user?.role === Role.Admin && <td><UploadComponent id={order.orderID} /></td>}
+                            </tr>
+                        })}
+                    </tbody>
+                </table>
             </div>
         </div>
     )

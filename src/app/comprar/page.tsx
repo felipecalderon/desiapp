@@ -10,19 +10,13 @@ import { fetchData } from '@/utils/fetchData'
 import { useEffect, useState } from 'react'
 
 export default function TablaVentasProductos() {
-  const { user } = storeAuth()
-  const { products, setProducts } = storeProduct()
-  useEffect(() => {
-    fetchData('products')
-      .then(productos => setProducts(productos))
-  }, [user])
+  const { products } = storeProduct()
 
   return <>
-      <SelectStore />
     <div className="flex flew-row justify-between w-full mt-6 px-10">
       <TablaProductosCompra products={products} />
       <TablaPedidosCompra />
     </div>
-      <ResumeCompra />
+    <ResumeCompra />
   </>
 }

@@ -40,6 +40,8 @@ export default function Navbar() {
 	useEffect(() => {
         if(!user && !isLoadingUser){
             route.push('/login')
+			setUser(null)
+			setIsLogged(false)
 			localStorage.clear()
         }
     }, [user, isLoadingUser])
