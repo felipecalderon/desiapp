@@ -64,7 +64,7 @@ const SelectStore = () => {
     }, [user]);
 
     useEffect(() => {
-        if(stores){
+        if(stores && user?.role !== Role.Admin){
             const storeID = (stores[0]?.storeID)
             cargarProductos(storeID)
         }
