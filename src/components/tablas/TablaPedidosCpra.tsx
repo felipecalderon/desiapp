@@ -20,7 +20,7 @@ const TablaPedidosCompra = () => {
                     </thead>
                     <tbody className='hover:bg-gray-100 dark:hover:bg-slate-800'>
                     {pedidoVta.map((producto) => {
-                        const {priceCost, priceList, sizeNumber, sku, stockQuantity, variationID} = producto.ProductVariations[0]
+                        const {priceCost, priceList, sku, stockQuantity, variationID} = producto.ProductVariations[0]
                         return (
                             <tr className="border-b border-gray-200" key={variationID}>
                             <td className="py-3 px-6 text-center ">

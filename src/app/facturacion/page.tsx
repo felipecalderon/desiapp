@@ -6,6 +6,8 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import storeAuth from "@/stores/store.auth"
 import storeDataStore from "@/stores/store.dataStore"
+import UploadComponent from "@/components/UploadDrag"
+import { Role } from "@/config/interfaces"
 interface Orders {
     orderID: string
     status: string
@@ -26,15 +28,10 @@ export default function Facturacion() {
     if (orders) return (
         <div>
             <div className='flex flex-col items-start gap-5'>
-                <header className='rounded-md py-2 w-[280px]'>
-                    <div>
-                        <p>Fecha</p>
-                    </div>
-                </header>
                 <div className='flex'>
-                    <section className='bg-[#f5f5f5] border border-[#ccc] rounded-md'>
+                    <section className='bg-[#f5f5f5] dark:bg-slate-500 border border-[#ccc] rounded-md'>
                         <main className='h-full'>
-                            <div className='h-full flex flex-col justify-center items-center text-center gap-6 p-8'>
+                            <div className='h-full flex flex-col justify-center items-center text-center gap-6 px-8'>
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full table-auto">
                                         <thead>
@@ -48,10 +45,11 @@ export default function Facturacion() {
                                             {orders.map((order) => {
 
                                                 const fecha = getFecha(order.createdAt)
-                                                return <tr className="cursor-pointer" key={order.orderID} onClick={() => route.push(`/comprar/detalle/${order.orderID}`)}>
-                                                    <td className="border px-4 py-2 hover:bg-slate-200">{fecha?.fecha}</td>
-                                                    <td className="border px-4 py-2 hover:bg-slate-200">{order.status}</td>
-                                                    <td className="border px-4 py-2 hover:bg-slate-200">{formatoPrecio(order.total*1.19)}</td>
+                                                return <tr className="cursor-pointer" key={order.orderID}>
+                                                    <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{fecha?.fecha}</td>
+                                                    <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{order.status}</td>
+                                                    <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{formatoPrecio(order.total*1.19)}</td>
+                                                    { user?.role === Role.Admin && <td><UploadComponent id={order.orderID}/></td>}
                                                 </tr>
                                             })}
                                         </tbody>
@@ -61,7 +59,7 @@ export default function Facturacion() {
                         </main>
                     </section>
                 </div>
-                S</div>
+            </div>
         </div>
     )
 }
