@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 
 function DetallesProducto({ product }: { product: Producto }) {
     const [cantidad, setCantidad] = useState(1)
-    const { pedidoVta, setPedido, clearPedido, removePedido, updateCantidad } = storeVta()
+    const { pedidoVta, setPedido, removePedido, updateCantidad } = storeVta()
     const { priceList, sizeNumber, sku, stockQuantity } = product.ProductVariations[0]
 
     const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,10 +54,6 @@ function DetallesProducto({ product }: { product: Producto }) {
     }
     useEffect(() => {
         updateCantidad(sku, cantidad);
-        //cuando el componente se desmonta se limpia el pedido
-        return () => {
-            clearPedido()
-        }
     }, [cantidad])
     return (
         <div>

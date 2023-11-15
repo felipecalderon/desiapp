@@ -17,9 +17,6 @@ export default function DataTable({ message, products }: { message: string, prod
       else return acc
     }, 0)
     setTotal(newTotal)
-    return () => {
-      setTotal(0)
-    }
   }, [products])
 
   if (!products || products.length === 0) return (

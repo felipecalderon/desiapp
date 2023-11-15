@@ -46,9 +46,9 @@ export default function LoginForm() {
       if (response.ok) {
         const resToken = response.headers.get('authorization')
         if(resToken){
-          const [_bearer, token] = resToken.split(' ')
-          setMessage('Acceso correcto, redirigiendo..')
           if(error) setError(null)
+          setMessage('Acceso correcto, redirigiendo..')
+          const [_bearer, token] = resToken.split(' ')
           const decodeToken: any = decodeJWT(token)
           if(decodeToken && isTokenExpired(decodeToken.exp)) throw 'El token expiró'
           localStorage.setItem('user', JSON.stringify(decodeToken ))

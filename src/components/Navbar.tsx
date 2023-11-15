@@ -38,13 +38,12 @@ export default function Navbar() {
 	}, [user, token, isLoadingToken])
 
 	useEffect(() => {
-        if(!user && !isLoadingUser){
-            route.push('/login')
-			setUser(null)
-			setIsLogged(false)
-			localStorage.clear()
-        }
-    }, [user, isLoadingUser])
+		if (!user && !isLoadingUser && !isLoadingToken) {
+		  route.push('/login');
+		  localStorage.clear();
+		  setIsLogged(false);
+		}
+	  }, [user, isLoadingUser, isLoadingToken]);
 	
 	if (!user) return null
 	return (

@@ -1,29 +1,14 @@
 'use client'
-import storeAuth from '@/stores/store.auth'
 import useBarcode from '@/stores/store.barcode'
-import storeVta from '@/stores/store.pedidoVta'
 import storeProduct from '@/stores/store.product'
-import { fetchData } from '@/utils/fetchData'
 import { useEffect, useRef } from 'react'
+import { FaBarcode } from "react-icons/fa";
 
 export default function Input() {
-    const { sku, changeSend, isSend, setValue } = useBarcode()
-    const { user } = storeAuth()
-    const { setProducts, setProduct, products } = storeProduct()
+    const { sku, setValue } = useBarcode()
+    const { setProduct, products } = storeProduct()
 
     const inputRef = useRef<HTMLInputElement | null>(null)
-
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-        if (e.relatedTarget === null || (e.relatedTarget && !(e.currentTarget.contains(e.relatedTarget as Node)))) {
-            changeSend(isSend)
-          }
-    }
-
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            changeSend(isSend)
-        }
-    }
     
     const findProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value);
@@ -42,30 +27,17 @@ export default function Input() {
           }
     }
 
-    useEffect(() => {
-        if(user && user.userID) {
-        fetchData(`store/${user.userID}`)
-          .then(stores => {
-            fetchData(`products/?storeID=${stores[0]?.storeID}`)
-                .then(res => setProducts(res))
-          })}
-
-        return () => {
-          setProducts([])
-        }
-      }, [user])
     return (
-        <>
+        <div className='flex flex-row w-full justify-center gap-3 py-6'>  
+            <FaBarcode className='text-7xl'/>
             <input
                 type="text"
                 ref={inputRef}
                 value={sku}
                 onChange={(e) => findProduct(e)}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyPress}
-                className="w-full p-2 border rounded-md dark:bg-gray-800 dark:text-white bg-white text-gray-900 transition-colors duration-300"
+                className="w-1/2 px-2 border rounded-md dark:bg-gray-800 dark:text-white bg-white text-gray-900 transition-colors duration-300"
                 placeholder="Ingresa el código de barra / sku"
             />
-        </>
+        </div>
     )
 }
