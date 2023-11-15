@@ -11,7 +11,7 @@ import { formatoRut } from '@/utils/rut'
 
 const Header = () => {
     const { user } = storeAuth()
-    const { setStore, store } = storeDataStore()
+    const { store } = storeDataStore()
 
     if (!user) return null
     if (user.role === Role.Admin) {
