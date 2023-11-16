@@ -30,7 +30,7 @@ interface Sales {
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const [sales, setSales] = useState<Sales[] | []>([])
+    const [sales, setSales] = useState<Sales[]>([])
     const [totalSales, setTotalSales] = useState(0)
     const { store } = storeDataStore()
 
