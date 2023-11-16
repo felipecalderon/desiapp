@@ -34,26 +34,31 @@ function DetallesProducto({ product }: { product: Producto }) {
 
         // 4. Verificar si el producto ya está en el pedido
         const productoEnPedido = pedidoVta.find(({ ProductVariations }) =>
-            ProductVariations?.some(({ sku: skuVar }) => skuVar === variacionActualizada.sku)
+            ProductVariations?.some(({ sku: skuVar }) => skuVar === sku)
         );
 
         // 5. Si la cantidad es 0 y el producto ya está en el pedido, quitarlo del pedido
         if (cantidad === 0 && productoEnPedido) {
-            removePedido(variacionActualizada.sku);
+            removePedido(sku);
         }
 
         // 6. Si la cantidad no es 0 y el producto ya está en el pedido, actualizar la cantidad
         else if (cantidad !== 0 && productoEnPedido) {
-            updateCantidad(variacionActualizada.sku, cantidad);
+            return updateCantidad(sku, cantidad);
         }
 
         // 7. Si el producto no está en el pedido y la cantidad no es 0, agregarlo al pedido
         else if (cantidad !== 0) {
-            setPedido(productoClonado);
-        }
+            setPedido(productoClonado)
+            return updateCantidad(sku, cantidad);
+        } 
+        removePedido(sku)
     }
     useEffect(() => {
-        updateCantidad(sku, cantidad);
+        if(Number(cantidad) > 0) updateCantidad(sku, cantidad);
+        else {
+            removePedido(sku);
+        }
     }, [cantidad])
     return (
         <div>
@@ -74,10 +79,11 @@ function DetallesProducto({ product }: { product: Producto }) {
                 <p className='dark:text-white text-gray-900'>Ingrese la cantidad a vender</p>
                 <input
                     type="number"
+                    name="cantidad"
                     value={cantidad}
                     min={0}
                     max={stockQuantity}
-                    onChange={(e) => handleCantidadChange(e)}
+                    onChange={handleCantidadChange}
                     className="w-full p-2 rounded-md dark:bg-gray-800 dark:text-white bg-white text-gray-900 transition-colors duration-300"
                     placeholder="Ingresa la cantidad"
                 />

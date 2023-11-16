@@ -4,7 +4,6 @@ import storeProduct from "@/stores/store.product"
 
 export default function ProductoDetalle() {
     const { product } = storeProduct()
-    
     if(!product) return <p>Escanee el código de barras en la caja del calzado D3SI</p>
     return (
         <div className="dark:bg-gray-700 dark:text-white p-4 rounded-md shadow-md w-full">

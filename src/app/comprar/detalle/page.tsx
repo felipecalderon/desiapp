@@ -1,5 +1,7 @@
 'use client'
 import { url } from '@/config/constants'
+import storeAuth from '@/stores/store.auth'
+import storeDataStore from '@/stores/store.dataStore'
 import storeCpra from '@/stores/store.pedidCpra'
 import storeProduct from '@/stores/store.product'
 import { formatoPrecio } from '@/utils/price'
@@ -8,23 +10,25 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 
 const DetalleCompra = () => {
-    const { productos, totalProductos, totalNeto, storeID, userID } = storeCpra()
+    const { productos, totalProductos, totalNeto } = storeCpra()
+    const { user } = storeAuth()
+    const { store } = storeDataStore()
     const { products } = storeProduct()
     const route = useRouter()
     const generarOC = async () => {
-        try {            
-            if(!storeID || !userID || productos.length === 0) throw 'Faltan datos para hacer OC'
+        try {
+            if (!store || !user) throw 'Faltan datos para hacer OC'
             const res = await fetch(`${url.backend}/order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                  },
+                },
                 body: JSON.stringify({
-                    storeID, userID, products: productos
+                    storeID: store.storeID, userID: user.userID, products: productos
                 })
             })
             const data = await res.json()
-            if(data.orderID) route.push(`/comprar/detalle/${data.orderID}`)
+            if (data.orderID) route.push(`/comprar/detalle/${data.orderID}`)
         } catch (error) {
             console.log(error)
         }
@@ -99,7 +103,7 @@ const DetalleCompra = () => {
                 </table>
             </div>
             <div className='flex flex-row justify-center gap-3 py-4'>
-                <button 
+                <button
                     onClick={generarOC}
                     className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300'>Generar orden de compra</button>
                 <Link href="/comprar/">

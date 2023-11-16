@@ -3,6 +3,7 @@ export interface Producto {
 	productID: string
 	name: string
 	image: string
+	cantidad: number
 	ProductVariations: Variacion[]
 }
 
@@ -14,6 +15,7 @@ export interface Variacion {
 	priceCost: number
 	sku: string
 	stockQuantity: number
+	storeProductID: string
 }
 
 export enum Role {

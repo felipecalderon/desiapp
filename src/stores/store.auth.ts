@@ -52,9 +52,9 @@ const storeAuth = create<AuthState>((set) => ({
         { name: 'Stock', path: '/stock' },
         { name: 'Facturación', path: '/facturacion' },
         { name: 'Comprar', path: '/comprar' },
-        { name: 'Devoluciones', path: '/devoluciones' },
-        { name: 'Historial', path: '/historial' },
-        { name: 'Legales', path: '/legales' }
+        // { name: 'Devoluciones', path: '/devoluciones' },
+        // { name: 'Historial', path: '/historial' },
+        // { name: 'Legales', path: '/legales' }
       ],
     storeSellerMenu: [
         { name: 'Comprar', path: '/comprar' },

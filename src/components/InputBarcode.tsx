@@ -32,6 +32,7 @@ export default function Input() {
             <FaBarcode className='text-7xl'/>
             <input
                 type="text"
+                name='search'
                 ref={inputRef}
                 value={sku}
                 onChange={(e) => findProduct(e)}
