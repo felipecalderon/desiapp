@@ -4,14 +4,15 @@ import { Role, Store } from '@/config/interfaces'
 import FechaFormateada from './FechaFormat'
 import HoraFormateada from './HoraFormateada'
 import storeAuth from '@/stores/store.auth'
-import { useEffect } from 'react'
-import { fetchData } from '@/utils/fetchData'
 import storeDataStore from '@/stores/store.dataStore'
 import { formatoRut } from '@/utils/rut'
+import storeSales from '@/stores/store.sales'
+import { formatoPrecio } from '@/utils/price'
 
 const Header = () => {
     const { user } = storeAuth()
     const { store } = storeDataStore()
+    const {sales, setSales, totalSales, totalStores, updateTotals} = storeSales()
 
     if (!user) return null
     if (user.role === Role.Admin) {
@@ -24,7 +25,7 @@ const Header = () => {
                 </div>
                 <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>
                     <h2 className='text-base font-semibold whitespace-pre'>
-                        PAGO DE CLIENTES PENDIENTE: $ 11.898.00
+                        PAGO DE CLIENTES PENDIENTE: {formatoPrecio(totalSales)}
                     </h2>
                 </div>
             </div>
@@ -40,7 +41,7 @@ const Header = () => {
             </div>
             <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>
                 <h2 className='text-base font-semibold whitespace-pre'>
-                    VENTAS DEL MES: $ 1.898.00
+                    VENTAS DEL MES: {formatoPrecio(totalSales)}
                 </h2>
             </div>
         </div>

@@ -30,7 +30,7 @@ export default function Facturacion() {
             <div className="overflow-x-auto">
                 <table className="table-auto">
                     <thead>
-                        <tr>
+                        <tr className="dark:bg-blue-950">
                             <th className="border px-4 py-2">Fecha</th>
                             <th className="border px-4 py-2">Status</th>
                             <th className="border px-4 py-2">Total</th>
@@ -40,10 +40,10 @@ export default function Facturacion() {
                         {orders.map((order) => {
 
                             const fecha = getFecha(order.createdAt)
-                            return <tr className="cursor-pointer" key={order.orderID}>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{fecha?.fecha}</td>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{order.status}</td>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200">{formatoPrecio(order.total * 1.19)}</td>
+                            return <tr className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{fecha?.fecha}</td>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
                                 {user?.role === Role.Admin && <td><UploadComponent id={order.orderID} /></td>}
                             </tr>
                         })}

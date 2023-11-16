@@ -6,7 +6,12 @@ import { Role } from '@/config/interfaces'
 import { fetchData } from '@/utils/fetchData'
 import storeDataStore from '@/stores/store.dataStore'
 import { formatoPrecio } from '@/utils/price'
-
+import { getFecha } from '@/utils/fecha'
+import storeSales from '@/stores/store.sales'
+import SalesResumeTable from '../SalesResumeTable'
+interface Store {
+    storeID: string
+}
 interface SaleProduct {
     SaleProductID: string,
     saleID: string,
@@ -30,22 +35,33 @@ interface Sales {
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const [sales, setSales] = useState<Sales[]>([])
-    const [totalSales, setTotalSales] = useState(0)
+    const {sales, setSales, totalSales, totalStores, updateTotals} = storeSales()
     const { store } = storeDataStore()
 
-    useEffect(() => {
-        if (store) {
-            fetchData(`sale?storeID=${store.storeID}`)
-                .then(res => setSales(res))
-        }
-    }, [store])
+    const contarTiendasQueHanVendido = () => {
+        const storeIDs = new Set(sales.map(sale => sale.storeID));
+        return storeIDs.size;
+    }
 
     useEffect(() => {
-        // Calcula la suma total
-        const total = sales.reduce((acc, sale) => acc + sale.total, 0);
-        setTotalSales(total);
-    }, [sales]);
+        updateTotals();
+    }, [sales])
+
+    useEffect(() => {
+        if (store && user) {
+            if (user.role === Role.Franquiciado) {
+                fetchData(`sale?storeID=${store.storeID}`)
+                    .then(res => setSales(res))
+            }
+        } else if (!store && user) {
+            if (user.role === Role.Admin) {
+                fetchData(`sale`)
+                    .then(res => setSales(res))
+            }
+        }
+
+    }, [store, user])
+
 
     if (!user) return null
     if (user.role === Role.Admin) return (
@@ -55,15 +71,16 @@ const DashBoard = () => {
                 <div className='flex flex-col gap-3 items-center'></div>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold'>
-                        TOTAL VENTAS DEL MES A NIVEL NACIONAL:  15
+                        TOTAL VENTAS DEL MES A NIVEL NACIONAL: {sales.length}
                     </h2>
                     <h2 className='text-lg font-semibold'>
-                        TIENDAS QUE HAN VENDIDO:  6 DE 6
+                        TIENDAS QUE HAN VENDIDO:  {contarTiendasQueHanVendido()} DE {totalStores}
                     </h2>
                     <h2 className='text-lg font-semibold'>
-                        TOTAL:  $ 1.700.000 IVA. INC.
+                        TOTAL:  {formatoPrecio(totalSales)} IVA. INC.
                     </h2>
                 </div>
+                <SalesResumeTable />
             </div>
         </>
     )
@@ -79,15 +96,7 @@ const DashBoard = () => {
                         TOTAL:  {formatoPrecio(totalSales)} IVA. INC.
                     </h2>
                 </div>
-                {
-                    sales.map(({ total }) => {
-                        return (
-                            <ul>
-                                <li>{total}</li>
-                            </ul>
-                        )
-                    })
-                }
+                <SalesResumeTable />
             </div>
         </>
     )
