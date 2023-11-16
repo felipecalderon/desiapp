@@ -43,7 +43,7 @@ const DashBoard = () => {
 
     useEffect(() => {
         // Calcula la suma total
-        const total = sales ? sales.reduce((acc: number, sale) => acc + sale.total, 0) : 0
+        const total = sales.reduce((acc, sale) => acc + sale.total, 0);
         setTotalSales(total);
     }, [sales]);
 
