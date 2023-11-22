@@ -2,19 +2,18 @@
 import useUserLS from "@/hooks/getItemLocalStorage"
 import Image from "next/image"
 import SelectStore from "./SelectStore"
-import storeDataStore from "@/stores/store.dataStore"
 
 const ProfileMenu = () => {
     const { user } = useUserLS()
-    const { store } = storeDataStore()
-    // Función para manejar el clic en la imagen
+
+    // manejar el clic en la imagen
     const handleImageClick = () => {
         // Abrir el explorador de archivos al hacer clic en la imagen
         const fileInput = document.createElement('input')
         fileInput.type = 'file'
         fileInput.accept = 'image/*'
 
-        // Agregar un evento para capturar el archivo seleccionado
+        // evento para capturar el archivo seleccionado
         fileInput.addEventListener('change', (event) => {
             const file = (event.target as HTMLInputElement).files?.[0] // Conversión explícita del tipo
             if (file) {
