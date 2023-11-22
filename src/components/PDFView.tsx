@@ -1,3 +1,5 @@
+'use client'
+import { useState } from 'react';
 import { Document, Page, } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 
@@ -5,12 +7,25 @@ import { pdfjs } from 'react-pdf';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const PDFView = ({ url }: { url: string }) => {
-    // 'https://res.cloudinary.com/duwncbe8p/image/upload/v1700602362/me47uatqg1jndmv4bmfk.pdf'
-    if(url) return (
-        <Document file={url}>
-            <Page pageNumber={1} />
-        </Document>
-    )
-}
-
-export default PDFView
+        const [numPages, setNumPages] = useState<number | null>(null);
+        const pdf = new Array(numPages)
+        const onDocumentLoadSuccess = ({ numPages }: {numPages: number}) => {
+            setNumPages(numPages);
+        }
+    
+        return (
+            <Document
+                file={url}
+                onLoadSuccess={onDocumentLoadSuccess}
+            >
+                {Array.from(
+                    pdf,
+                    (el, index) => (
+                        <Page renderAnnotationLayer={false} renderTextLayer={false} key={`page_${index + 1}`} pageNumber={index + 1} />
+                    ),
+                )}
+            </Document>
+        );
+    }
+    
+    export default PDFView;

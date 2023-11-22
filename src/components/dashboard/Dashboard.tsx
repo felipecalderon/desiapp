@@ -1,67 +1,19 @@
 'use client'
 import { FaCashRegister as Icon } from 'react-icons/fa'
 import useUserLS from '@/hooks/getItemLocalStorage'
-import { useEffect, useState } from 'react'
 import { Role } from '@/config/interfaces'
-import { fetchData } from '@/utils/fetchData'
-import storeDataStore from '@/stores/store.dataStore'
 import { formatoPrecio } from '@/utils/price'
-import { getFecha } from '@/utils/fecha'
 import storeSales from '@/stores/store.sales'
 import SalesResumeTable from '../SalesResumeTable'
-interface Store {
-    storeID: string
-}
-interface SaleProduct {
-    SaleProductID: string,
-    saleID: string,
-    storeProductID: string,
-    quantitySold: number,
-    unitPrice: number,
-    subtotal: number,
-    createdAt: Date,
-    updatedAt: Date,
-}
-
-interface Sales {
-    saleID: string,
-    storeID: string,
-    total: number,
-    status: string,
-    createdAt: Date,
-    updatedAt: Date,
-    SaleProducts: SaleProduct[]
-}
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const {sales, setSales, totalSales, totalStores, updateTotals} = storeSales()
-    const { store } = storeDataStore()
+    const {sales, totalSales, totalStores} = storeSales()
 
     const contarTiendasQueHanVendido = () => {
         const storeIDs = new Set(sales.map(sale => sale.storeID));
         return storeIDs.size;
     }
-
-    useEffect(() => {
-        updateTotals();
-    }, [sales])
-
-    useEffect(() => {
-        if (store && user) {
-            if (user.role === Role.Franquiciado) {
-                fetchData(`sale?storeID=${store.storeID}`)
-                    .then(res => setSales(res))
-            }
-        } else if (!store && user) {
-            if (user.role === Role.Admin) {
-                fetchData(`sale`)
-                    .then(res => setSales(res))
-            }
-        }
-
-    }, [store, user])
-
 
     if (!user) return null
     if (user.role === Role.Admin) return (
