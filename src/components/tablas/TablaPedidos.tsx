@@ -13,7 +13,7 @@ interface Products {
 }
 const TablaPedidosVenta = () => {
     const route = useRouter()
-    const { pedidoVta } = storeVta()
+    const { pedidoVta, clearPedido } = storeVta()
     const { store } = storeDataStore()
     const [message, setMessage] = useState<string | null>(null)
     const [products, setProducts] = useState<Products[] | null>(null)
@@ -49,7 +49,10 @@ const TablaPedidosVenta = () => {
                     ? <div className="bg-white text-center p-4 dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
                         <p className='text-center text-2xl'>{message}</p>
                         <button className='my-4 items-center px-5 py-5 bg-blue-500 text-white font-semibold text-xs uppercase tracking-widest hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200 disabled:opacity-25 transition ease-in-out duration-150' 
-                        onClick={() => route.push('/')}
+                        onClick={() => {
+                            clearPedido()
+                            route.push('/')
+                        }}
                         >Aceptar</button>
                     </div>
                     : <div>

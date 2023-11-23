@@ -56,7 +56,7 @@ const Header = () => {
     return (
         <div className='flex flex-row justify-between items-center w-full px-4 pt-8'>
             <div className='text-left'>
-                <h1 className='text-3xl font-semibold'>Bienvenido al portal D3SI</h1>
+                <h1 className='text-3xl font-semibold'>Bienvenido al portal D3SI AVOCCO</h1>
                 <p>RUT: {formatoRut(store?.rut)}</p>
                 <p>Tienda de {store?.location}, {store?.city}</p>
             </div>

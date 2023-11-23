@@ -7,8 +7,8 @@ import Header from '@/components/Header'
 const font = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'D3SI App',
-  description: 'Consignaciones',
+  title: 'D3SI AVOCCO App',
+  description: 'Franquicias en Chile.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
