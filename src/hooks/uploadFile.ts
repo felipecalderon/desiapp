@@ -6,12 +6,12 @@ export default function useUploadFile() {
 	const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState('Seleccione archivo para subir')
-    const uploadFile = useCallback(async (file: File, fileType: string, userID: string) => {
+    const uploadFile = useCallback(async (file: File, fileType: string, storeID: string) => {
         setLoading(true);
         setError(null);
 
         const formData = new FormData();
-        formData.append('userID', userID)
+        formData.append('storeID', storeID)
         formData.append('fileType', fileType)
         formData.append('uploadFile', file);
 
