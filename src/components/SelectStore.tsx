@@ -7,8 +7,7 @@ import { fetchData } from '@/utils/fetchData'
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
 
 const SelectStore = () => {
-    const [stores, setStores] = useState<Store[]>([]);
-    const { setStore, store } = storeDataStore();
+    const { setStore, store, cleanStore, setStores, stores} = storeDataStore();
     const { user } = storeAuth();
     const { setProducts } = storeProduct();
 
@@ -31,6 +30,7 @@ const SelectStore = () => {
     
         if (valorSeleccionado === '' || valorSeleccionado === 'Stock total') {
             cargarProductos();
+            cleanStore()
         } else {
             const choosedStore = stores.find(({ storeID }) => storeID === valorSeleccionado);
             if (choosedStore) {

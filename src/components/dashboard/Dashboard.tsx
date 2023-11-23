@@ -5,10 +5,12 @@ import { Role } from '@/config/interfaces'
 import { formatoPrecio } from '@/utils/price'
 import storeSales from '@/stores/store.sales'
 import SalesResumeTable from '../SalesResumeTable'
+import storeDataStore from '@/stores/store.dataStore'
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const {sales, totalSales, totalStores} = storeSales()
+    const {sales, totalSales, totalProducts} = storeSales()
+    const { stores } = storeDataStore()
 
     const contarTiendasQueHanVendido = () => {
         const storeIDs = new Set(sales.map(sale => sale.storeID));
@@ -23,10 +25,13 @@ const DashBoard = () => {
                 <div className='flex flex-col gap-3 items-center'></div>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold'>
+                        CALZADOS VENDIDOS:  {totalProducts} PARES
+                    </h2>
+                    <h2 className='text-lg font-semibold'>
                         TOTAL VENTAS DEL MES A NIVEL NACIONAL: {sales.length}
                     </h2>
                     <h2 className='text-lg font-semibold'>
-                        TIENDAS QUE HAN VENDIDO:  {contarTiendasQueHanVendido()} DE {totalStores}
+                        TIENDAS QUE HAN VENDIDO:  {contarTiendasQueHanVendido()} DE {stores.length}
                     </h2>
                     <h2 className='text-lg font-semibold'>
                         TOTAL:  {formatoPrecio(totalSales)} IVA. INC.

@@ -58,6 +58,7 @@ const LegalesPage = () => {
         }
         if (store) getFiles()
     }, [store])
+    if(!store) return <p className="py-2 italic">Selecciona una tienda para ver documentos</p>
     return (
         <>
             <div className="flex flex-row justify-between w-full px-10">
