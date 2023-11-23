@@ -51,6 +51,11 @@ const LegalesPage = () => {
         }
     }
 
+    //bloquear clic derecho
+    const handleRightClick = (event: MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+    };
+
     useEffect(() => {
         const getFiles = async () => {
             const data: File[] = await fetchData(`upload?storeID=${store?.storeID}`)
@@ -79,8 +84,9 @@ const LegalesPage = () => {
                         </>
                     }
                     {
-                        file && 
+                        file && <div onContextMenu={handleRightClick}>
                             <PDFView url={file.filePath} />
+                            </div>
                     }
                 </div>
             </div>
