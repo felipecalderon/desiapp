@@ -41,7 +41,12 @@ const LegalesPage = () => {
         setButtonId(idButton)
         if (files) {
             const filtro = files.find(({ fileType }) => idButton === fileType)
-            if (filtro) setFile(filtro)
+            if (filtro) {
+                const newFiltro = {...filtro}
+                let secureUrl = newFiltro.filePath.replace('http://', 'https://');
+                newFiltro.filePath = secureUrl
+                setFile(newFiltro)
+            }
             else setFile(null)
         }
     }
@@ -78,18 +83,6 @@ const LegalesPage = () => {
                     }
                 </div>
             </div>
-            {/* <div className="flex flex-col">
-                {message}
-                {isLoading && <p>Cargando...</p>}
-                {error && <p>Error: {error}</p>}
-                {
-                    files.length > 0 && files.map(({ createdAt, updatedAt, filePath, fileType }) => {
-                        return <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>
-                            <button>{fileType}</button>
-                        </div>
-                    })
-                }
-            </div> */}
         </>
     )
 }
