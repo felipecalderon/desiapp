@@ -14,20 +14,20 @@ import useUserLS from "@/hooks/getItemLocalStorage"
 export default function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
-	const { setIsLogged, adminMenu, storeManagerMenu, storeSellerMenu, supplierMenu, setUser } = storeAuth()
-    const { user, isLoadingUser } = useUserLS()
+	const { setIsLogged, adminMenu, storeManagerMenu, storeSellerMenu, supplierMenu, setUser, user } = storeAuth()
+	const { isLoadingUser } = useUserLS()
 	const { token, isLoadingToken } = useTokenLS()
 	const currentPath = usePathname()
 	const route = useRouter()
 
 	useEffect(() => {
 		if (user && token && !isLoadingUser) {
-			if(isTokenExpired(token)){
+			if (isTokenExpired(token)) {
 				setIsLogged(false)
 				setUser(null)
 			}
 			else setIsLogged(true)
-		}else{
+		} else {
 			setIsLogged(false)
 		}
 		if (user?.role === Role.Admin) setUserMenu(adminMenu)
@@ -38,13 +38,15 @@ export default function Navbar() {
 	}, [user, token, isLoadingToken])
 
 	useEffect(() => {
-		if (!user && !isLoadingUser && !isLoadingToken) {
-		  route.push('/login');
-		  localStorage.clear();
-		  setIsLogged(false);
-		}
-	  }, [user, isLoadingUser, isLoadingToken]);
-	
+		setTimeout(() => {
+			if (!user && !isLoadingUser && !isLoadingToken) {
+				route.push('/login');
+				localStorage.clear();
+				setIsLogged(false);
+			}
+		}, 500)
+	}, [user, isLoadingUser, isLoadingToken]);
+
 	if (!user) return null
 	return (
 		<nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center dark:bg-gray-900 lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">

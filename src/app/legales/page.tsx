@@ -72,7 +72,7 @@ const LegalesPage = () => {
                     <button id="garantia" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Garantía</button>
                     <button id="seguro" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Seguro</button>
                 </div>
-                <div className="flex flex-col justify-center items-center w-2/3">
+                <div className="flex flex-col justify-start items-center w-2/3 h-screen overflow-y-auto">
                     {
                         (buttonId !== '' && !file) && <p>No se encontró documento de {buttonId}</p> 
                     }
