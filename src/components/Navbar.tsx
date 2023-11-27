@@ -6,15 +6,59 @@ import Image from "next/image"
 import ProfileMenu from "./ProfileMenu"
 import useTokenLS from "@/hooks/getTokenLS"
 import { usePathname, useRouter } from "next/navigation"
-import storeAuth, { Menu } from "@/stores/store.auth"
+import storeAuth from "@/stores/store.auth"
 import { Role } from "@/config/interfaces"
 import { isTokenExpired } from "@/utils/jwt"
 import useUserLS from "@/hooks/getItemLocalStorage"
 
+export type Menu = {
+	name: string
+	path: string
+  }
+
+const menu = {
+	adminMenu: [
+	{ name: 'Home', path: '/' },
+	{ name: 'Stock', path: '/stock' },
+	{ name: 'Invoice', path: '/facturacion' },
+	{ name: 'Order', path: '/comprar' },
+	{ name: 'Quote', path: '/none' },
+	{ name: 'Returns', path: '/devoluciones' },
+	{ name: 'History', path: '/historial' },
+	{ name: 'Settings', path: '/settings' },
+	{ name: 'Legal', path: '/legales' }
+  ],
+supplierMenu: [
+	{ name: 'Home', path: '/' },
+	{ name: 'Stock', path: '/stock' },
+	{ name: 'Invoice', path: '/facturacion' },
+	{ name: 'Order', path: '/comprar' },
+	{ name: 'Quote', path: '/none' },
+	{ name: 'Returns', path: '/devoluciones' },
+	{ name: 'History', path: '/historial' },
+	{ name: 'Settings', path: '/settings' },
+	{ name: 'Legal', path: '/legales' }
+  ],
+storeManagerMenu: [
+	{ name: 'Inicio', path: '/' },
+	{ name: 'Vender', path: '/vender' },
+	{ name: 'Stock', path: '/stock' },
+	{ name: 'Facturación', path: '/facturacion' },
+	{ name: 'Comprar', path: '/comprar' },
+	// { name: 'Devoluciones', path: '/devoluciones' },
+	// { name: 'Historial', path: '/historial' },
+	{ name: 'Legales', path: '/legales' }
+  ],
+storeSellerMenu: [
+	{ name: 'Comprar', path: '/comprar' },
+	{ name: 'Historial', path: '/historial' }
+  ],
+}
+
 export default function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
-	const { setIsLogged, adminMenu, storeManagerMenu, storeSellerMenu, supplierMenu, setUser, user } = storeAuth()
+	const { setIsLogged, setUser, user } = storeAuth()
 	const { isLoadingUser } = useUserLS()
 	const { token, isLoadingToken } = useTokenLS()
 	const currentPath = usePathname()
@@ -30,21 +74,22 @@ export default function Navbar() {
 		} else {
 			setIsLogged(false)
 		}
-		if (user?.role === Role.Admin) setUserMenu(adminMenu)
-		else if (user?.role === Role.Franquiciado) setUserMenu(storeManagerMenu)
-		else if (user?.role === Role.NO_Franquiciado) setUserMenu(storeSellerMenu)
-		else if (user?.role === Role.Proveedor) setUserMenu(supplierMenu)
+		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
+		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
+		else if (user?.role === Role.NO_Franquiciado) setUserMenu(menu.storeSellerMenu)
+		else if (user?.role === Role.Proveedor) setUserMenu(menu.supplierMenu)
 
 	}, [user, token, isLoadingToken])
 
 	useEffect(() => {
-		setTimeout(() => {
+		const verificaUser = setTimeout(() => {
 			if (!user && !isLoadingUser && !isLoadingToken) {
 				route.push('/login');
 				localStorage.clear();
 				setIsLogged(false);
 			}
 		}, 500)
+		return () => clearTimeout(verificaUser)
 	}, [user, isLoadingUser, isLoadingToken]);
 
 	if (!user) return null
