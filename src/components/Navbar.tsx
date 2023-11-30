@@ -14,45 +14,45 @@ import useUserLS from "@/hooks/getItemLocalStorage"
 export type Menu = {
 	name: string
 	path: string
-  }
+}
 
 const menu = {
 	adminMenu: [
-	{ name: 'Home', path: '/' },
-	{ name: 'Stock', path: '/stock' },
-	{ name: 'Invoice', path: '/facturacion' },
-	{ name: 'Order', path: '/comprar' },
-	{ name: 'Quote', path: '/none' },
-	{ name: 'Returns', path: '/devoluciones' },
-	{ name: 'History', path: '/historial' },
-	{ name: 'Settings', path: '/settings' },
-	{ name: 'Legal', path: '/legales' }
-  ],
-supplierMenu: [
-	{ name: 'Home', path: '/' },
-	{ name: 'Stock', path: '/stock' },
-	{ name: 'Invoice', path: '/facturacion' },
-	{ name: 'Order', path: '/comprar' },
-	{ name: 'Quote', path: '/none' },
-	{ name: 'Returns', path: '/devoluciones' },
-	{ name: 'History', path: '/historial' },
-	{ name: 'Settings', path: '/settings' },
-	{ name: 'Legal', path: '/legales' }
-  ],
-storeManagerMenu: [
-	{ name: 'Inicio', path: '/' },
-	{ name: 'Vender', path: '/vender' },
-	{ name: 'Stock', path: '/stock' },
-	{ name: 'Facturación', path: '/facturacion' },
-	{ name: 'Comprar', path: '/comprar' },
-	// { name: 'Devoluciones', path: '/devoluciones' },
-	// { name: 'Historial', path: '/historial' },
-	{ name: 'Legales', path: '/legales' }
-  ],
-storeSellerMenu: [
-	{ name: 'Comprar', path: '/comprar' },
-	{ name: 'Historial', path: '/historial' }
-  ],
+		{ name: 'Home', path: '/' },
+		{ name: 'Stock', path: '/stock' },
+		{ name: 'Invoice', path: '/facturacion' },
+		{ name: 'Order', path: '/comprar' },
+		{ name: 'Quote', path: '/none' },
+		{ name: 'Returns', path: '/devoluciones' },
+		{ name: 'History', path: '/historial' },
+		{ name: 'Settings', path: '/settings' },
+		{ name: 'Legal', path: '/legales' }
+	],
+	supplierMenu: [
+		{ name: 'Home', path: '/' },
+		{ name: 'Stock', path: '/stock' },
+		{ name: 'Invoice', path: '/facturacion' },
+		{ name: 'Order', path: '/comprar' },
+		{ name: 'Quote', path: '/none' },
+		{ name: 'Returns', path: '/devoluciones' },
+		{ name: 'History', path: '/historial' },
+		{ name: 'Settings', path: '/settings' },
+		{ name: 'Legal', path: '/legales' }
+	],
+	storeManagerMenu: [
+		{ name: 'Inicio', path: '/' },
+		{ name: 'Vender', path: '/vender' },
+		{ name: 'Stock', path: '/stock' },
+		{ name: 'Facturación', path: '/facturacion' },
+		{ name: 'Comprar', path: '/comprar' },
+		// { name: 'Devoluciones', path: '/devoluciones' },
+		// { name: 'Historial', path: '/historial' },
+		{ name: 'Legales', path: '/legales' }
+	],
+	storeSellerMenu: [
+		{ name: 'Comprar', path: '/comprar' },
+		{ name: 'Historial', path: '/historial' }
+	],
 }
 
 export default function Navbar() {
@@ -65,19 +65,22 @@ export default function Navbar() {
 	const route = useRouter()
 
 	useEffect(() => {
-		if (user && token && !isLoadingUser) {
-			if (isTokenExpired(token)) {
+		const verificaUser = setTimeout(() => {
+			if (user && token && !isLoadingUser) {
+				if (isTokenExpired(token)) {
+					setIsLogged(false)
+					setUser(null)
+				}
+				else setIsLogged(true)
+			} else {
 				setIsLogged(false)
-				setUser(null)
 			}
-			else setIsLogged(true)
-		} else {
-			setIsLogged(false)
-		}
+		}, 500)
 		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
 		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
 		else if (user?.role === Role.NO_Franquiciado) setUserMenu(menu.storeSellerMenu)
 		else if (user?.role === Role.Proveedor) setUserMenu(menu.supplierMenu)
+		return () => clearTimeout(verificaUser)
 
 	}, [user, token, isLoadingToken])
 
