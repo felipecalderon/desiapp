@@ -1,9 +1,9 @@
 'use client'
-import { Producto } from "@/config/interfaces"
+import { Producto, Variacion } from "@/config/interfaces"
 import storeCpra from "@/stores/store.pedidCpra"
 import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 
 export default function DataCompra({ message, products }: { message: string, products: Producto[] }) {
   const [productosCentral, setProductosCentral] = useState<Producto[] | null>(null)
@@ -35,12 +35,31 @@ export default function DataCompra({ message, products }: { message: string, pro
     // Si no encuentras el producto, devuelve 0
     return 0;
   };
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>, variation: Variacion) => {
+      const newCantidad = Number(e.target.value);
+      const maxStock = variation.stockQuantity;
+  
+      if (newCantidad > maxStock) {
+          e.target.value = maxStock.toString();
+          return;
+      }
+  
+      setCantidades((prevCantidades) => ({ ...prevCantidades, [variation.variationID]: newCantidad }));
+      if (newCantidad > 0) {
+        handleAgregarAlPedido(variation.variationID, newCantidad, variation.priceCost);
+      } else {
+        removePedido(variation.variationID);
+      }
+  }
 
   useEffect(() => {
     fetchData('products')
       .then(res => {
         setProductosCentral(res)
       })
+    return () => {
+      clearPedido()
+    }
   }, [])
 
   if (!products || products.length === 0) return (
@@ -94,13 +113,7 @@ export default function DataCompra({ message, products }: { message: string, pro
             <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
               <input min="0" max={getStockCentralBySku(variation.sku)} type="number"
                 name={variation.sku}
-                onChange={(e) => {
-                  const newCantidad = parseInt(e.target.value, 10);
-                  setCantidades((prevCantidades) => ({ ...prevCantidades, [variationID]: newCantidad }));
-                  if (newCantidad > 0) {
-                    handleAgregarAlPedido(variation.variationID, newCantidad, variation.priceCost);
-                  } else removePedido(variation.variationID)
-                }}
+                onChange={(e) => handleInputChange(e, variation)}
                 className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1" />
             </td>
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
