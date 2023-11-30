@@ -13,7 +13,7 @@ export default function TablaVentasProductos() {
   const { products } = storeProduct()
 
   return <>
-    <div className="flex flew-row justify-between w-full mt-6 px-10">
+    <div className="w-full mt-6 px-10">
       <TablaProductosCompra products={products} />
       <TablaPedidosCompra />
     </div>

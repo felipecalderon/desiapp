@@ -7,6 +7,7 @@ const TablaProductos = ({ products }: { products: Producto[] }) => {
 	const { user } = storeAuth()
     
     if(user) return (
+        <>
                 <table className="min-w-full table-auto">
                     <thead>
                         <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
@@ -21,6 +22,7 @@ const TablaProductos = ({ products }: { products: Producto[] }) => {
                     </thead>
                     <DataTable products={products} message={'Cargando productos...'} />
                 </table>
+        </>
     )
 }
 
