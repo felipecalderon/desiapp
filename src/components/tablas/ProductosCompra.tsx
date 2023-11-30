@@ -5,13 +5,14 @@ import DataCompra from "./DataCompra"
 import { ChangeEvent, useEffect, useState } from "react"
 import storeCpra from "@/stores/store.pedidCpra"
 import { fetchData } from "@/utils/fetchData"
+import storeDataStore from "@/stores/store.dataStore"
 
 const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
     const { user } = storeAuth()
     const [productosCentral, setProductosCentral] = useState<Producto[] | null>(null)
     const { productos, setPedido, updateCantidad, removePedido, clearPedido } = storeCpra()
     const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
-
+    const { store } = storeDataStore()
     const handleAgregarAlPedido = (variationID: string, cantidad: number, price: number) => {
         const existingVariation = productos.find((producto) => producto.variationID === variationID);
 
@@ -57,7 +58,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, variation: Variacion) => {
         const newCantidad = Number(e.target.value);
-        const maxStock = variation.stockQuantity;
+        const maxStock = getStockCentralBySku(variation.sku)
 
         if (newCantidad > maxStock) {
             e.target.value = maxStock.toString();
@@ -82,9 +83,16 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
         }
     }, [])
 
+    if(!store) return <p>Selecciona una tienda para agregar la orden</p>
     if (user) return (
         <>
-            <button className="bg-blue-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" onClick={agregarUnoaTodos}>Agregar 1 en todos los calzados disponibles</button>
+            {
+                user.role === Role.Admin 
+                && <div className="flex items-center gap-3">
+                    <button className="bg-blue-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" onClick={agregarUnoaTodos}>Agregar calzados</button>
+                    <p>Gestionando orden para: <span className="font-bold">{store.name}</span> {store.city}</p>
+                </div>
+            }
             <table className="min-w-full table-auto">
                 <thead>
                     <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
