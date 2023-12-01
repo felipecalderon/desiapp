@@ -76,14 +76,14 @@ export default function Navbar() {
 			} else {
 				setIsLogged(false)
 			}
-		}, 500)
+		}, 600)
 		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
 		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
 		else if (user?.role === Role.NO_Franquiciado) setUserMenu(menu.storeSellerMenu)
 		else if (user?.role === Role.Proveedor) setUserMenu(menu.supplierMenu)
 		return () => clearTimeout(verificaUser)
 
-	}, [user, token, isLoadingToken])
+	}, [user])
 
 	useEffect(() => {
 		const verificaUser = setTimeout(() => {
