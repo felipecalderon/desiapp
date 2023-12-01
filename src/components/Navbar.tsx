@@ -58,8 +58,8 @@ const menu = {
 export default function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
-	const { setIsLogged, setUser, user } = storeAuth()
-	const { isLoadingUser } = useUserLS()
+	const { setIsLogged, setUser } = storeAuth()
+	const { isLoadingUser, user } = useUserLS()
 	const { token, isLoadingToken } = useTokenLS()
 	const currentPath = usePathname()
 	const route = useRouter()
@@ -68,6 +68,7 @@ export default function Navbar() {
 		const verificaUser = setTimeout(() => {
 			if (user && token && !isLoadingUser) {
 				if (isTokenExpired(token)) {
+					console.log('token expirado');
 					setIsLogged(false)
 					setUser(null)
 				}
@@ -90,6 +91,7 @@ export default function Navbar() {
 				route.push('/login');
 				localStorage.clear();
 				setIsLogged(false);
+				console.log('No está logueado');
 			}
 		}, 500)
 		return () => clearTimeout(verificaUser)
