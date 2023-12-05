@@ -71,17 +71,20 @@ const LegalesPage = () => {
                     <button id="contrato" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Contrato</button>
                     <button id="garantia" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Garantía</button>
                     <button id="seguro" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Seguro</button>
+                    <div>
+                    {
+                        user && user.role === Role.Admin && <>
+                            <p className="py-2 text-center italic">Como admin puedes subir un documento nuevo o reemplazar el existente:</p>
+                            <p className="py-2 text-center italic">Cargar {buttonId}:</p>
+                            <input name={buttonId} type="file" onChange={handleFileChange} />
+                            <p>{message}</p>
+                        </>
+                    }
+                    </div>
                 </div>
                 <div className="flex flex-col justify-start items-center w-2/3 h-screen overflow-y-auto">
                     {
                         (buttonId !== '' && !file) && <p>No se encontró documento de {buttonId}</p> 
-                    }
-                    {
-                        user && user.role === Role.Admin && <>
-                            <p className="py-2 text-center italic">Como admin puedes subir un documento nuevo o reemplazar el existente:</p>
-                            <input name={buttonId} type="file" onChange={handleFileChange} />
-                            <p>{message}</p>
-                        </>
                     }
                     {
                         file && <div onContextMenu={handleRightClick}>
