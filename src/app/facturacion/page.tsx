@@ -25,6 +25,7 @@ export default function Facturacion() {
                 .then(res => setOrders(res))
         }
     }, [store])
+    if(orders?.length === 0) return <p>No hay órdenes creadas aún</p>
     if (orders) return (
         <div className='flex flex-col justify-start items-center text-center gap-6 px-8 pt-10'>
             <div className="overflow-x-auto">

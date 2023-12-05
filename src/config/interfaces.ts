@@ -65,7 +65,7 @@ export interface ProductosdeOrden {
     sizeNumber: number
     priceList: number
     priceCost: number
-    sku: number
+    sku: string
     stockQuantity:number
     quantityOrdered: number
     subtotal: number
