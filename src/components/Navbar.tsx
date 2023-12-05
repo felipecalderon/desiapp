@@ -18,15 +18,15 @@ export type Menu = {
 
 const menu = {
 	adminMenu: [
-		{ name: 'Home', path: '/' },
+		{ name: 'Inicio', path: '/' },
 		{ name: 'Stock', path: '/stock' },
-		{ name: 'Invoice', path: '/facturacion' },
-		{ name: 'Order', path: '/comprar' },
-		{ name: 'Quote', path: '/none' },
-		{ name: 'Returns', path: '/devoluciones' },
-		{ name: 'History', path: '/historial' },
-		{ name: 'Settings', path: '/settings' },
-		{ name: 'Legal', path: '/legales' }
+		{ name: 'Facturación', path: '/facturacion' },
+		{ name: 'Comprar', path: '/comprar' },
+		// { name: 'Quote', path: '/none' },
+		// { name: 'Returns', path: '/devoluciones' },
+		// { name: 'History', path: '/historial' },
+		{ name: 'Configuración', path: '/settings' },
+		{ name: 'Legales', path: '/legales' }
 	],
 	supplierMenu: [
 		{ name: 'Home', path: '/' },
