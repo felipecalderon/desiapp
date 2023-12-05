@@ -21,7 +21,13 @@ const PDFView = ({ url }: { url: string }) => {
                 {Array.from(
                     pdf,
                     (el, index) => (
-                        <Page renderAnnotationLayer={false} renderTextLayer={false} key={`page_${index + 1}`} pageNumber={index + 1} />
+                        <Page 
+                            className="mb-3"
+                            key={`page_${index + 1}`} 
+                            renderAnnotationLayer={false} 
+                            renderTextLayer={false} 
+                            pageNumber={index + 1} 
+                        />
                     ),
                 )}
             </Document>
