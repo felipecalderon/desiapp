@@ -78,9 +78,6 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
             .then(res => {
                 setProductosCentral(res)
             })
-        return () => {
-            clearPedido()
-        }
     }, [])
 
     if(!store) return <p>Selecciona una tienda para agregar la orden</p>
