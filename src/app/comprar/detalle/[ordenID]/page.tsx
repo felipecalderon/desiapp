@@ -37,6 +37,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       const formatoUpdateOrder = {
         ...editOrder, newProducts: [...products]
       }
+      if(order?.status === 'Recibido') return setMessage('Productos declarados como RECIBIDOS, no se puede cambiar')
+      if(order?.status === editOrder.status) return setMessage('No hay cambios para realizar')
       const data = await fetch(`${url.backend}/order`, { 
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -88,7 +90,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       } <button onClick={editOrderHandle} className="px-3 rounded-sm bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
       {edit && user?.role===Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
     </p>
-    {message && <p className="bg-green-800 px-3 rounded-md text-white">{message}</p>}
+    {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
     <div className="border-t mt-4 pt-4">
       <p className="text-xl font-semibold mb-2">Productos:</p>
       <table className="min-w-full divide-y divide-gray-200">
