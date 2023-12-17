@@ -65,36 +65,29 @@ export default function Navbar() {
 	const route = useRouter()
 
 	useEffect(() => {
-		const verificaUser = setTimeout(() => {
-			if (user && token && !isLoadingUser) {
-				if (isTokenExpired(token)) {
-					console.log('token expirado');
-					setIsLogged(false)
-					setUser(null)
-				}
-				else setIsLogged(true)
-			} else {
+		if (user && token && !isLoadingUser) {
+			if (isTokenExpired(token)) {
+				console.log('token expirado');
 				setIsLogged(false)
+				setUser(null)
 			}
-		}, 600)
+			else setIsLogged(true)
+		} else {
+			setIsLogged(false)
+		}
 		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
 		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
 		else if (user?.role === Role.NO_Franquiciado) setUserMenu(menu.storeSellerMenu)
 		else if (user?.role === Role.Proveedor) setUserMenu(menu.supplierMenu)
-		return () => clearTimeout(verificaUser)
-
-	}, [user])
+	}, [user, isLoadingUser])
 
 	useEffect(() => {
-		const verificaUser = setTimeout(() => {
-			if (!user && !isLoadingUser && !isLoadingToken) {
-				route.push('/login');
-				localStorage.clear();
-				setIsLogged(false);
-				console.log('No está logueado');
-			}
-		}, 500)
-		return () => clearTimeout(verificaUser)
+		if (!user && !isLoadingUser && !isLoadingToken) {
+			route.push('/login');
+			localStorage.clear();
+			setIsLogged(false);
+			console.log('No está logueado');
+		}
 	}, [user, isLoadingUser, isLoadingToken]);
 
 	if (!user) return null
