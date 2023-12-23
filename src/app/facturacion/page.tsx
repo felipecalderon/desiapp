@@ -20,11 +20,19 @@ export default function Facturacion() {
     const { store } = storeDataStore()
     const [orders, setOrders] = useState<Orders[] | null>(null)
     useEffect(() => {
-        if (store && user) {
+        if (store) {
             fetchData(`order/?storeID=${store.storeID}`)
+                .then(res => setOrders(res))
+        }else{
+            fetchData('order')
                 .then(res => setOrders(res))
         }
     }, [store])
+
+    useEffect(() => {
+
+    }, [])
+
     if(orders?.length === 0) return <p>No hay órdenes creadas aún</p>
     if (orders) return (
         <div className='flex flex-col justify-start items-center text-center gap-6 px-8 pt-10'>

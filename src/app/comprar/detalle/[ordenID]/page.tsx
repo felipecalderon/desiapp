@@ -64,7 +64,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const editOrderHandle = async () => {
     if(!edit){
       setEdit(!edit)
-    }else{
+    }else{  
       setEdit(false)
       const formatoUpdateOrder = {
         ...editOrder, newProducts: [...products]
