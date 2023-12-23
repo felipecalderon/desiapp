@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import storeAuth from "@/stores/store.auth"
 import storeDataStore from "@/stores/store.dataStore"
-import UploadComponent from "@/components/UploadDrag"
 import { Role } from "@/config/interfaces"
 interface Orders {
     orderID: string
@@ -23,11 +22,11 @@ export default function Facturacion() {
         if (store) {
             fetchData(`order/?storeID=${store.storeID}`)
                 .then(res => setOrders(res))
-        }else{
+        }else if(user?.role === Role.Admin){
             fetchData('order')
                 .then(res => setOrders(res))
         }
-    }, [store])
+    }, [store, user])
 
     useEffect(() => {
 
