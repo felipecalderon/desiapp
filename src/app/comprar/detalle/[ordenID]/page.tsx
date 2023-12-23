@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { BiSolidEdit } from "react-icons/bi";
 
-
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
   const {user} = storeAuth()
   const route = useRouter()
@@ -34,12 +33,31 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
 
   const imprimirTabla = () => {
     if (tablaRef.current) {
-      const printContents = tablaRef.current.innerHTML;
-      const originalContents = document.body.innerHTML;
+      const ventanaImpresion = window.open('', '_blank');
+      if(ventanaImpresion) {
+        ventanaImpresion.document.write('<html><head><title>Impresión</title>');
+    
+        // Copiar los estilos globales y de Tailwind
+        Array.from(document.getElementsByTagName("link")).forEach(link => {
+          if (link.rel === "stylesheet") {
+            ventanaImpresion.document.write(link.outerHTML);
+          }
+        });
+    
+        ventanaImpresion.document.write('</head><body>');
+        ventanaImpresion.document.write(tablaRef.current.outerHTML);
+        ventanaImpresion.document.write('</body></html>');
+        ventanaImpresion.document.close();
   
-      document.body.innerHTML = printContents;
-      window.print();
-      document.body.innerHTML = originalContents;
+        // Llamar a la función de impresión
+        ventanaImpresion.focus(); // Enfocar la ventana de impresión para asegurar que el diálogo se abra en ella
+        ventanaImpresion.print();
+  
+        // Retrasar el cierre de la ventana de impresión
+        setTimeout(() => {
+          ventanaImpresion.close();
+        }, 500); // Ajuste el tiempo de espera según sea necesario
+      }
     }
   };
 
@@ -107,25 +125,25 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       {edit && user?.role===Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
     </p>
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
-    <div className="border-t mt-4 pt-4">
+    <div className="border-t mt-4 pt-4 px-10">
       <button onClick={imprimirTabla} className="px-3 rounded-sm bg-blue-800 text-white">Imprimir</button>
       <p className="text-xl font-semibold mb-2">Productos:</p>
-      <table ref={tablaRef} id="tablaOrdenCompra" className="min-w-full divide-y divide-gray-200">
+      <table ref={tablaRef} className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 dark:bg-blue-950">
           <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
               Detalle
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+            <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
               Talla
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+            <th scope="col" className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
               Costo
             </th>
-            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+            <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
               Cantidad
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+            <th scope="col" className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
               Subtotal
             </th>
           </tr>
@@ -135,21 +153,21 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             order.ProductVariations.map(({ name, priceCost, quantityOrdered, sizeNumber, sku, subtotal }) => {
               return (
                 <tr key={sku} className="hover:bg-gray-100 dark:hover:bg-blue-700">
-                  <td className="flex flex-row justify-between px-6 py-4">
+                  <td className="flex flex-row justify-between px-2 py-2">
                     <div>
                       {name} <span className="text-sm font-thin">({sku})</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-0 py-2 text-center whitespace-nowrap">
                     {sizeNumber}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-2 py-2 text-center  whitespace-nowrap">
                     {formatoPrecio(priceCost)}
                   </td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap">
+                  <td className="px-0 py-2 text-center whitespace-nowrap">
                     {quantityOrdered}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-2 py-2 text-center  whitespace-nowrap">
                     {formatoPrecio(subtotal)}
                   </td>
                 </tr>
