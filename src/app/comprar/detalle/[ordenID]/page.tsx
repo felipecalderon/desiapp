@@ -2,11 +2,12 @@
 import { url } from "@/config/constants"
 import { OrdendeCompra, ProductosdeOrden, Role } from "@/config/interfaces"
 import storeAuth from "@/stores/store.auth"
+import { calcularParesTotales } from "@/utils/calculateTotal"
 import { getFecha } from "@/utils/fecha"
 import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { BiSolidEdit } from "react-icons/bi";
 
 
@@ -17,6 +18,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const [edit, setEdit] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [products, setProducts] = useState<ProductosdeOrden[]>([])
+  const [totalPares, setTotalPares] = useState(0)
+  const tablaRef = useRef<HTMLTableElement>(null);
   const [editOrder, setEditOrder] = useState({
     orderID: params.ordenID,
     status: 'Pendiente'
@@ -28,6 +31,17 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     setMessage(res.message)
     route.push('/facturacion')
   }
+
+  const imprimirTabla = () => {
+    if (tablaRef.current) {
+      const printContents = tablaRef.current.innerHTML;
+      const originalContents = document.body.innerHTML;
+  
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+    }
+  };
 
   const editOrderHandle = async () => {
     if(!edit){
@@ -63,6 +77,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         return [...prevProducts, ...newProducts.map(product => ({ ...product }))];
       });
     }
+    const paresTotales = calcularParesTotales(products)
+    setTotalPares(paresTotales)
   }, [order]);
 
   useEffect(() => {
@@ -78,8 +94,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     <p className="text-sm">Creación O.C: {creacion?.fecha} a las {creacion?.hora}</p>
     <p className="text-lg font-semibold">Subtotal: {formatoPrecio(order.total)}</p>
     <p className="text-lg font-semibold">IVA: {formatoPrecio(order.total * 0.19)}</p>
-    <p className="text-lg font-semibold">Total: {formatoPrecio(order.total * 1.19)}</p>
-    <p className={`text-lg font-semibold flex flex-row gap-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
+    <p className="text-lg font-semibold">Total: {formatoPrecio(order.total * 1.19)} <span className="italic font-normal">({totalPares} pares)</span></p>
+    <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
       Estado: {!edit
         ? order.status
         : <select onChange={(e) => setEditOrder({...editOrder, status: e.target.value})}>
@@ -92,8 +108,9 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     </p>
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
     <div className="border-t mt-4 pt-4">
+      <button onClick={imprimirTabla} className="px-3 rounded-sm bg-blue-800 text-white">Imprimir</button>
       <p className="text-xl font-semibold mb-2">Productos:</p>
-      <table className="min-w-full divide-y divide-gray-200">
+      <table ref={tablaRef} id="tablaOrdenCompra" className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 dark:bg-blue-950">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
