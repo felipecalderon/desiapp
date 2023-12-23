@@ -18,13 +18,49 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #tablaOrdenCompra,
+  #tablaOrdenCompra * {
+    visibility: visible;
+  }
+
+  #tablaOrdenCompra {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    font-size: 12px;
+    /* Ajuste según sea necesario */
+  }
+
+  #tablaOrdenCompra th,
+  #tablaOrdenCompra td {
+    padding: 10px;
+    /* Ajuste el espaciado según sea necesario */
+    border: 1px solid black;
+    /* Añade bordes para definir claramente las celdas */
+  }
+
+  #tablaOrdenCompra thead {
+    background-color: #f9fafb;
+    /* O el color que prefiera */
+  }
+
+  #tablaOrdenCompra tbody tr:nth-child(even) {
+    background-color: #f1f1f1;
+    /* Para bandas de filas, si lo desea */
+  }
+}
+
 
 .react-icons {
   fill: currentColor;
