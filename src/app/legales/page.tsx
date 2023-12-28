@@ -36,13 +36,13 @@ const LegalesPage = () => {
     }
 
     const clickButton = (event: MouseEvent<HTMLButtonElement>) => {
-        const target = event.target as HTMLButtonElement; 
+        const target = event.target as HTMLButtonElement;
         const idButton = target.id
         setButtonId(idButton)
         if (files) {
             const filtro = files.find(({ fileType }) => idButton === fileType)
             if (filtro) {
-                const newFiltro = {...filtro}
+                const newFiltro = { ...filtro }
                 let secureUrl = newFiltro.filePath.replace('http://', 'https://');
                 newFiltro.filePath = secureUrl
                 setFile(newFiltro)
@@ -63,34 +63,39 @@ const LegalesPage = () => {
         }
         if (store) getFiles()
     }, [store])
-    if(!store) return <p className="py-2 italic">Selecciona una tienda para ver documentos</p>
+    if (!store) return <p className="py-2 italic">Selecciona una tienda para ver documentos</p>
     return (
         <>
             <div className="flex flex-row justify-between w-full px-10">
-                <div className="flex flex-col justify-start items-center w-1/3 mt-10">
-                    <button id="contrato" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Contrato</button>
-                    <button id="garantia" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Garantía</button>
-                    <button id="seguro" onClick={clickButton} className="my-2 py-2 bg-blue-700 w-52 rounded-xl hover:scale-110 transition-all">Seguro</button>
-                    <div>
-                    {
-                        user && user.role === Role.Admin && <>
-                            <p className="py-2 text-center italic">Como admin puedes subir un documento nuevo o reemplazar el existente:</p>
-                            <p className="py-2 text-center italic">Cargar {buttonId}:</p>
-                            <input name={buttonId} type="file" onChange={handleFileChange} />
-                            <p>{message}</p>
-                        </>
-                    }
+                <div className="flex flex-col justify-start items-center w-1/3 mt-10 space-y-4">
+                    <div className="bg-white rounded-lg p-4 w-full shadow-md">
+                        <h3 className="text-lg font-bold mb-2">{store.name}</h3>
+                        <p className="text-sm text-gray-600">Ubicación General: <span className="font-bold">{store.location}</span></p>
+                        <p className="text-sm text-gray-600">Dirección: <span className="font-bold">{store.address}, {store.city}</span></p>
+                        <p className="text-sm text-gray-600">RUT: <span className="font-bold">{store.rut}</span></p>
+                        <p className="text-sm text-gray-600">Teléfono: <span className="font-bold">{store.phone}</span></p>
+                    </div>
+                    <button id="contrato" onClick={clickButton} className="py-3 text-white bg-blue-700 w-52 rounded-xl hover:shadow-md transition-all">Contrato</button>
+                    <button id="garantia" onClick={clickButton} className="py-3 text-white bg-blue-700 w-52 rounded-xl hover:shadow-md transition-all">Garantía</button>
+                    <button id="seguro" onClick={clickButton} className="py-3 text-white bg-blue-700 w-52 rounded-xl hover:shadow-md transition-all">Seguro</button>
+                    <div className="text-center mt-4">
+                        {(user && user.role === Role.Admin && buttonId !== '') && (
+                            <>
+                                <p className="py-2 italic">Como admin puedes subir un documento nuevo o reemplazar el existente:</p>
+                                <p className="py-2 italic">Cargar <span className="font-bold">{buttonId}</span>:</p>
+                                <input name={buttonId} type="file" onChange={handleFileChange} className="text-sm" />
+                                <p>{message}</p>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className="flex flex-col justify-start items-center w-2/3 h-screen overflow-y-auto">
-                    {
-                        (buttonId !== '' && !file) && <p>No se encontró documento de {buttonId}</p> 
-                    }
-                    {
-                        file && <div onContextMenu={handleRightClick}>
+                    {(buttonId !== '' && !file) && <p>No se encontró documento de {buttonId}</p>}
+                    {file && (
+                        <div onContextMenu={handleRightClick}>
                             <PDFView url={file.filePath} />
-                            </div>
-                    }
+                        </div>
+                    )}
                 </div>
             </div>
         </>

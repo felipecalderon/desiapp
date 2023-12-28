@@ -22,7 +22,7 @@ const PDFView = ({ url }: { url: string }) => {
                     pdf,
                     (el, index) => (
                         <Page 
-                            className="mb-3"
+                            className="mb-3 shadow-md"
                             key={`page_${index + 1}`} 
                             renderAnnotationLayer={false} 
                             renderTextLayer={false} 
