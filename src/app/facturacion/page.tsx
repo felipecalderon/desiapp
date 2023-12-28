@@ -6,12 +6,14 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import storeAuth from "@/stores/store.auth"
 import storeDataStore from "@/stores/store.dataStore"
-import { Role } from "@/config/interfaces"
+import { Role, Store } from "@/config/interfaces"
+
 interface Orders {
     orderID: string
     status: string
     total: number
     createdAt: Date
+    Store: Store
 }
 export default function Facturacion() {
     const route = useRouter()
@@ -39,6 +41,7 @@ export default function Facturacion() {
                 <table className="table-auto">
                     <thead>
                         <tr className="dark:bg-blue-950">
+                            <th className="border px-4 py-2">Sucursal</th>
                             <th className="border px-4 py-2">Fecha</th>
                             <th className="border px-4 py-2">Status</th>
                             <th className="border px-4 py-2">Total</th>
@@ -49,6 +52,7 @@ export default function Facturacion() {
 
                             const fecha = getFecha(order.createdAt)
                             return <tr className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{fecha?.fecha}</td>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
