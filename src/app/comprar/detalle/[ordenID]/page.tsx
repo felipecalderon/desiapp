@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
-  const {user} = storeAuth()
+  const { user } = storeAuth()
   const route = useRouter()
   const [order, setOrder] = useState<OrdendeCompra | null>(null)
   const [edit, setEdit] = useState(false)
@@ -33,25 +33,25 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const imprimirTabla = () => {
     if (tablaRef.current) {
       const ventanaImpresion = window.open('', '_blank');
-      if(ventanaImpresion) {
+      if (ventanaImpresion) {
         ventanaImpresion.document.write('<html><head><title>Impresión</title>');
-    
+
         // Copiar los estilos globales y de Tailwind
         Array.from(document.getElementsByTagName("link")).forEach(link => {
           if (link.rel === "stylesheet") {
             ventanaImpresion.document.write(link.outerHTML);
           }
         });
-    
+
         ventanaImpresion.document.write('</head><body>');
         ventanaImpresion.document.write(tablaRef.current.outerHTML);
         ventanaImpresion.document.write('</body></html>');
         ventanaImpresion.document.close();
-  
+
         // Llamar a la función de impresión
         ventanaImpresion.focus(); // Enfocar la ventana de impresión para asegurar que el diálogo se abra en ella
         ventanaImpresion.print();
-  
+
         // Retrasar el cierre de la ventana de impresión
         setTimeout(() => {
           ventanaImpresion.close();
@@ -61,61 +61,60 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   };
 
   const editOrderHandle = async () => {
-    if(!edit){
+    if (!edit) {
       setEdit(!edit)
-    }else{  
+    } else {
       setEdit(false)
       const formatoUpdateOrder = {
         ...editOrder, newProducts: [...products]
       }
-      if(order?.status === 'Recibido') return setMessage('Productos declarados como RECIBIDOS, no se puede cambiar')
-      if(order?.status === editOrder.status) return setMessage('No hay cambios para realizar')
-      const data = await fetch(`${url.backend}/order`, { 
+      if (order?.status === 'Recibido') return setMessage('Productos declarados como RECIBIDOS, no se puede cambiar')
+      if (order?.status === editOrder.status) return setMessage('No hay cambios para realizar')
+      const data = await fetch(`${url.backend}/order`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formatoUpdateOrder)
       })
       const res = await data.json()
       setMessage(`${res.message}, recargue para ver los cambios`)
-      console.log({res});
+      console.log({ res });
     }
   }
 
   type GroupedProducts = {
     [key: string]: ProductosdeOrden[];
   };
-// Función para agrupar y ordenar los productos
-function groupAndSortProducts(products: ProductosdeOrden[]): ProductosdeOrden[] {
-  const grouped = products.reduce<GroupedProducts>((acc, product) => {
-    // Si el grupo aún no existe, inicialízalo
-    if (!acc[product.name]) {
-      acc[product.name] = [];
-    }
-    // Agrega el producto al grupo correspondiente
-    acc[product.name].push(product);
-    return acc;
-  }, {});
-  // Ordenar cada grupo por sizeNumber de menor a mayor y luego aplanar el resultado
-  return Object.values(grouped).flatMap(group => group.sort((a, b) => Number(a.sizeNumber) - Number(b.sizeNumber)));
-}
-useEffect(() => {
-  if (order) {
-    const newProducts = order.ProductVariations.filter(pv => 
-      !products.some(p => p.variationID === pv.variationID)
-    );
-
-    console.log('Nuevos productos a agregar:', newProducts);
-
-    if (newProducts.length > 0) {
-      const updatedProducts = [...products, ...newProducts];
-      const groupedAndSorted = groupAndSortProducts(updatedProducts);
-      setProducts(groupedAndSorted);
-    }
+  // Función para agrupar y ordenar los productos
+  function groupAndSortProducts(products: ProductosdeOrden[]): ProductosdeOrden[] {
+    const grouped = products.reduce<GroupedProducts>((acc, product) => {
+      // Si el grupo aún no existe, inicialízalo
+      if (!acc[product.name]) {
+        acc[product.name] = [];
+      }
+      // Agrega el producto al grupo correspondiente
+      acc[product.name].push(product);
+      return acc;
+    }, {});
+    // Ordenar cada grupo por sizeNumber de menor a mayor y luego aplanar el resultado
+    return Object.values(grouped).flatMap(group => group.sort((a, b) => Number(a.sizeNumber) - Number(b.sizeNumber)));
   }
+  useEffect(() => {
+    if (order) {
+      const newProducts = order.ProductVariations.filter(pv =>
+        !products.some(p => p.variationID === pv.variationID)
+      );
+      if (newProducts.length > 0) {
+        const updatedProducts = [...products, ...newProducts];
+        const groupedAndSorted = groupAndSortProducts(updatedProducts);
+        setProducts(groupedAndSorted);
+      }
+    }
+  }, [order]);
 
-  const paresTotales = calcularParesTotales(products)
-  setTotalPares(paresTotales)
-}, [order]);
+  useEffect(() => {
+    const paresTotales = calcularParesTotales(products)
+    setTotalPares(paresTotales)
+  }, [order, products])
 
   useEffect(() => {
     fetchData(`order/${params.ordenID}`)
@@ -134,13 +133,13 @@ useEffect(() => {
     <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
       Estado: {!edit
         ? order.status
-        : <select onChange={(e) => setEditOrder({...editOrder, status: e.target.value})}>
+        : <select onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}>
           <option value={'Pendiente'}>Pendiente</option>
-          {edit && user?.role===Role.Admin && <option value={'Pagado'}>Pagado</option>}
+          {edit && user?.role === Role.Admin && <option value={'Pagado'}>Pagado</option>}
           <option value={'Recibido'}>Recibido conforme  </option>
         </select>
       } <button onClick={editOrderHandle} className="px-3 rounded-sm bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
-      {edit && user?.role===Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
+      {edit && user?.role === Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
     </p>
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
     <div className="border-t mt-4 pt-4 px-10">
@@ -175,7 +174,7 @@ useEffect(() => {
               return (
                 <tr key={sku} className="hover:bg-gray-100 dark:hover:bg-blue-700">
                   <td className="px-0 py-2 text-center whitespace-nowrap">
-                      {i+1}
+                    {i + 1}
                   </td>
                   <td className="flex flex-row justify-between px-2 py-2">
                     <div>
