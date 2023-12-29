@@ -42,12 +42,11 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
 
     const agregarUnoaTodos = () => {
         const nuevasCantidades: { [key: string]: number } = {};
-
         products.forEach((producto) => {
             producto.ProductVariations?.forEach((variation) => {
                 const maxStock = getStockCentralBySku(variation.sku);
                 const cantidadActual = 1
-                if (cantidadActual < maxStock) {
+                if (cantidadActual <= maxStock) {
                     nuevasCantidades[variation.variationID] = cantidadActual
                     handleAgregarAlPedido(variation.variationID, cantidadActual, variation.priceCost);
                 } else nuevasCantidades[variation.variationID] = maxStock

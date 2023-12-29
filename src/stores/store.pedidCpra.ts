@@ -75,11 +75,11 @@ const storeCpra = create<ListaCompra>((set) => ({
 				...state,
 				productos: updatedProductos,
 				totalProductos: updatedProductos.reduce(
-					(acc, producto) => acc + producto.quantityOrdered,
+					(acc, producto) => acc + Number(producto.quantityOrdered),
 					0
 				),
 				totalNeto: updatedProductos.reduce(
-					(acc, producto) => acc + Number(producto.price) * producto.quantityOrdered,
+					(acc, producto) => acc + Number(producto.price) * Number(producto.quantityOrdered),
 					0
 				),
 			};
