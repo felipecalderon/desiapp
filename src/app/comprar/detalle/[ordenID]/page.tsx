@@ -8,7 +8,6 @@ import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
-import { BiSolidEdit } from "react-icons/bi";
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
   const {user} = storeAuth()
@@ -82,22 +81,41 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     }
   }
 
-  useEffect(() => {
-    if(order) {
-      setProducts(prevProducts => {
-        // Crear un mapa de IDs de productos existentes para una verificación rápida
-        const existingProductIds = new Set(prevProducts.map(p => p.variationID));
-  
-        // Filtrar los productos que ya están presentes
-        const newProducts = order.ProductVariations.filter(product => !existingProductIds.has(product.variationID));
-
-        // Agregar solo los nuevos productos
-        return [...prevProducts, ...newProducts.map(product => ({ ...product }))];
-      });
+  type GroupedProducts = {
+    [key: string]: ProductosdeOrden[];
+  };
+// Función para agrupar y ordenar los productos
+function groupAndSortProducts(products: ProductosdeOrden[]): ProductosdeOrden[] {
+  const grouped = products.reduce<GroupedProducts>((acc, product) => {
+    // Si el grupo aún no existe, inicialízalo
+    if (!acc[product.name]) {
+      acc[product.name] = [];
     }
-    const paresTotales = calcularParesTotales(products)
-    setTotalPares(paresTotales)
-  }, [order]);
+    // Agrega el producto al grupo correspondiente
+    acc[product.name].push(product);
+    return acc;
+  }, {});
+  // Ordenar cada grupo por sizeNumber de menor a mayor y luego aplanar el resultado
+  return Object.values(grouped).flatMap(group => group.sort((a, b) => Number(a.sizeNumber) - Number(b.sizeNumber)));
+}
+useEffect(() => {
+  if (order) {
+    const newProducts = order.ProductVariations.filter(pv => 
+      !products.some(p => p.variationID === pv.variationID)
+    );
+
+    console.log('Nuevos productos a agregar:', newProducts);
+
+    if (newProducts.length > 0) {
+      const updatedProducts = [...products, ...newProducts];
+      const groupedAndSorted = groupAndSortProducts(updatedProducts);
+      setProducts(groupedAndSorted);
+    }
+  }
+
+  const paresTotales = calcularParesTotales(products)
+  setTotalPares(paresTotales)
+}, [order]);
 
   useEffect(() => {
     fetchData(`order/${params.ordenID}`)
@@ -132,6 +150,9 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         <thead className="bg-gray-50 dark:bg-blue-950">
           <tr>
             <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+              #
+            </th>
+            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
               Detalle
             </th>
             <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
@@ -150,9 +171,12 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         </thead>
         <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
           {
-            order.ProductVariations.map(({ name, priceCost, quantityOrdered, sizeNumber, sku, subtotal }) => {
+            products.map(({ name, priceCost, quantityOrdered, sizeNumber, sku, subtotal }, i) => {
               return (
                 <tr key={sku} className="hover:bg-gray-100 dark:hover:bg-blue-700">
+                  <td className="px-0 py-2 text-center whitespace-nowrap">
+                      {i+1}
+                  </td>
                   <td className="flex flex-row justify-between px-2 py-2">
                     <div>
                       {name} <span className="text-sm font-thin">({sku})</span>
