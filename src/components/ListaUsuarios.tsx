@@ -1,12 +1,13 @@
 'use client'
 import { Role, User } from '@/config/interfaces'
-import { fetchData, fetchUpdate } from '@/utils/fetchData'
+import { fetchData, fetchDelete, fetchUpdate } from '@/utils/fetchData'
 import React, { useEffect, useState } from 'react'
 
 const ListaDeUsuarios = () => {
     const [users, setUsers] = useState<User[] | null>(null)
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
     // Función para cargar los usuarios del servidor
     const loadUsers = async () => {
         const data = await fetchData('users');
@@ -17,33 +18,41 @@ const ListaDeUsuarios = () => {
         loadUsers();
     }, []);
 
-const saveEdit = async () => {
-    setLoading(true)
-    // Encuentra el usuario original en la lista de usuarios
-    const usuarioOriginal: User | undefined = users?.find(({ userID }) => editingUser?.userID === userID);
+    const saveEdit = async () => {
+        setLoading(true)
+        // Encuentra el usuario original en la lista de usuarios
+        const usuarioOriginal: User | undefined = users?.find(({ userID }) => editingUser?.userID === userID);
 
-    if (usuarioOriginal && editingUser) {
-        // Objeto para almacenar solo los campos modificados
-        const cambios: Partial<User> = {};
+        if (usuarioOriginal && editingUser) {
+            // Objeto para almacenar solo los campos modificados
+            const cambios: Partial<User> = {};
 
-        // Comparar cada campo
-        (Object.keys(editingUser) as Array<keyof User>).forEach(key => {
-            if (editingUser[key] !== usuarioOriginal[key]) {
-                cambios[key] = editingUser[key] as any;
+            // Comparar cada campo
+            (Object.keys(editingUser) as Array<keyof User>).forEach(key => {
+                if (editingUser[key] !== usuarioOriginal[key]) {
+                    cambios[key] = editingUser[key] as any;
+                }
+            });
+            const update = await fetchUpdate(`users/${editingUser.email}`, cambios)
+            if (update.message) {
+                loadUsers();
             }
-        });
-        const update = await fetchUpdate(`users/${editingUser.email}`, cambios)
-        if(update.message){
-            loadUsers();
         }
-    }
-    setLoading(false)
-    setEditingUser(null);
-};
+        setLoading(false)
+        setEditingUser(null);
+    };
 
     const startEditing = (user: User) => {
         setEditingUser({ ...user });
     };
+
+    const deleteUser = async (email: string) => {
+        setLoading(true)
+        const borrar = await fetchDelete(`users/${email}`)
+        if(borrar.error) setError(borrar.error)
+        setLoading(false)
+        loadUsers();
+    }
     if (!users) return <p>Cargando lista...</p>
     return (
         <>
@@ -126,12 +135,12 @@ const saveEdit = async () => {
                                     <div className="block relative space-x-2">
                                         {editingUser && editingUser.userID === user.userID ? (
                                             <>
-                                            <button className="bg-green-600 hover:bg-green-900 text-white px-2 py-2 rounded-xl text-xs" onClick={saveEdit}>
-                                                {loading ? 'Guardando...' : 'Guardar'}
-                                            </button>
-                                            <button className="bg-red-600 hover:bg-red-900 text-white px-2 py-2 rounded-xl text-xs" onClick={saveEdit}>
-                                                Eliminar
-                                            </button>
+                                                <button className="bg-green-600 hover:bg-green-900 text-white px-2 py-2 rounded-xl text-xs" onClick={saveEdit}>
+                                                    {loading ? 'Guardando...' : 'Guardar'}
+                                                </button>
+                                                <button className="bg-red-600 hover:bg-red-900 text-white px-2 py-2 rounded-xl text-xs" onClick={() => deleteUser(editingUser.email)}>
+                                                    {loading ? 'Borrando...' : 'Eliminar'}
+                                                </button>
                                             </>
                                         ) : (
                                             <button className="bg-indigo-600 hover:bg-indigo-900 text-white px-2 py-2 rounded-xl text-xs" onClick={() => startEditing(user)}>
@@ -144,6 +153,7 @@ const saveEdit = async () => {
                         ))}
                     </tbody>
                 </table>
+                {error && <p className='text-red bg-white px-3 italic'>{error}</p>}
             </div>
         </>
     )

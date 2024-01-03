@@ -24,7 +24,7 @@ const menu = {
 		{ name: 'Comprar', path: '/comprar' },
 		// { name: 'Quote', path: '/none' },
 		// { name: 'Returns', path: '/devoluciones' },
-		// { name: 'History', path: '/historial' },
+		{ name: 'Usuarios', path: '/usuarios' },
 		{ name: 'Configuración', path: '/settings' },
 		{ name: 'Legales', path: '/legales' }
 	],
