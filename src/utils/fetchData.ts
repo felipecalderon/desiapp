@@ -1,8 +1,11 @@
+'use server'
 import { url } from "@/config/constants"
 
 export const fetchData = async (path: string) => {
     try {
-      const response = await fetch(`${url.backend}/${path}`)
+      const response = await fetch(`${url.backend}/${path}`, {
+        cache: 'no-store'
+      })
       const data = await response.json()
       if(data) return data
       return null
@@ -10,3 +13,19 @@ export const fetchData = async (path: string) => {
       console.error('Error fetching:', error)
     }
   }
+
+export const fetchUpdate = async (path: string, body: object) => {
+  try {;
+    const response = await fetch(`${url.backend}/${path}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store'
+    })
+    const data = await response.json()
+    if(data) return data
+    return null
+  } catch (error) {
+    console.error('Error fetching:', error)
+  }
+}

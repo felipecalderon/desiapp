@@ -46,7 +46,7 @@ export interface User {
 	name: string
 	email: string
 	userImg: string
-	stores: Store[]
+	Stores: Store[]
 	exp: number
   }
 
