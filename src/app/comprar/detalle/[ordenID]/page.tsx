@@ -122,30 +122,37 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       .catch(e => console.log('error obteniendo orden', e))
   }, [])
 
-  if (!order) return <p>Orden no encontrada</p>
+
+  if (!order) return <p>Cargando...</p>
   const creacion = getFecha(order.createdAt)
-  return <div className="container mx-auto my-8 p-4">
-    <h2 className="text-3xl font-bold mb-4">Detalle de la O.C</h2>
+  return <div ref={tablaRef} className="container mx-auto my-1 px-4">
+    <h2 className="text-3xl font-bold my-3">Detalle de la O.C</h2>
     <p className="text-sm">Creación O.C: {creacion?.fecha} a las {creacion?.hora}</p>
+    <p className="text-2xl font-semibold">{order.Store.name} - {order.Store.rut}</p>
     <p className="text-lg font-semibold">Subtotal: {formatoPrecio(order.total)}</p>
     <p className="text-lg font-semibold">IVA: {formatoPrecio(order.total * 0.19)}</p>
     <p className="text-lg font-semibold">Total: {formatoPrecio(order.total * 1.19)} <span className="italic font-normal">({totalPares} pares)</span></p>
+    <div className="flex flex-row items-center gap-3">
+
     <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
       Estado: {!edit
         ? order.status
         : <select onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}>
           <option value={'Pendiente'}>Pendiente</option>
           {edit && user?.role === Role.Admin && <option value={'Pagado'}>Pagado</option>}
-          <option value={'Recibido'}>Recibido conforme  </option>
+          {edit && user?.role === Role.Admin && <option value={'Enviado'}>Enviado</option>}
+          {edit && user?.role === Role.Admin && <option value={'Facturado'}>Facturado</option>}
+          <option value={'Recibido'}>Recibido conforme</option>
         </select>
-      } <button onClick={editOrderHandle} className="px-3 rounded-sm bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
+      } <button onClick={editOrderHandle} className="px-6 rounded-lg bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
       {edit && user?.role === Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
     </p>
+    <button onClick={imprimirTabla} className="px-3 rounded-lg h-fit bg-blue-900 text-sm py-1 text-white">Imprimir</button>
+    </div>
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
-    <div className="border-t mt-4 pt-4 px-10">
-      <button onClick={imprimirTabla} className="px-3 rounded-sm bg-blue-800 text-white">Imprimir</button>
+    <div className="mt-2">
       <p className="text-xl font-semibold mb-2">Productos:</p>
-      <table ref={tablaRef} className="min-w-full divide-y divide-gray-200">
+      <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 dark:bg-blue-950">
           <tr>
             <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
@@ -171,12 +178,15 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
           {
             products.map(({ name, priceCost, quantityOrdered, sizeNumber, sku, subtotal }, i) => {
+              // Comparar el nombre actual con el nombre de la fila anterior
+              let isDifferentGroup = i === 0 || name !== products[i - 1].name;
+              const barra = isDifferentGroup && 'border-t-2'
               return (
-                <tr key={sku} className="hover:bg-gray-100 dark:hover:bg-blue-700">
-                  <td className="px-0 py-2 text-center whitespace-nowrap">
+                <tr key={sku} className={`hover:bg-gray-100 dark:hover:bg-blue-700`}>
+                  <td className={`px-0 py-2 text-center whitespace-nowrap`}>
                     {i + 1}
                   </td>
-                  <td className="flex flex-row justify-between px-2 py-2">
+                  <td className={`flex flex-row justify-between px-2 py-2 ${barra}`}>
                     <div>
                       {name} <span className="text-sm font-thin">({sku})</span>
                     </div>
@@ -199,6 +209,10 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
           }
         </tbody>
       </table>
+      <p className="text-lg font-semibold text-right">Subtotal: {formatoPrecio(order.total)}</p>
+      <p className="text-lg font-semibold text-right">IVA: {formatoPrecio(order.total * 0.19)}</p>
+      <p className="text-lg font-semibold text-right">Total: {formatoPrecio(order.total * 1.19)} </p>
+      <p className="text-lg font-semibold text-right">Total Pares: {totalPares}</p>
     </div>
   </div>
 }

@@ -28,21 +28,23 @@ body {
     visibility: hidden;
   }
 
-  table,
-  table * {
+  p{
+    visibility: visible;
+  }
+
+  table, table * {
     visibility: visible;
   }
 
   table {
-    position: absolute;
+    position: relative;
     left: 0;
     top: 0;
     width: 100%;
     font-size: 12px; /* Ajuste según sea necesario */
   }
 
-  table th,
-  table td {
+  table th, table td {
     padding: 10px; /* Ajuste el espaciado según sea necesario */
     border: 1px solid black; /* Añade bordes para definir claramente las celdas */
   }
