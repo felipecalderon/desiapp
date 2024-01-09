@@ -37,7 +37,7 @@ export interface Store {
 	isAdminStore: boolean
 	createdAt: Date
 	updatedAt: Date
-	Users: UserStore[]
+	Users: User[]
 }
 
 export interface User {
