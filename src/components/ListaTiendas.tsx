@@ -16,7 +16,6 @@ import React, { useState } from 'react'
 
 const ListaTiendas = ({store}: {store: Store[]}) => {
     const [editingStore, setEditingStore] = useState<Store | null>(null);
-    console.log(store);
     const saveEdit = async () => {
         console.log('ok');
     };
