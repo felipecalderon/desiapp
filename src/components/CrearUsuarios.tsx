@@ -96,6 +96,7 @@ const CrearUsuarios = () => {
             setForm(prevForm => ({ ...prevForm, password: passValue }));
         }
     }, []);
+    
     return (
         <div className="container mx-auto p-4">
             <form onSubmit={enviarForm} className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6" autoComplete="new-password">
@@ -131,9 +132,9 @@ const CrearUsuarios = () => {
                             className="form-select block w-full mt-1 border-gray-300 shadow-sm rounded-md bg-gray-200 px-2"
                         >
                             <option value="admin">Administrador</option>
-                            <option value="supplier">Proveedor</option>
                             <option value="store_manager">Franquiciado</option>
-                            <option value="store_seller">NO Franquiciado</option>
+                            <option value="consignado">Consignado</option>
+                            <option value="tercero">Tercero</option>
                         </select>
                     </label>
                 </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Role } from '@/config/interfaces'
+import { OrdendeCompra, Role } from '@/config/interfaces'
 import FechaFormateada from './FechaFormat'
 import HoraFormateada from './HoraFormateada'
 import storeAuth from '@/stores/store.auth'
@@ -8,13 +8,14 @@ import storeDataStore from '@/stores/store.dataStore'
 import { formatoRut } from '@/utils/rut'
 import storeSales from '@/stores/store.sales'
 import { formatoPrecio } from '@/utils/price'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchData } from '@/utils/fetchData'
 
 const Header = () => {
     const { user } = storeAuth()
     const { store } = storeDataStore()
     const { totalSales, sales, setSales, updateTotals } = storeSales()
+    const [facturado, setFacturado] = useState(0)
 
     useEffect(() => {
         updateTotals();
@@ -34,6 +35,19 @@ const Header = () => {
         }
 
     }, [store, user])
+
+    useEffect(() => {
+        fetchData('order')
+            .then((order: OrdendeCompra[]) => {
+                const total = order.reduce((acc, {total, status}) => {
+                    if(status === 'Pendiente'){
+                        return acc + total
+                    }
+                    return acc
+                }, 0)
+                setFacturado(total);
+            })
+    }, [])
     if (!user) return null
     if (user.role === Role.Admin) {
         return (
@@ -46,7 +60,7 @@ const Header = () => {
                     <p className='italic'><FechaFormateada /> | <HoraFormateada /></p>
                     <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>
                         <h2 className='text-base font-semibold whitespace-pre'>
-                            PAGO DE CLIENTES PENDIENTE: {formatoPrecio(totalSales)}
+                            PAGO DE CLIENTES PENDIENTE: {formatoPrecio(facturado)}
                         </h2>
                     </div>
                 </div>
