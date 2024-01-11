@@ -42,8 +42,8 @@ export const bajarExcel = (productos: Producto[]): void => {
 				variacion.sku,
 				variacion.sku,
 				variacion.stockQuantity,
-				variacion.priceCost,
-				variacion.priceList,
+				Math.round(variacion.priceCost),
+				Math.round(variacion.priceList),
 			];
 			values.forEach((value, colIdx) => {
 				const cell_ref: string = XLSX.utils.encode_cell({
