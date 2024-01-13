@@ -29,16 +29,13 @@ const menu = {
 		{ name: 'Configuración', path: '/settings' },
 		{ name: 'Legales', path: '/legales' }
 	],
-	supplierMenu: [
-		{ name: 'Home', path: '/' },
+	consignadoMenu: [
+		{ name: 'Inicio', path: '/' },
+		{ name: 'Vender', path: '/vender' },
 		{ name: 'Stock', path: '/stock' },
-		{ name: 'Invoice', path: '/facturacion' },
-		{ name: 'Order', path: '/comprar' },
-		{ name: 'Quote', path: '/none' },
-		{ name: 'Returns', path: '/devoluciones' },
-		{ name: 'History', path: '/historial' },
-		{ name: 'Settings', path: '/settings' },
-		{ name: 'Legal', path: '/legales' }
+		{ name: 'Facturación', path: '/facturacion' },
+		{ name: 'Comprar', path: '/comprar' },
+		{ name: 'Legales', path: '/legales' }
 	],
 	storeManagerMenu: [
 		{ name: 'Inicio', path: '/' },
@@ -50,9 +47,9 @@ const menu = {
 		// { name: 'Historial', path: '/historial' },
 		{ name: 'Legales', path: '/legales' }
 	],
-	storeSellerMenu: [
+	terceroMenu: [
 		{ name: 'Comprar', path: '/comprar' },
-		{ name: 'Historial', path: '/historial' }
+		{ name: 'Historial de compras', path: '/historial' }
 	],
 }
 
@@ -78,8 +75,8 @@ export default function Navbar() {
 		}
 		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
 		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
-		else if (user?.role === Role.NO_Franquiciado) setUserMenu(menu.storeSellerMenu)
-		else if (user?.role === Role.Proveedor) setUserMenu(menu.supplierMenu)
+		else if (user?.role === Role.Consignado) setUserMenu(menu.consignadoMenu)
+		else if (user?.role === Role.Tercero) setUserMenu(menu.terceroMenu)
 	}, [user, isLoadingUser])
 
 	useEffect(() => {

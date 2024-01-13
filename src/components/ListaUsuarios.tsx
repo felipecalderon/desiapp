@@ -109,16 +109,16 @@ const ListaDeUsuarios = () => {
                                             className="bg-gray-200 px-2 rounded-md"
                                         >
                                             <option value="admin">Administrador</option>
-                                            <option value="supplier">Proveedor</option>
+                                            <option value="consignado">Consignado</option>
                                             <option value="store_manager">Franquiciado</option>
-                                            <option value="store_seller">NO Franquiciado</option>
+                                            <option value="tercero">Tercero</option>
                                         </select>
                                     ) : (
                                         {
                                             'admin': 'Administrador',
-                                            'supplier': 'Proveedor',
+                                            'consignado': 'Consignado',
                                             'store_manager': 'Franquiciado',
-                                            'store_seller': 'NO Franquiciado'
+                                            'tercero': 'Tercero'
                                         }[user.role]
                                     )}
                                 </td>

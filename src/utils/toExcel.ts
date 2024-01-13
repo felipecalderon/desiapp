@@ -1,5 +1,6 @@
 import { Producto, Variacion } from '@/config/interfaces';
 import * as XLSX from 'xlsx';
+import { calcularEAN } from './calcEan13';
 
 export const bajarExcel = (productos: Producto[]): void => {
 	if (!productos || productos.length === 0) {
@@ -39,7 +40,7 @@ export const bajarExcel = (productos: Producto[]): void => {
 				variacion.sizeNumber,
                 'D3SI AVOCCO',
                 'Si',
-				variacion.sku,
+				calcularEAN(variacion.sku),
 				variacion.sku,
 				variacion.stockQuantity,
 				Math.round(variacion.priceCost),

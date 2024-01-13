@@ -20,9 +20,9 @@ export interface Variacion {
 
 export enum Role {
 	Admin = 'admin',
-	Proveedor = 'supplier',
 	Franquiciado = 'store_manager',
-	NO_Franquiciado = 'store_seller',
+	Consignado = 'consignado',
+	Tercero = 'tercero',
 }
 
 export interface Store {
