@@ -8,7 +8,10 @@ export default function TablaCompraProductos() {
   const { products } = storeProduct()
   const { store } = storeDataStore()
 
-  if(!store) return <p className="bg-red-600">Selecciona una tienda para crear la orden</p>
+  if (!store) return <p
+    className="bg-red-600 px-3 py-2 rounded-lg text-white my-auto ">
+    Selecciona una tienda para crear la orden
+  </p>
 
   return <>
     <div className="w-full mt-6 px-10">

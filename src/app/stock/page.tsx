@@ -1,4 +1,3 @@
-import SelectStore from "@/components/SelectStore"
 import InfoTotalStock from "@/components/InfoTotalStock"
 import GenerarTablaStock from "@/components/tablas/GenerarTabla"
 

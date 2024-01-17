@@ -17,13 +17,14 @@ export default function FiltroProductos({ products }: { products: Producto[] }) 
         // Ordenar de forma descendente por similitud
         return similitudB - similitudA;
     });
+
     if(products.length === 0) return null
     return (
         <>
         <div className="mb-4 flex flex-row gap-3">
-            <label htmlFor="filtro" className="text-right">Buscar producto:</label>
             <input
-                className="px-2 bg-yellow-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm"
+                className="px-2 py-1 bg-blue-200 mt-1 block w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
+                placeholder="Buscar producto aquí..."
                 type="text"
                 id="filtro"
                 value={filtro}
