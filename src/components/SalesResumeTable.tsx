@@ -34,12 +34,15 @@ const SalesResumeTable = () => {
                         Vendido
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                        Cantidad
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                         Estado
                     </th>
                 </tr>
             </thead>
             <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
-                {sales.map(({ total, status, createdAt, saleID, storeID }) => {
+                {sales.map(({ total, status, createdAt, saleID, storeID, SaleProducts }) => {
                     const creacion = getFecha(createdAt);
                     const store = stores && stores.find(({storeID: ID}) => ID === storeID)
                     return (
@@ -52,6 +55,13 @@ const SalesResumeTable = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 {formatoPrecio(total)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                {
+                                SaleProducts.length && SaleProducts.length > 1
+                                    ? SaleProducts.length + ' pares'
+                                    : SaleProducts.length + ' par'
+                                }
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 {status}
