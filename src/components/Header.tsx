@@ -1,8 +1,8 @@
 'use client'
 
 import { OrdendeCompra, Role } from '@/config/interfaces'
-import FechaFormateada from './FechaFormat'
-import HoraFormateada from './HoraFormateada'
+import FechaFormateada from '@/components/FechaFormat'
+import HoraFormateada from '@/components/HoraFormateada'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
 import { formatoRut } from '@/utils/rut'

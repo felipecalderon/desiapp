@@ -104,21 +104,21 @@ const CrearUsuarios = () => {
                 <div className="mb-4">
                     <label className="block mb-2">
                         <span className="text-gray-700">Nombre</span>
-                        <input className="form-input mt-1 block w-full border-gray-300 shadow-sm rounded-md" type="text" name="name" autoComplete="off" onChange={changeForm} />
+                        <input className="bg-slate-100 form-input mt-1 block w-full border-gray-300 shadow-sm rounded-md" type="text" name="name" autoComplete="off" onChange={changeForm} />
                         {errors.name !== '' && <p className="text-red-500 text-xs italic">{errors.name}</p>}
                     </label>
                 </div>
                 <div className="mb-4">
                     <label className="block mb-2">
                         <span className="text-gray-700">Email</span>
-                        <input ref={emailRef} className="form-input mt-1 block w-full border-gray-300 shadow-sm rounded-md" type="text" name="email" autoComplete="off" onChange={changeForm} />
+                        <input ref={emailRef} className="bg-slate-100 form-input mt-1 block w-full border-gray-300 shadow-sm rounded-md" type="text" name="email" autoComplete="off" onChange={changeForm} />
                         {errors.email !== '' && <p className="text-red-500 text-xs italic">{errors.email}</p>}
                     </label>
                 </div>
                 <div className="mb-4">
                     <label className="block mb-2">
                         <span className="text-gray-700">Clave</span>
-                        <input ref={passwordRef} className="form-input mt-1 block w-full border-gray-300 shadow-sm rounded-md" type="password" name="password" autoComplete="off" onChange={changeForm} />
+                        <input ref={passwordRef} className="bg-slate-100 form-input mt-1 block w-full border-gray-300 shadow-sm rounded-md" type="password" name="password" autoComplete="off" onChange={changeForm} />
                         {errors.password !== '' && <p className="text-red-500 text-xs italic">{errors.password}</p>}
                     </label>
                 </div>

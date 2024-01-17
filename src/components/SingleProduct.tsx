@@ -1,7 +1,7 @@
 'use client'
 import storeProduct from '@/stores/store.product'
-import ImagenProducto from './ImageProduct'
-import DetallesProducto from './DetalleSingleProduct'
+import ImagenProducto from '@/components/ImageProduct'
+import DetallesProducto from '@/components/DetalleSingleProduct'
 
 export default function SingleProductComponent() {
   const { product } = storeProduct()
