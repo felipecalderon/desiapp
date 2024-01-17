@@ -21,7 +21,7 @@ export default function DataCompra({ message, products, cantidades, getStockCent
 
   return (
     <tbody className="text-gray-700 dark:text-gray-200 text-sm font-light">
-      {products.map((producto) => {
+      {products.map((producto: Producto) => {
         return producto.ProductVariations?.map((variation, index) => {
           const variationID = variation.variationID;
           const cantidad = cantidades[variationID] || 0;
@@ -59,11 +59,16 @@ export default function DataCompra({ message, products, cantidades, getStockCent
                 </td>
             }
             <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-              <input min="0" max={getStockCentralBySku(variation.sku)} type="number"
+              <input
+                type="text"
+                pattern="[0-9]*"
+                inputMode="numeric"
+                max={getStockCentralBySku(variation.sku)}
                 name={variation.sku}
                 value={cantidades[variation.variationID] || 0}
                 onChange={(e) => handleInputChange(e, variation)}
-                className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1" />
+                className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1"
+                />
             </td>
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
               {formatoPrecio(subtotal)}

@@ -13,6 +13,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
     const { productos, setPedido, updateCantidad, removePedido, clearPedido } = storeCpra()
     const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
     const { store } = storeDataStore()
+    
     const handleAgregarAlPedido = (variationID: string, cantidad: number, price: number) => {
         const existingVariation = productos.find((producto) => producto.variationID === variationID);
 
@@ -40,12 +41,11 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
         return 0;
     };
 
-    const agregarUnoaTodos = () => {
+    const agregarCantidadesGlobales = (products: Producto[], cantidadActual = 1) => {
         const nuevasCantidades: { [key: string]: number } = {};
         products.forEach((producto) => {
             producto.ProductVariations?.forEach((variation) => {
                 const maxStock = getStockCentralBySku(variation.sku);
-                const cantidadActual = 1
                 if (cantidadActual <= maxStock) {
                     nuevasCantidades[variation.variationID] = cantidadActual
                     handleAgregarAlPedido(variation.variationID, cantidadActual, variation.priceCost);
@@ -73,20 +73,28 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
     }
 
     useEffect(() => {
+        return () => clearPedido()
+    }, [])
+
+    useEffect(() => {
         fetchData('products')
             .then(res => {
                 setProductosCentral(res)
             })
     }, [])
 
-    if(!store) return <p>Selecciona una tienda para agregar la orden</p>
     if (user) return (
         <>
             {
                 user.role === Role.Admin 
                 && <div className="flex items-center gap-3">
-                    <button className="bg-blue-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" onClick={agregarUnoaTodos}>Agregar calzados</button>
-                    <p>Gestionando orden para: <span className="font-bold">{store.name}</span> {store.city}</p>
+                    <button className="bg-blue-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" 
+                    onClick={() => agregarCantidadesGlobales(products)}>Agregar calzados</button>
+
+                    <button className="bg-red-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" 
+                    onClick={() => agregarCantidadesGlobales(products, 0)}>Quitar calzados</button>
+
+                    <p>Gestionando orden para: <span className="font-bold">{store?.name}</span> {store?.city}</p>
                 </div>
             }
             <table className="min-w-full table-auto">

@@ -1,21 +1,18 @@
 'use client'
-import SelectStore from '@/components/SelectStore'
-import TablaProductosCompra from '@/components/tablas/ProductosCompra'
+import FiltroProductos from '@/components/FiltroProductos'
 import ResumeCompra from '@/components/tablas/ResumeCompra'
-import TablaPedidosCompra from '@/components/tablas/TablaPedidosCpra'
-import storeAuth from '@/stores/store.auth'
-import storeCpra from '@/stores/store.pedidCpra'
+import storeDataStore from '@/stores/store.dataStore'
 import storeProduct from '@/stores/store.product'
-import { fetchData } from '@/utils/fetchData'
-import { useEffect, useState } from 'react'
 
-export default function TablaVentasProductos() {
+export default function TablaCompraProductos() {
   const { products } = storeProduct()
+  const { store } = storeDataStore()
+
+  if(!store) return <p className="bg-red-600">Selecciona una tienda para crear la orden</p>
 
   return <>
     <div className="w-full mt-6 px-10">
-      <TablaProductosCompra products={products} />
-      <TablaPedidosCompra />
+      <FiltroProductos products={products} />
     </div>
     <ResumeCompra />
   </>

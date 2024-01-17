@@ -66,6 +66,7 @@ const CrearTienda = () => {
         return "";
 
     }
+
     const validateRUT = (rut: string) => {
         if(rut === '') return 'Ingrese RUT'
         if (rut.length < 8) {
@@ -101,6 +102,7 @@ const CrearTienda = () => {
     const getUsers = async () => {
         setUsuarios(await fetchData('users'))
     }
+    
     useEffect(() => {
         getUsers()
     }, [])

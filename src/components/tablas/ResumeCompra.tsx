@@ -2,12 +2,13 @@
 import storeCpra from '@/stores/store.pedidCpra';
 import { formatoPrecio } from '@/utils/price';
 import { GrLinkNext as NextIcon } from 'react-icons/gr'
+
 import React from 'react'
 import Link from 'next/link';
 
 const ResumeCompra = () => {
     const { productos, totalProductos, totalNeto } = storeCpra()
-    console.log(totalProductos);
+
     if (productos.length > 0) return (
         <footer
             className='fixed bottom-0 left-60 hover:scale-105 hover:shadow-xl transition-all shadow-blue-400 bg-green-500 text-gray-800 rounded-t-lg p-3'
@@ -38,7 +39,7 @@ const ResumeCompra = () => {
                         <Link href={'comprar/detalle'}>
                             <NextIcon style={{ color: 'white' }} />
                         </Link>
-                    </span>                
+                    </span>                   
                 </div>
             </div>
         </footer>
