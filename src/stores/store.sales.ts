@@ -9,6 +9,7 @@ interface SaleProduct {
     subtotal: number,
     createdAt: Date,
     updatedAt: Date,
+    variationID: string
 }
 
 interface Sales {

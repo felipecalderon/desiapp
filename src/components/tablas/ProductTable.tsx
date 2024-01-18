@@ -2,7 +2,6 @@
 import storeAuth from "@/stores/store.auth"
 import DataTable from "./DataTable"
 import { Producto, Role } from '@/config/interfaces'
-import { bajarExcel } from "@/utils/toExcel"
 
 const TablaProductos = ({ products }: { products: Producto[] }) => {
 	const { user } = storeAuth()
@@ -17,7 +16,8 @@ const TablaProductos = ({ products }: { products: Producto[] }) => {
                             <th className="py-3 px-2 text-center">Talla</th>
                             {user?.role === Role.Admin && <th className="py-3 px-6 text-center">Precio Costo</th>}
                             <th className="py-3 px-6 text-center">Precio Plaza</th>
-                            <th className="py-3 px-2 text-center">Stock</th>
+                            <th className="py-3 px-2 text-center">Stock central</th>
+                            <th className="py-3 px-2 text-center">Stock agregado</th>
                         </tr>
                     </thead>
                     <DataTable products={products} message={'Cargando productos...'} />
