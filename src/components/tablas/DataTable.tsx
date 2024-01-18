@@ -59,10 +59,11 @@ export default function DataTable({ message, products }: { message: string, prod
                     <span className='font-bold text-green-600'>{variation.stockQuantity}</span>
                   </td>
               }
+              {user && user.role === Role.Admin && 
               <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                 { quantitySold }
               </td>
-
+              }
             </tr>
           })
         }

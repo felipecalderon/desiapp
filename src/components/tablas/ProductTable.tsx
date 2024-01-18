@@ -17,7 +17,7 @@ const TablaProductos = ({ products }: { products: Producto[] }) => {
                             {user?.role === Role.Admin && <th className="py-3 px-6 text-center">Precio Costo</th>}
                             <th className="py-3 px-6 text-center">Precio Plaza</th>
                             <th className="py-3 px-2 text-center">Stock central</th>
-                            <th className="py-3 px-2 text-center">Stock agregado</th>
+                            {user?.role === Role.Admin && <th className="py-3 px-6 text-center">Stock agregado</th>}
                         </tr>
                     </thead>
                     <DataTable products={products} message={'Cargando productos...'} />
