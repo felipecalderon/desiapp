@@ -63,9 +63,9 @@ function DetallesProducto({ product }: { product: Producto }) {
     return (
         <div>
             <div className="flex flex-row items-center gap-3">
-                <div className="w-12 h-12 bg-red-600 flex flex-col justify-center items-center p-1">
-                    <span className="text-xs mb-1">Talla</span>
-                    <span className="text-lg font-bold">{sizeNumber}</span>
+                <div className="w-12 h-12 bg-red-600 flex flex-col justify-center items-center">
+                    <span className="text-xs text-white">Talla</span>
+                    <span className="text-lg font-bold text-white">{sizeNumber}</span>
                 </div>
                 <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
             </div>
@@ -95,8 +95,8 @@ function DetallesProducto({ product }: { product: Producto }) {
                     Agregar al Pedido
                 </button>
             </form>
-                : <div className="bg-red-800 px-2 py-3">
-                    <p className="text-lg font-semibold my-3">Usted no tiene stock disponible para el calzado {product.name} talla {sizeNumber}, adquiera con el franquiciante.</p>
+                : <div className="bg-red-800 px-2 py-3 text-center my-3">
+                    <p className="text-lg font-semibold my-3 text-white">Usted no tiene stock disponible, adquiera con el franquiciante.</p>
                 </div>}
         </div>
     )

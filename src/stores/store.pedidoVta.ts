@@ -19,11 +19,19 @@ const storeVta = create<ListaPedido>((set) => ({
 
 	removePedido: (sku) =>
 		set((state) => {
-			return {
-				pedidoVta: state.pedidoVta.filter(({ ProductVariations }) =>
-					ProductVariations.some(({ sku: skuVar }) => skuVar === sku)
-				),
-			};
+			let producto = state.pedidoVta.map((product) => {
+				return {
+				  ...product,
+				  ProductVariations: product.ProductVariations?.filter(
+					(variation) => variation.sku !== sku
+				  ),
+				};
+			  })
+			  if(!producto){
+				return { pedidoVta: []}
+			  }else{
+				return { pedidoVta: producto }
+			  }
 		}),
 
 	clearPedido: () => set({ pedidoVta: [] }),

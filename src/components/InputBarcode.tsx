@@ -32,9 +32,11 @@ export default function Input() {
             <FaBarcode className='text-7xl'/>
             <input
                 type="text"
-                name='search'
+                name="search"
                 ref={inputRef}
                 value={sku}
+                autoComplete='off'
+
                 onChange={(e) => findProduct(e)}
                 className="w-1/2 px-2 border rounded-md dark:bg-gray-800 dark:text-white bg-white text-gray-900 transition-colors duration-300"
                 placeholder="Ingresa el código de barra / sku"

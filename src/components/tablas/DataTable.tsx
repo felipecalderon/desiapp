@@ -2,23 +2,22 @@
 import { Producto, Role } from "@/config/interfaces"
 import storeAuth from "@/stores/store.auth"
 import storeSales from "@/stores/store.sales"
+import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
-import { useMemo } from "react"
-
+import { useEffect, useState } from "react"
+interface StockAgregado {
+  variationID: string
+  totalQuantity: string
+}
 export default function DataTable({ message, products }: { message: string, products: Producto[] }) {
   const { user } = storeAuth()
   const { sales } = storeSales()
-  
-  const salesSummary = useMemo(() => {
-      const summary = new Map();
-      sales.forEach(sale => {
-          sale.SaleProducts.forEach(saleProduct => {
-              const quantity = summary.get(saleProduct.variationID) || 0;
-              summary.set(saleProduct.variationID, quantity + saleProduct.quantitySold);
-          });
-      });
-      return summary;
-  }, [sales]);
+  const [stockAgregado, setStock] = useState<StockAgregado[]>([])
+ 
+  useEffect(() => {
+    fetchData('products/all')
+    .then((stockAgregado) => setStock(stockAgregado))
+  }, [])
 
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
@@ -28,12 +27,12 @@ export default function DataTable({ message, products }: { message: string, prod
     </tbody>
   )
 
-  if (sales && sales.length > 0) {
+  if (sales && sales.length > 0 && stockAgregado.length > 0) {
     return (
       <tbody className="text-gray-600 dark:text-gray-200 text-sm font-light">
         {products.map((producto) => {
           return producto.ProductVariations?.map((variation, index) => {
-            const quantitySold = salesSummary.get(variation.variationID) || 0;
+            const quantitySold = stockAgregado.find((stockA) => stockA.variationID === variation.variationID)?.totalQuantity || 0
             const esPrimero = index === 0
             return <tr key={variation.variationID} className={`${esPrimero ? 'border-t-4 border-t-blue-300' : 'border-t'} text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300`}>
               {esPrimero && (

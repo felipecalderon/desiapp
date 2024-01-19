@@ -10,7 +10,7 @@ import storeDataStore from "@/stores/store.dataStore"
 const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
     const { user } = storeAuth()
     const [productosCentral, setProductosCentral] = useState<Producto[] | null>(null)
-    const { productos, setPedido, updateCantidad, removePedido, clearPedido } = storeCpra()
+    const { productos, setPedido, updateCantidad, removePedido } = storeCpra()
     const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
     const { store } = storeDataStore()
     
@@ -71,10 +71,6 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
             removePedido(variation.variationID);
         }
     }
-
-    useEffect(() => {
-        return () => clearPedido()
-    }, [])
 
     useEffect(() => {
         fetchData('products')

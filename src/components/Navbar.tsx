@@ -10,6 +10,9 @@ import storeAuth from "@/stores/store.auth"
 import { Role } from "@/config/interfaces"
 import { isTokenExpired } from "@/utils/jwt"
 import useUserLS from "@/hooks/getItemLocalStorage"
+import storeCpra from "@/stores/store.pedidCpra"
+import storeProduct from "@/stores/store.product"
+import storeSales from "@/stores/store.sales"
 
 export type Menu = {
 	name: string
@@ -58,21 +61,13 @@ export default function Navbar() {
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
 	const { setIsLogged, setUser } = storeAuth()
 	const { isLoadingUser, user } = useUserLS()
-	const { token, isLoadingToken } = useTokenLS()
 	const currentPath = usePathname()
 	const route = useRouter()
-
+	const {clearPedido} = storeCpra()
+	const {setProducts} = storeProduct()
+	const {setSales} = storeSales()
+	
 	useEffect(() => {
-		if (user && token && !isLoadingUser) {
-			if (isTokenExpired(token)) {
-				console.log('token expirado');
-				setIsLogged(false)
-				setUser(null)
-			}
-			else setIsLogged(true)
-		} else {
-			setIsLogged(false)
-		}
 		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
 		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
 		else if (user?.role === Role.Consignado) setUserMenu(menu.consignadoMenu)
@@ -80,14 +75,22 @@ export default function Navbar() {
 	}, [user, isLoadingUser])
 
 	useEffect(() => {
-		if (!user && !isLoadingUser && !isLoadingToken) {
+		if (!user && !isLoadingUser) {
 			route.push('/login');
 			localStorage.clear();
 			setIsLogged(false);
 			console.log('No está logueado');
 		}
-	}, [user, isLoadingUser, isLoadingToken]);
+	}, [user, isLoadingUser]);
 
+	useEffect(() => {
+		return () => {
+			setUser(null)
+			clearPedido()
+			setProducts([])
+			setSales([])
+		}
+	}, [])
 	if (!user) return null
 	return (
 		<nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center dark:bg-gray-900 lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">

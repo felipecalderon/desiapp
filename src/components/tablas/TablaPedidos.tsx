@@ -2,18 +2,19 @@
 import { url } from '@/config/constants'
 import storeDataStore from '@/stores/store.dataStore'
 import storeVta from '@/stores/store.pedidoVta'
-import { fetchData } from '@/utils/fetchData'
 import { formatoPrecio } from '@/utils/price'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { BsFillCartPlusFill } from 'react-icons/bs'
+import { CiSquareRemove } from "react-icons/ci";
+
 interface Products {
     storeProductID: string
     quantitySold: number
 }
 const TablaPedidosVenta = () => {
     const route = useRouter()
-    const { pedidoVta, clearPedido } = storeVta()
+    const { pedidoVta, clearPedido, removePedido } = storeVta()
     const { store } = storeDataStore()
     const [message, setMessage] = useState<string | null>(null)
     const [products, setProducts] = useState<Products[] | null>(null)
@@ -65,18 +66,20 @@ const TablaPedidosVenta = () => {
                                         <th className="py-3 px-3 text-center">Cantidad</th>
                                         <th className="py-3 px-6 text-center">Precio Unitario</th>
                                         <th className="py-3 px-6 text-center">Subtotal</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='hover:bg-gray-100 dark:hover:bg-slate-800'>
                                     {pedidoVta.map((producto) => {
-                                        const { priceCost, priceList, sizeNumber, sku, stockQuantity, variationID } = producto.ProductVariations[0]
+                                        if(producto.ProductVariations.length === 0 || Object.keys(producto).length === 0 ) return null
+                                        const { priceList, sizeNumber, sku, stockQuantity, variationID } = producto?.ProductVariations[0]
                                         return (
                                             <tr className="border-b border-gray-200" key={variationID}>
                                                 <td className="py-3 px-6 text-center ">
                                                     <span>{sku}</span>
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
-                                                    <span>{producto.name}</span>
+                                                    <span>{producto.name} - {sizeNumber}</span>
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
                                                     <span>{producto.cantidad}</span>
@@ -86,6 +89,13 @@ const TablaPedidosVenta = () => {
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
                                                     <span>{formatoPrecio(priceList * producto.cantidad)}</span>
+                                                </td>
+                                                <td className="py-3 px-6 text-center">
+                                                    <button 
+                                                    // onClick={() => removePedido(sku)}
+                                                    className='text-red-600 text-3xl hover:scale-125 transition-all'>
+                                                        <CiSquareRemove />
+                                                        </button>
                                                 </td>
                                             </tr>)
                                     })}
