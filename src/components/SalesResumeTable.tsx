@@ -57,11 +57,7 @@ const SalesResumeTable = () => {
                                 {formatoPrecio(total)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-center">
-                                {
-                                SaleProducts.length && SaleProducts.length > 1
-                                    ? SaleProducts.length + ' pares'
-                                    : SaleProducts.length + ' par'
-                                }
+                                { SaleProducts.length }
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 {status}

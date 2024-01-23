@@ -33,8 +33,9 @@ const ListaDeUsuarios = () => {
                     cambios[key] = editingUser[key] as any;
                 }
             });
-            const update = await fetchUpdate(`users/${editingUser.email}`, cambios)
-            if (update.message) {
+            const updateUser = await fetchUpdate(`users/${editingUser.email}`, cambios)
+
+            if (updateUser.message) {
                 loadUsers();
             }
         }

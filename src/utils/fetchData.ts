@@ -30,7 +30,7 @@ export const fetchData = async (path: string) => {
     }
   }
 
-export const fetchUpdate = async (path: string, body: object) => {
+export const fetchUpdate = async (path: string, body?: object) => {
   try {;
     const response = await fetch(`${url.backend}/${path}`, {
       method: 'PUT',

@@ -98,8 +98,8 @@ const CrearUsuarios = () => {
     }, []);
     
     return (
-        <div className="container mx-auto p-4">
-            <form onSubmit={enviarForm} className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6" autoComplete="new-password">
+        <div className="container p-4">
+            <form onSubmit={enviarForm} className="bg-white shadow-md rounded-lg p-6" autoComplete="new-password">
                 <h2 className="text-2xl font-bold mb-5 text-center">Crear usuarios</h2>
                 <div className="mb-4">
                     <label className="block mb-2">
