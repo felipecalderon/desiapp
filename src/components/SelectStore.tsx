@@ -7,14 +7,15 @@ import { fetchData } from '@/utils/fetchData'
 import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
 
 const SelectStore = () => {
-    const { setStore, store, cleanStore, setStores, stores} = storeDataStore();
+    const { setStore, cleanStore, setStores, stores} = storeDataStore();
     const { user } = storeAuth();
-    const { setProducts } = storeProduct();
+    const { setProducts, setTotal } = storeProduct();
 
     const cargarProductos = async (storeID?: string) => {
         const endpoint = storeID ? `products/?storeID=${storeID}` : 'products';
         const productos: Producto[] | void = await fetchData(endpoint);
         setProducts(productos as Producto[]);
+        setTotal()
     };
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement, MouseEvent>) => {
@@ -71,7 +72,7 @@ const SelectStore = () => {
     }, [stores])
     return (
         <select
-            className="text-gray-800 mb-3 h-fit bg-white border border-gray-300 rounded-md px-4 py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+            className="text-gray-800 text-center mx-2 mb-3 h-fit bg-white border border-gray-300 rounded-md  py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
             name="selectStore"
             onChange={seleccionarOpcion}
         >

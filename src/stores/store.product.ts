@@ -7,7 +7,7 @@ interface DataProduct {
 	total: number
 	setProduct: (product: Producto) => void
 	setProducts: (products: Producto[]) => void
-	setTotal: (total: number) => void
+	setTotal: () => void
 }
 
 const storeProduct = create<DataProduct>((set) => ({
@@ -16,8 +16,18 @@ const storeProduct = create<DataProduct>((set) => ({
 	total: 0,
 	setProduct: (product: Producto) => set({product}),
 	setProducts: (products: Producto[]) => set({ products: sortProductVariations(products) }),
-	setTotal: (totalInput: number) => set({ total: totalInput }),
+	setTotal: () => set((state) => {
+		const total = calculateTotal(state.products)
+		return {...state, total}
+	}),
 }))
+const calculateTotal = (products: Producto[]) => {
+	let total = 0
+	products.forEach(({ProductVariations}) => ProductVariations.forEach(({stockQuantity}) => {
+		total += Number(stockQuantity)
+	}))
+	return total
+}
 
 const sortProductVariations = (products: Producto[]) => {
     return products.map(product => {

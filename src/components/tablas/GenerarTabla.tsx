@@ -5,6 +5,7 @@ import storeProduct from '@/stores/store.product'
 import { bajarExcel } from '@/utils/toExcel'
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { Producto } from '@/config/interfaces'
+import InfoTotalStock from '../InfoTotalStock'
 
 const GenerarTabla = () => {
     const { products } = storeProduct()
@@ -30,9 +31,9 @@ const GenerarTabla = () => {
     }
     return (
         <div className="container mx-auto px-10 dark:bg-gray-800">
-        <div className="mb-4 flex flex-row gap-3">
+        <div className="mb-4 flex flex-row gap-3 items-center h-auto">
             <input
-                className="px-2 bg-blue-200 mt-3 w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
+                className="px-2 py-1 bg-blue-200 mt-3 w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
                 placeholder="Buscar producto aquí..."
                 type="text"
                 id="filtro"
@@ -40,6 +41,7 @@ const GenerarTabla = () => {
                 onChange={handleFiltroChange}
             />
             <button onClick={download} className="flex flex-row items-center bg-blue-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all">Descargar excel <RiFileExcel2Fill className='text-2xl ml-2' /></button>
+            <InfoTotalStock />
         </div>
             <div className="bg-white dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
                 <TablaProductos products={productosOrdenados}/>
