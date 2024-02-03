@@ -195,11 +195,12 @@ const ActualizarCalzado = () => {
 							Selecciona una talla:
 							{product.ProductVariations.map(
 								(variacion) => {
+									const esMismaTalla = variacion.sizeNumber === showForm?.sizeNumber && variacion.sku === showForm.sku
 									return (
 										<div
 											key={variacion.variationID}
 											onClick={() => setShowForm(variacion)}
-											className='bg-yellow-300 active:bg-yellow-700 transition-all cursor-pointer rounded-full w-8 h-8 flex justify-center items-center'
+											className={`${esMismaTalla ? 'bg-yellow-500 border-orange-600 border-2 font-extrabold' : 'bg-yellow-300'} active:bg-yellow-700 transition-all cursor-pointer rounded-full w-8 h-8 flex justify-center items-center`}
 										>
 											<p className='text-xs font-semibold'>
 												{variacion.sizeNumber}
