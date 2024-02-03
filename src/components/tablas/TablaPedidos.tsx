@@ -1,7 +1,10 @@
 'use client'
 import { url } from '@/config/constants'
+import useBarcode from '@/stores/store.barcode'
 import storeDataStore from '@/stores/store.dataStore'
 import storeVta from '@/stores/store.pedidoVta'
+import {storeProduct} from '@/stores/store.product'
+import storeSales from '@/stores/store.sales'
 import { formatoPrecio } from '@/utils/price'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -14,10 +17,14 @@ interface Products {
 }
 const TablaPedidosVenta = () => {
     const route = useRouter()
-    const { pedidoVta, clearPedido, removePedido } = storeVta()
+    const { pedidoVta, clearPedido } = storeVta()
+    const { setSales } = storeSales()
     const { store } = storeDataStore()
     const [message, setMessage] = useState<string | null>(null)
     const [products, setProducts] = useState<Products[] | null>(null)
+    const {setProduct} = storeProduct()
+    const { setValue } = useBarcode()
+
     const handleSendVta = async () => {
         if (!store) return console.log('Falta ID para store');
         if (!products) return console.log('Faltan productos');
@@ -32,16 +39,34 @@ const TablaPedidosVenta = () => {
             })
         })
         const data = await res.json()
-        if (data) setMessage(data.message)
+        if (data) {
+            const res = await fetch(`${url.backend}/sale?storeID=${store.storeID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            const dataSales = await res.json() 
+            setSales(dataSales)
+            setMessage(data.message)
+            setValue('')
+            setProduct(null)
+            setProducts(null)
+        }
     }
 
     useEffect(() => {
-        const transformedArray = pedidoVta.map(item => ({
-            "storeProductID": item.ProductVariations[0].storeProductID,
-            "quantitySold": item.cantidad
-        }));
-        setProducts(transformedArray)
+        if(pedidoVta && pedidoVta.length > 0){
+            const transformedArray = pedidoVta?.map(item => {
+                return {
+                    "storeProductID": item.ProductVariations[0]?.storeProductID,
+                    "quantitySold": item.cantidad
+                }
+            });
+            setProducts(transformedArray)
+        }
     }, [pedidoVta])
+
     if (!pedidoVta || pedidoVta.length === 0) return null
     return (
         <div className="p-4 dark:bg-gray-800">
@@ -51,8 +76,8 @@ const TablaPedidosVenta = () => {
                         <p className='text-center text-2xl'>{message}</p>
                         <button className='my-4 items-center px-5 py-5 bg-blue-500 text-white font-semibold text-xs uppercase tracking-widest hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200 disabled:opacity-25 transition ease-in-out duration-150' 
                         onClick={() => {
-                            clearPedido()
                             route.push('/')
+                            clearPedido()
                         }}
                         >Aceptar</button>
                     </div>

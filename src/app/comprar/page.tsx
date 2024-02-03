@@ -2,7 +2,7 @@
 import FiltroProductos from '@/components/FiltroProductos'
 import ResumeCompra from '@/components/tablas/ResumeCompra'
 import storeDataStore from '@/stores/store.dataStore'
-import storeProduct from '@/stores/store.product'
+import {storeProduct} from '@/stores/store.product'
 
 export default function TablaCompraProductos() {
   const { products } = storeProduct()

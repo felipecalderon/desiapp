@@ -1,8 +1,8 @@
 'use client'
 
 import { url } from '@/config/constants';
-import { Producto } from '@/config/interfaces';
-import storeProduct from '@/stores/store.product';
+import { Producto, ProductosdeOrden } from '@/config/interfaces';
+import {storeProduct} from '@/stores/store.product';
 import { fetchData } from '@/utils/fetchData';
 import { formatoPrecio } from '@/utils/price';
 import React, { ChangeEvent, FocusEvent, FormEvent, useEffect, useState } from 'react'
@@ -140,7 +140,7 @@ const CrearCalzado = () => {
             name='parentProductID'
             className="block w-full p-2 mb-2 border rounded-md"
           >
-            {products.map((product, i) => (
+            {products.map((product: any, i: number) => (
               <option key={product.productID} value={product.productID}>
                 ({i+1}) {product.name}
               </option>

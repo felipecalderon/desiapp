@@ -1,6 +1,6 @@
 'use client'
 import useBarcode from '@/stores/store.barcode'
-import storeProduct from '@/stores/store.product'
+import {storeProduct} from '@/stores/store.product'
 import { useEffect, useRef } from 'react'
 import { FaBarcode } from "react-icons/fa";
 

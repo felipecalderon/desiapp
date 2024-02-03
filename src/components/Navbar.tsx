@@ -11,7 +11,7 @@ import { Role } from "@/config/interfaces"
 import { isTokenExpired } from "@/utils/jwt"
 import useUserLS from "@/hooks/getItemLocalStorage"
 import storeCpra from "@/stores/store.pedidCpra"
-import storeProduct from "@/stores/store.product"
+import {storeProduct} from "@/stores/store.product"
 import storeSales from "@/stores/store.sales"
 
 export type Menu = {

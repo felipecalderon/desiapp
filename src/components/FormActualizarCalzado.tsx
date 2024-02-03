@@ -199,7 +199,7 @@ const ActualizarCalzado = () => {
 										<div
 											key={variacion.variationID}
 											onClick={() => setShowForm(variacion)}
-											className='bg-yellow-300 cursor-pointer rounded-full w-8 h-8 flex justify-center items-center'
+											className='bg-yellow-300 active:bg-yellow-700 transition-all cursor-pointer rounded-full w-8 h-8 flex justify-center items-center'
 										>
 											<p className='text-xs font-semibold'>
 												{variacion.sizeNumber}
@@ -255,7 +255,7 @@ const ActualizarCalzado = () => {
 							type='number'
 							name='stockQuantity'
 							placeholder='Stock total'
-							min={1}
+							min={0}
 							max={100}
 							className='block w-full p-2 my-2 border rounded-md'
 						/>

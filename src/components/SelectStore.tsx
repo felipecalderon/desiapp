@@ -2,9 +2,9 @@
 import { Producto, Role, Store } from '@/config/interfaces'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
-import storeProduct from '@/stores/store.product'
+import {storeProduct} from '@/stores/store.product'
 import { fetchData } from '@/utils/fetchData'
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
+import { ChangeEvent, MouseEvent, useEffect } from 'react'
 
 const SelectStore = () => {
     const { setStore, cleanStore, setStores, stores} = storeDataStore();

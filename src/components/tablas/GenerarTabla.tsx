@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import TablaProductos from './ProductTable'
-import storeProduct from '@/stores/store.product'
+import {storeProduct} from '@/stores/store.product'
 import { bajarExcel } from '@/utils/toExcel'
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { Producto } from '@/config/interfaces'

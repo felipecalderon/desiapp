@@ -1,5 +1,5 @@
 'use client'
-import storeProduct from '@/stores/store.product'
+import {storeProduct} from '@/stores/store.product'
 import React from 'react'
 
 const InfoTotalStock = () => {
