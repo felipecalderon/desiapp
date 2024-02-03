@@ -2,7 +2,7 @@
 
 import { url } from '@/config/constants';
 import { Producto, Variacion } from '@/config/interfaces';
-import storeProduct from '@/stores/store.product';
+import {storeProduct} from '@/stores/store.product';
 import { fetchData } from '@/utils/fetchData';
 import { formatoPrecio } from '@/utils/price';
 import React, {
