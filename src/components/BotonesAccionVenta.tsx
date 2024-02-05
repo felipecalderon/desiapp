@@ -2,6 +2,8 @@
 import { useRouter } from 'next/navigation'
 import { TiArrowBack } from "react-icons/ti";
 import { IoPrint } from "react-icons/io5";
+import { MdDelete } from "react-icons/md";
+
 
 import React, { useState } from 'react'
 import { fetchDelete } from '@/utils/fetchData';
@@ -61,10 +63,10 @@ const BotonesAccionVenta = ({ saleID }: { saleID: string }) => {
                 <button className='flex gap-1 items-center bg-blue-700 px-3 py-2 rounded-lg text-white my-auto'
                     onClick={() => route.back()}>
                     <TiArrowBack className='text-xl' />
-                    Volver atrás
+                    Volver
                 </button>
 
-                <button className='flex gap-1 items-center bg-red-600 px-3 py-2 rounded-lg text-white my-auto'
+                <button className='flex gap-1 items-center bg-green-600 px-3 py-2 rounded-lg text-white my-auto'
                     onClick={imprimirDetalleVenta}>
                     <IoPrint className='text-xl' />
                     Imprimir
@@ -72,8 +74,8 @@ const BotonesAccionVenta = ({ saleID }: { saleID: string }) => {
 
                 {user?.role === Role.Admin && <button className='flex gap-1 items-center bg-red-600 px-3 py-2 rounded-lg text-white my-auto'
                     onClick={() => borrarVenta(saleID)}>
-                    <IoPrint className='text-xl' />
-                    Borrar Venta
+                    <MdDelete className='text-xl' />
+                    Borrar
                 </button>}
             </div>
         </>
