@@ -24,15 +24,19 @@ body {
 }
 
 @media print {
-  body * {
-    visibility: hidden;
+  *, ::before, ::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: #e5e7eb;
   }
 
-  p{
+  p {
     visibility: visible;
   }
 
-  table, table * {
+  table,
+  table * {
     visibility: visible;
   }
 
@@ -41,20 +45,30 @@ body {
     left: 0;
     top: 0;
     width: 100%;
-    font-size: 12px; /* Ajuste según sea necesario */
+    font-size: 12px;
+    /* Ajuste según sea necesario */
   }
 
-  table th, table td {
-    padding: 10px; /* Ajuste el espaciado según sea necesario */
-    border: 1px solid black; /* Añade bordes para definir claramente las celdas */
+  table th,
+  table td {
+    padding: 10px;
+    /* Ajuste el espaciado según sea necesario */
+    border: 1px solid black;
+    /* Añade bordes para definir claramente las celdas */
   }
 
   table thead {
-    background-color: #f9fafb; /* O el color que prefiera */
+    background-color: #f9fafb;
+    /* O el color que prefiera */
   }
 
   table tbody tr:nth-child(even) {
-    background-color: #f1f1f1; /* Para bandas de filas, si lo desea */
+    background-color: #f1f1f1;
+    /* Para bandas de filas, si lo desea */
+  }
+
+  mb-4 {
+    margin-bottom: 1rem;
   }
 }
 

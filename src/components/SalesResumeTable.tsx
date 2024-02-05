@@ -17,18 +17,9 @@ const SalesResumeTable = () => {
     const [deleteText, setDeleteText] = useState<string | null>(null)
     const { user } = storeAuth()
     const route = useRouter()
-    const borrarVenta = async (saleID: string) => {
-        try {
-            setDeleteText('...borrando')
-            const venta = await fetchDelete(`sale?saleID=${saleID}`)
-            if (venta.error) throw venta.error
-            setDeleteText(venta)
-        } catch (error) {
-            setDeleteText('Venta ya eliminada, recargar')
-            console.log({ error });
-        } finally{
-            route.push('/')
-        }
+
+    const redireccionVenta = (saleID: string) => {
+        route.push(`/vender/${saleID}`)
     }
 
     useEffect(() => {
@@ -42,6 +33,7 @@ const SalesResumeTable = () => {
                 })
         }
     }, [store])
+
     if (sales && sales.length > 0) return (
         <>
             <p className="text-xl px-3 bg-blue-900 my-2 rounded-md text-white">{ deleteText }</p>
@@ -63,9 +55,6 @@ const SalesResumeTable = () => {
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                             Estado
                         </th>
-                        {(user && user.role === Role.Admin) && <th scope="col" className="w-fit">
-
-                        </th>}
                     </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
@@ -73,7 +62,10 @@ const SalesResumeTable = () => {
                         const creacion = getFecha(createdAt);
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
                         return (
-                            <tr key={saleID} className="hover:bg-gray-100 dark:hover:bg-blue-700">
+                            <tr key={saleID} 
+                            className="hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer"
+                            onClick={() => redireccionVenta(saleID)}
+                            >
                                 {(user && user.role === Role.Admin) && <td className="px-6 py-4 whitespace-nowrap">
                                     {store && store.location}
                                 </td>}
@@ -89,14 +81,6 @@ const SalesResumeTable = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {status}
                                 </td>
-                                {(user && user.role === Role.Admin) && <td className="w-fit">
-                                    <button
-                                        onClick={() => borrarVenta(saleID)}
-                                        className="bg-red-700 rounded-xl flex gap-3 items-center px-2 py-1 text-white text-xs">
-                                        <BsFillEraserFill />
-                                        Borrar
-                                    </button>
-                                </td>}
                             </tr>
                         );
                     })}
