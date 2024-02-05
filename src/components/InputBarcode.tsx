@@ -11,19 +11,22 @@ export default function Input() {
     const inputRef = useRef<HTMLInputElement | null>(null)
     
     const findProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value);
+        const skuBuscado = e.target.value
+        setValue(skuBuscado);
 
         const producto = products.map((product) => {
             return {
               ...product,
               ProductVariations: product.ProductVariations?.filter(
-                (variation) => variation.sku === e.target.value
+                (variation) => variation.sku === skuBuscado
               ),
             };
           }).find((product) => product.ProductVariations?.length > 0);
         
           if (producto) {
             setProduct(producto);
+          }else if(producto !== null){
+            setProduct(null)
           }
     }
 

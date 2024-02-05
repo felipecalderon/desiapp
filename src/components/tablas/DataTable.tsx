@@ -4,6 +4,8 @@ import storeAuth from "@/stores/store.auth"
 import storeSales from "@/stores/store.sales"
 import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
+import { FaShoePrints } from "react-icons/fa6";
+
 import { useEffect, useState } from "react"
 interface StockAgregado {
   variationID: string
@@ -13,7 +15,7 @@ export default function DataTable({ message, products }: { message: string, prod
   const { user } = storeAuth()
   const { sales } = storeSales()
   const [stockAgregado, setStock] = useState<StockAgregado[]>([])
- 
+
   useEffect(() => {
     fetchData('products/all')
     .then((stockAgregado) => setStock(stockAgregado))
@@ -31,6 +33,7 @@ export default function DataTable({ message, products }: { message: string, prod
     return (
       <tbody className="text-gray-600 dark:text-gray-200 text-sm font-light">
         {products.map((producto) => {
+          const totalStockQuantity = producto.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0;
           return producto.ProductVariations?.map((variation, index) => {
             const quantitySold = stockAgregado.find((stockA) => stockA.variationID === variation.variationID)?.totalQuantity || 0
             const esPrimero = index === 0
@@ -41,6 +44,10 @@ export default function DataTable({ message, products }: { message: string, prod
                     <div className="flex flex-col items-center">
                       <img src={producto.image} alt={producto.name} className="w-40 h-30 object-cover" />
                       <span className="font-medium text-center">{producto.name}</span>
+                      <p className="flex gap-1 items-centers text-white bg-blue-300 px-3 py-1 rounded-lg font-bold my-2">
+                        <FaShoePrints className="text-2xl text-white"/>
+                        {totalStockQuantity}
+                      </p>
                     </div>
                   </td>
                 </>

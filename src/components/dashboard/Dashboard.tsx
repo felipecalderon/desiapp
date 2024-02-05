@@ -37,7 +37,10 @@ const DashBoard = () => {
                         TOTAL:  {formatoPrecio(totalSales)} IVA. INC.
                     </h2>
                 </div>
-                <SalesResumeTable />
+                <div className='flex flex-col items-center'>
+                    <h2 className="text-xl font-medium mt-9 mb-2">Últimas ventas:</h2>
+                    <SalesResumeTable />
+                </div>
             </div>
         </>
     )
@@ -53,7 +56,10 @@ const DashBoard = () => {
                         TOTAL:  {formatoPrecio(totalSales)} IVA. INC.
                     </h2>
                 </div>
-                <SalesResumeTable />
+                <div className='flex flex-col items-center'>
+                    <h2 className="text-xl font-medium mt-9 mb-2">Últimas ventas:</h2>
+                    <SalesResumeTable />
+                </div>
             </div>
         </>
     )

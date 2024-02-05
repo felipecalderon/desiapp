@@ -1,10 +1,12 @@
 'use client'
 import { url } from '@/config/constants'
+import { Producto } from '@/config/interfaces'
 import useBarcode from '@/stores/store.barcode'
 import storeDataStore from '@/stores/store.dataStore'
 import storeVta from '@/stores/store.pedidoVta'
 import {storeProduct} from '@/stores/store.product'
 import storeSales from '@/stores/store.sales'
+import { fetchData } from '@/utils/fetchData'
 import { formatoPrecio } from '@/utils/price'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -22,9 +24,15 @@ const TablaPedidosVenta = () => {
     const { store } = storeDataStore()
     const [message, setMessage] = useState<string | null>(null)
     const [products, setProducts] = useState<Products[] | null>(null)
-    const {setProduct} = storeProduct()
+    const {setProduct, setProducts: setProductosTienda} = storeProduct()
     const { setValue } = useBarcode()
 
+    const cargarProductos = async (storeID?: string) => {
+		const endpoint = storeID ? `products/?storeID=${storeID}` : 'products';
+		const productos: Producto[] = await fetchData(endpoint);
+		setProductosTienda(productos);
+	};
+    
     const handleSendVta = async () => {
         if (!store) return console.log('Falta ID para store');
         if (!products) return console.log('Faltan productos');
@@ -51,7 +59,7 @@ const TablaPedidosVenta = () => {
             setMessage(data.message)
             setValue('')
             setProduct(null)
-            setProducts(null)
+            await cargarProductos(store.storeID)
         }
     }
 
