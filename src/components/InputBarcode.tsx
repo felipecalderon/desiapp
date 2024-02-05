@@ -1,6 +1,7 @@
 'use client'
 import useBarcode from '@/stores/store.barcode'
 import {storeProduct} from '@/stores/store.product'
+import { calcularEAN } from '@/utils/calcEan13';
 import { useEffect, useRef } from 'react'
 import { FaBarcode } from "react-icons/fa";
 
@@ -18,7 +19,9 @@ export default function Input() {
             return {
               ...product,
               ProductVariations: product.ProductVariations?.filter(
-                (variation) => variation.sku === skuBuscado
+                (variation) => {
+                  return variation.sku === skuBuscado.trim() || calcularEAN(variation.sku) === skuBuscado.trim()
+                }
               ),
             };
           }).find((product) => product.ProductVariations?.length > 0);
