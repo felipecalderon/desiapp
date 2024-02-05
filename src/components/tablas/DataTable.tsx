@@ -28,9 +28,8 @@ export default function DataTable({ message, products }: { message: string, prod
       </tr>
     </tbody>
   )
-
-  if (sales && sales.length > 0 && stockAgregado.length > 0) {
-    return (
+  
+  return (
       <tbody className="text-gray-600 dark:text-gray-200 text-sm font-light">
         {products.map((producto) => {
           const totalStockQuantity = producto.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0;
@@ -76,5 +75,4 @@ export default function DataTable({ message, products }: { message: string, prod
         )}
       </tbody>
     )
-  }
 }
