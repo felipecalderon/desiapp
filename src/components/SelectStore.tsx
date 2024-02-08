@@ -78,7 +78,7 @@ const SelectStore = () => {
         >
             {(user && user.role === Role.Admin)
                 && <option value="" className="text-gray-500 italic">
-                    Stock Central
+                    📦 Central
                 </option>}
 
             {stores.map((store) => (

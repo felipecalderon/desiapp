@@ -23,14 +23,16 @@ const SalesResumeTable = () => {
     }
 
     useEffect(() => {
-        if (user && user.role === Role.Admin) {
-            fetchData('sale')
-                .then(data => setSales(data))
-        } else if (store) {
-            fetchData(`sale?storeID=${store.storeID}`)
-                .then(data => {
-                    setSales(data)
-                })
+        if(user && store){
+            if (user.role === Role.Admin && !store) {
+                fetchData('sale')
+                    .then(data => setSales(data))
+            } else if (store) {
+                fetchData(`sale?storeID=${store.storeID}`)
+                    .then(data => {
+                        setSales(data)
+                    })
+            }
         }
     }, [store])
 
