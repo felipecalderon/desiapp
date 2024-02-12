@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import Header from '@/components/Header'
+import NextProvider from '@/components/NextuiProvider'
 
 const font = Montserrat({ subsets: ['latin'] })
 
@@ -18,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex flex-col justify-start items-center w-full bg-gray-100 dark:bg-gray-800 pb-16">
           <Header />
-          {children}
+          <NextProvider>
+            {children}
+          </NextProvider>
         </main>
       </body>
     </html>

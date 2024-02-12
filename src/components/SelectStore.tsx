@@ -2,12 +2,13 @@
 import { Producto, Role, Store } from '@/config/interfaces'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
-import {storeProduct} from '@/stores/store.product'
+import { storeProduct } from '@/stores/store.product'
 import { fetchData } from '@/utils/fetchData'
 import { ChangeEvent, MouseEvent, useEffect } from 'react'
+import ModalUI from './Modal'
 
 const SelectStore = () => {
-    const { setStore, cleanStore, setStores, stores} = storeDataStore();
+    const { setStore, cleanStore, setStores, stores } = storeDataStore();
     const { user } = storeAuth();
     const { setProducts, setTotal } = storeProduct();
 
@@ -20,7 +21,7 @@ const SelectStore = () => {
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement, MouseEvent>) => {
         let valorSeleccionado: any;
-
+        console.log(evento.target);
         if ('target' in evento) {
             // Es un evento ChangeEvent
             valorSeleccionado = (evento as ChangeEvent<HTMLSelectElement>).target.value;
@@ -28,7 +29,7 @@ const SelectStore = () => {
             // Es un evento MouseEvent
             valorSeleccionado = (evento as MouseEvent<HTMLSelectElement, MouseEvent>).currentTarget.value;
         }
-    
+
         if (valorSeleccionado === '' || valorSeleccionado === 'Stock total') {
             cargarProductos();
             cleanStore()
@@ -55,7 +56,7 @@ const SelectStore = () => {
                 // Cargar productos al montar el componente para el usuario admin
                 if (user.role === Role.Admin) {
                     cargarProductos();
-                }else{
+                } else {
                     setStore(data[0])
                 }
             }
@@ -65,31 +66,31 @@ const SelectStore = () => {
     }, [user]);
 
     useEffect(() => {
-        if(stores && user?.role !== Role.Admin){
+        if (stores && user?.role !== Role.Admin) {
             const storeID = (stores[0]?.storeID)
             cargarProductos(storeID)
         }
     }, [stores])
     return (
-        <select
-            className="text-gray-800 text-center mx-2 mb-3 h-fit bg-white border border-gray-300 rounded-md  py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
-            name="selectStore"
-            onChange={seleccionarOpcion}
-        >
-            {(user && user.role === Role.Admin)
-                && <option value="" className="text-gray-500 italic">
-                    📦 Central
-                </option>}
-
-            {stores.map((store) => (
-                <option
-                    key={store.storeID}
-                    value={store.storeID}
-                    className="text-gray-700">
-                    {store.name}
-                </option>
-            ))}
-        </select>
+        <>
+            {user?.role === Role.Admin
+                ? <ModalUI stores={stores} onChange={seleccionarOpcion} />
+                : <select
+                    className="text-gray-800 text-center mx-2 mb-3 h-fit bg-white border border-gray-300 rounded-md  py-2 leading-5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    name="selectStore"
+                    onChange={seleccionarOpcion}
+                >
+                    {stores.map((store) => (
+                        <option
+                            key={store.storeID}
+                            value={store.storeID}
+                            className="text-gray-700">
+                            {store.name}
+                        </option>
+                    ))}
+                </select>
+            }
+        </>
     )
 }
 
