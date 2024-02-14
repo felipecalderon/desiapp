@@ -41,7 +41,7 @@ export default function ModalUI({ stores, onChange }: Props) {
                             <SelectItem
                                 key={store.storeID}
                                 value={store.storeID}
-                                className="text-white">
+                                >
                                 {store.name}
                             </SelectItem>
                         ))}
@@ -57,7 +57,7 @@ export default function ModalUI({ stores, onChange }: Props) {
                             <SelectItem
                                 key={store.storeID}
                                 value={store.storeID}
-                                className="text-white">
+                                >
                                 {store.name}
                             </SelectItem>
                         ))}

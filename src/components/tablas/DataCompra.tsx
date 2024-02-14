@@ -63,9 +63,10 @@ export default function DataCompra({ message, products, cantidades, getStockCent
                 type="text"
                 pattern="[0-9]*"
                 inputMode="numeric"
+                autoComplete="off"
                 max={getStockCentralBySku(variation.sku)}
                 name={variation.sku}
-                value={cantidades[variation.variationID] || 0}
+                value={cantidades[variation.variationID] || ""}
                 onChange={(e) => handleInputChange(e, variation)}
                 className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1"
                 />
