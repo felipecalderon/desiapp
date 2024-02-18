@@ -8,6 +8,7 @@ import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
+import { Input } from "@nextui-org/react";
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
   const { user } = storeAuth()
@@ -20,7 +21,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const tablaRef = useRef<HTMLTableElement>(null);
   const [editOrder, setEditOrder] = useState({
     orderID: params.ordenID,
-    status: 'Pendiente'
+    status: 'Pendiente',
+    dte: 0
   })
 
   const deleteOrder = async () => {
@@ -134,20 +136,28 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     <p className="text-lg font-semibold">Total: {formatoPrecio(order.total * 1.19)} <span className="italic font-normal">({totalPares} pares)</span></p>
     <div className="flex flex-row items-center gap-3">
 
-    <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
-      Estado: {!edit
-        ? order.status
-        : <select onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}>
-          <option value={'Pendiente'}>Pendiente</option>
-          {edit && user?.role === Role.Admin && <option value={'Pagado'}>Pagado</option>}
-          {edit && user?.role === Role.Admin && <option value={'Enviado'}>Enviado</option>}
-          {edit && user?.role === Role.Admin && <option value={'Facturado'}>Facturado</option>}
-          <option value={'Recibido'}>Recibido conforme</option>
-        </select>
-      } <button onClick={editOrderHandle} className="px-6 rounded-lg bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
-      {edit && user?.role === Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
-    </p>
-    <button onClick={imprimirTabla} className="px-3 rounded-lg h-fit bg-blue-900 text-sm py-1 text-white">Imprimir</button>
+      <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
+        Estado: {!edit
+          ? order.status
+          : <select defaultValue={order.status} onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}>
+            <option value={'Pendiente'}>Pendiente</option>
+            {edit && user?.role === Role.Admin && <option value={'Pagado'}>Pagado</option>}
+            {edit && user?.role === Role.Admin && <option value={'Enviado'}>Enviado</option>}
+            {edit && user?.role === Role.Admin && <option value={'Facturado'}>Facturado</option>}
+            <option value={'Recibido'}>Recibido conforme</option>
+          </select>
+        } <button onClick={editOrderHandle} className="px-6 rounded-lg bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
+        {edit && user?.role === Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
+        {edit && user?.role === Role.Admin && <Input
+          onChange={(e) => setEditOrder({ ...editOrder, dte: Number(e.target.value) })}
+          type="number"
+          min={0}
+          color="primary"
+          label="DTE"
+          placeholder="Ingresar n° DTE" />
+        }
+      </p>
+      <button onClick={imprimirTabla} className="px-3 rounded-lg h-fit bg-blue-900 text-sm py-1 text-white">Imprimir</button>
     </div>
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
     <div className="mt-2">
