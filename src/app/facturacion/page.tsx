@@ -6,20 +6,13 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import storeAuth from "@/stores/store.auth"
 import storeDataStore from "@/stores/store.dataStore"
-import { Role, Store } from "@/config/interfaces"
+import { OrdendeCompra, Role, Store } from "@/config/interfaces"
 
-interface Orders {
-    orderID: string
-    status: string
-    total: number
-    createdAt: Date
-    Store: Store
-}
 export default function Facturacion() {
     const route = useRouter()
     const { user } = storeAuth()
     const { store } = storeDataStore()
-    const [orders, setOrders] = useState<Orders[] | null>(null)
+    const [orders, setOrders] = useState<OrdendeCompra[] | null>(null)
     useEffect(() => {
         if (store) {
             fetchData(`order/?storeID=${store.storeID}`)
@@ -29,10 +22,6 @@ export default function Facturacion() {
                 .then(res => setOrders(res))
         }
     }, [store, user])
-
-    useEffect(() => {
-
-    }, [])
 
     if(orders?.length === 0) return <p>No hay órdenes creadas aún</p>
     if (orders) return (
@@ -45,17 +34,20 @@ export default function Facturacion() {
                             <th className="border px-4 py-2">Fecha</th>
                             <th className="border px-4 py-2">Status</th>
                             <th className="border px-4 py-2">Total</th>
+                            <th className="border px-4 py-2">N° DTE</th>
                         </tr>
                     </thead>
                     <tbody>
                         {orders.map((order) => {
-
                             const fecha = getFecha(order.createdAt)
                             return <tr className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{fecha?.fecha}</td>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
                                 <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
+                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">
+                                    {order.dte}
+                                </td>
                             </tr>
                         })}
                     </tbody>

@@ -71,7 +71,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         ...editOrder, newProducts: [...products]
       }
       if (order?.status === 'Recibido') return setMessage('Productos declarados como RECIBIDOS, no se puede cambiar')
-      if (order?.status === editOrder.status) return setMessage('No hay cambios para realizar')
+
       const data = await fetch(`${url.backend}/order`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -133,7 +133,10 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     <p className="text-2xl font-semibold">{order.Store.name} - {order.Store.rut}</p>
     <p className="text-lg font-semibold">Subtotal: {formatoPrecio(order.total)}</p>
     <p className="text-lg font-semibold">IVA: {formatoPrecio(order.total * 0.19)}</p>
-    <p className="text-lg font-semibold">Total: {formatoPrecio(order.total * 1.19)} <span className="italic font-normal">({totalPares} pares)</span></p>
+    {
+      order.dte ? <p className="text-lg font-semibold">N° DTE: <span className="italic font-normal">{order.dte}</span></p>
+      : <p className="text-lg font-semibold bg-red-300 px-2 rounded-sm w-fit">DTE Pendiente</p>
+    }
     <div className="flex flex-row items-center gap-3">
 
       <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>

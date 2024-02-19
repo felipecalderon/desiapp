@@ -81,6 +81,7 @@ export interface OrdendeCompra {
 	status: string;
 	createdAt: Date;
 	updatedAt: Date;
+	dte?: string;
 	ProductVariations: ProductosdeOrden[];
 	Store: Store
 }
