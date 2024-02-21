@@ -62,8 +62,9 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
             e.target.value = maxStock.toString();
             return;
         }
-        console.log({cantidades});
+
         setCantidades({ ...cantidades, [variation.variationID]: newCantidad });
+
         if (newCantidad > 0) {
             handleAgregarAlPedido(variation.variationID, newCantidad, variation.priceCost);
         } else {
@@ -78,6 +79,9 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
             })
     }, [])
 
+    useEffect(() => {
+        console.log('nuevos productos: ', productos);
+    }, [productos])
     if (user) return (
         <>
             <div className="flex flex-row justify-between items-center">

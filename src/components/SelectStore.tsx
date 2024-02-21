@@ -21,7 +21,6 @@ const SelectStore = () => {
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement, MouseEvent>) => {
         let valorSeleccionado: any;
-        console.log(evento.target);
         if ('target' in evento) {
             // Es un evento ChangeEvent
             valorSeleccionado = (evento as ChangeEvent<HTMLSelectElement>).target.value;
