@@ -1,21 +1,10 @@
 'use client'
 import { Store } from '@/config/interfaces'
 import { fetchData, fetchDelete, fetchUpdate } from '@/utils/fetchData';
-import React, { useState } from 'react'
-// {
-//     storeID: '61c59109-cd28-4117-af05-1b86951b3007',
-//     name: 'Rutas del Maule Mall Plaza',
-//     storeImg: null,
-//     location: 'Mall Plaza',
-//     rut: '76209020-1',
-//     phone: '98989898',
-//     address: 'Av. Circunvalación Oriente 1055, Local 218-219',
-//     city: 'Talca',
-//     isAdminStore: true,
-//     createdAt: '2023-11-09T01:29:48.762Z',
-// }
+import React, { useEffect, useState } from 'react'
 
-const ListaTiendas = ({store}: {store: Store[]}) => {
+const ListaTiendas = () => {
+    const [stores, setStores] = useState<Store[]>([])
     const [editingStore, setEditingStore] = useState<Store | null>(null);
     const [message, setMessage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -25,7 +14,7 @@ const ListaTiendas = ({store}: {store: Store[]}) => {
         setMessage(null)
         setLoading(true)
 
-        const storeEditada: Store | undefined = store.find(({ storeID }) => editingStore?.storeID === storeID);
+        const storeEditada: Store | undefined = stores.find(({ storeID }) => editingStore?.storeID === storeID);
         if (storeEditada && editingStore) {
             // Objeto para almacenar solo los campos modificados
             const cambios: Partial<Store> = {};
@@ -54,7 +43,11 @@ const ListaTiendas = ({store}: {store: Store[]}) => {
         setMessage('Tienda eliminada, refresca la página para ver cambios')
         setLoading(false)
     }
-    if(!store) return <p>Cargando..</p>
+
+    useEffect(() => {
+        fetchData('store').then(res => setStores(res))
+    }, [])
+    if(!stores) return <p>Cargando..</p>
     return (
         <>
             <div className="overflow-x-auto shadow-md bg-white my-6">
@@ -87,7 +80,7 @@ const ListaTiendas = ({store}: {store: Store[]}) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {store.map((tienda, index) => (
+                        {stores.map((tienda, index) => (
                             <tr key={tienda.storeID} className={index % 2 === 0 ? 'bg-white hover:bg-gray-100' : 'bg-gray-50 hover:bg-gray-100'}>
                                 <td className="px-2 py-4">
                                     {editingStore && editingStore.storeID === tienda.storeID ? (

@@ -12,6 +12,7 @@ const CrearTienda = () => {
         phone: '',
         address: '',
         city: '',
+        markup: '1.8',
         isAdminStore: true
     }
     const initialErrors = {
@@ -21,6 +22,7 @@ const CrearTienda = () => {
         rut: '',
         phone: '',
         address: '',
+        markup: '',
         city: '',
     }
     const [form, setForm] = useState(initialForm)
@@ -60,6 +62,7 @@ const CrearTienda = () => {
 
     const validateLocation = (location: string) => {
         if(location === '') return 'Falta nombre del sector o referencia'
+        console.log({location});
         if (location.length < 3 || location.length > 25) {
             return "Sucursal debe tener entre 3 y 25 caracteres.";
         }
@@ -117,14 +120,19 @@ const CrearTienda = () => {
                 <h2 className="text-2xl font-bold mb-5 text-center">Crear nueva Tienda</h2>
                 <div className="mb-4 flex flex-row gap-3 justify-center">
                     <label className="mb-2">
-                        <span className="text-gray-700 text-sm">Nombre de la tienda</span>
-                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="La tiendita" type="text" name="name" autoComplete="off" onChange={changeForm} />
-                        {errors.name !== '' && <p className="text-red-500 text-xs italic">{errors.name}</p>}
+                        <span className="text-gray-700 text-sm">RUT</span>
+                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="76.600.001-2" type="text" name="rut" autoComplete="off" onChange={changeForm} />
+                        {errors.rut !== '' && <p className="text-red-500 text-xs italic">{errors.rut}</p>}
                     </label>
                     <label className="mb-2">
-                        <span className="text-gray-700 text-sm">Dirección (calle y número)</span>
-                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="Calle 1234" type="text" name="address" autoComplete="off" onChange={changeForm} />
-                        {errors.address !== '' && <p className="text-red-500 text-xs italic">{errors.address}</p>}
+                        <span className="text-gray-700 text-sm">Markup</span>
+                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="Ej: 1.8" type="text" name="markup" autoComplete="off" onChange={changeForm} />
+                        {errors.markup !== '' && <p className="text-red-500 text-xs italic">{errors.markup}</p>}
+                    </label>
+                    <label className="mb-2">
+                        <span className="text-gray-700 text-sm">Nombre</span>
+                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="La tiendita" type="text" name="name" autoComplete="off" onChange={changeForm} />
+                        {errors.name !== '' && <p className="text-red-500 text-xs italic">{errors.name}</p>}
                     </label>
                 </div>
                 <div className="mb-4 flex flex-row gap-3 justify-center">
@@ -140,10 +148,10 @@ const CrearTienda = () => {
                     </label>
                 </div>
                 <div className="mb-4 flex flex-row gap-3 justify-center">
-                    <label className="mb-2">
-                        <span className="text-gray-700 text-sm">RUT</span>
-                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="76.600.001-2" type="text" name="rut" autoComplete="off" onChange={changeForm} />
-                        {errors.rut !== '' && <p className="text-red-500 text-xs italic">{errors.rut}</p>}
+                <label className="mb-2">
+                        <span className="text-gray-700 text-sm">Dirección (calle y número)</span>
+                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="Ej: Calle Nombre 111" type="text" name="address" autoComplete="off" onChange={changeForm} />
+                        {errors.address !== '' && <p className="text-red-500 text-xs italic">{errors.address}</p>}
                     </label>
                     <label className="mb-2">
                         <span className="text-gray-700 text-sm">Teléfono</span>
