@@ -40,11 +40,16 @@ const storeSales = create<SalesGlobalStore>((set, get) => ({
     updateTotals: () => {
         // Lógica para actualizar los totales y el conteo de tiendas
         const { sales } = get();
-        const totalSales = sales?.reduce((acc, sale) => acc + sale.total, 0);
-        const totalProducts = sales?.reduce((acc, sale) => {
+        if (!Array.isArray(sales)) {
+            console.error('sales is not an array', sales);
+            return; // Salir de la función si sales no es un array
+        }
+
+        const totalSales = sales.reduce((acc, sale) => acc + sale.total, 0);
+        const totalProducts = sales.reduce((acc, sale) => {
             return acc + sale.SaleProducts.length
         }, 0)
-        const totalStores = new Set(sales?.map(sale => sale.storeID)).size;
+        const totalStores = new Set(sales.map(sale => sale.storeID)).size;
         set({ totalSales, totalStores, totalProducts });
     }
 }));

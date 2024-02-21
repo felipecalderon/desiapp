@@ -41,6 +41,7 @@ export default function DataCompra({ message, products, cantidades, getStockCent
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
+            <td className="py-3 px-2 text-center bg-blue-200">{formatoPrecio(variation.priceList)}</td>
             {
               getStockCentralBySku(variation.sku) === 0
                 ? <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">

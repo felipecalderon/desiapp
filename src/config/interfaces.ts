@@ -37,6 +37,7 @@ export interface Store {
 	isAdminStore: boolean
 	createdAt: Date
 	updatedAt: Date
+	markup: string,
 	Users: User[]
 }
 

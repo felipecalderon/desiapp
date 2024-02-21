@@ -13,8 +13,10 @@ const DashBoard = () => {
     const { stores } = storeDataStore()
 
     const contarTiendasQueHanVendido = () => {
-        const storeIDs = new Set(sales.map(sale => sale.storeID));
-        return storeIDs.size;
+        if(sales){
+            const storeIDs = new Set(sales.map(sale => sale.storeID));
+            return storeIDs.size;
+        }
     }
 
     if (!user) return null

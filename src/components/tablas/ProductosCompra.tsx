@@ -10,8 +10,7 @@ import storeDataStore from "@/stores/store.dataStore"
 const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
     const { user } = storeAuth()
     const [productosCentral, setProductosCentral] = useState<Producto[] | null>(null)
-    const { productos, setPedido, updateCantidad, removePedido } = storeCpra()
-    const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
+    const { productos, setPedido, updateCantidad, removePedido, cantidades, setCantidades } = storeCpra()
     const { store } = storeDataStore()
     
     const handleAgregarAlPedido = (variationID: string, cantidad: number, price: number) => {
@@ -63,8 +62,8 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
             e.target.value = maxStock.toString();
             return;
         }
-
-        setCantidades((prevCantidades) => ({ ...prevCantidades, [variation.variationID]: newCantidad }));
+        console.log({cantidades});
+        setCantidades({ ...cantidades, [variation.variationID]: newCantidad });
         if (newCantidad > 0) {
             handleAgregarAlPedido(variation.variationID, newCantidad, variation.priceCost);
         } else {
@@ -81,18 +80,18 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
 
     if (user) return (
         <>
-            {
-                user.role === Role.Admin 
-                && <div className="flex items-center gap-3">
+            <div className="flex flex-row justify-between items-center">
                     <button className="bg-blue-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" 
-                    onClick={() => agregarCantidadesGlobales(products)}>Agregar calzados</button>
+                    onClick={() => agregarCantidadesGlobales(products)}>Agregar 1 par a todos</button>
 
                     <button className="bg-red-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" 
-                    onClick={() => agregarCantidadesGlobales(products, 0)}>Quitar calzados</button>
+                    onClick={() => agregarCantidadesGlobales(products, 0)}>Quitar todos los pares</button>
 
-                    <p>Gestionando orden para: <span className="font-bold">{store?.name}</span> {store?.city}</p>
+                    <p>Gestionando OC para: <span className="font-bold">{store?.name}</span> {store?.city}</p>
+                    <div className="bg-green-300 text-gray-900 italic px-7 py-1 my-3 rounded-lg">
+                        Markup: {store?.markup}
+                    </div>
                 </div>
-            }
             <table className="min-w-full table-auto">
                 <thead>
                     <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
@@ -100,6 +99,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
                         <th className="py-3 px-6 text-center">Código EAN</th>
                         <th className="py-3 px-2 text-center">Talla</th>
                         <th className="py-3 px-6 text-center">Costo Neto</th>
+                        <th className="py-3 px-6 text-center bg-blue-300">Precio Plaza</th>
                         <th className="py-3 px-2 text-center">Disponible Central</th>
                         <th className="py-3 px-2 text-center">Disponible Tienda</th>
                         <th className="py-3 px-2 text-center">Pedido</th>

@@ -12,6 +12,8 @@ interface ListaCompra {
 	productos: ProductosCompra[];
 	totalProductos: number;
 	totalNeto: number;
+	cantidades:  {[key: string]: number};
+	setCantidades: (key: {[key: string]: number}) => void;
 	setStoreID: (storeID: string) => void
 	setUserID: (userID: string) => void
 	setPedido: (variacion: ProductosCompra) => void;
@@ -26,6 +28,8 @@ const storeCpra = create<ListaCompra>((set) => ({
 	userID: null,
 	totalProductos: 0,
 	totalNeto: 0,
+	cantidades: {},
+	setCantidades: (cantidades) => set({cantidades}),
 	setStoreID: (storeID) => set({storeID}),
 	setUserID: (userID) => set({userID}),
 	setPedido: (variacion) =>
