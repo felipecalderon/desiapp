@@ -51,7 +51,7 @@ const menu = {
 	],
 	terceroMenu: [
 		{ name: 'Comprar', path: '/comprar' },
-		{ name: 'Historial de compras', path: '/historial' }
+		// { name: 'Historial de compras', path: '/historial' }
 	],
 }
 
