@@ -105,7 +105,7 @@ export default function Navbar() {
 				{userMenu && userMenu.map(({ name, path }) => {
 					return (
 						<li key={name} className={`hover:bg-blue-900 ${currentPath === path ? 'bg-blue-700 dark:bg-blue-800' : 'bg-blue-950'} transition duration-200 rounded text-center font-semibold`}>
-							<Link href={path} className="block py-1 px-16">
+							<Link href={path} className="block py-1 px-8">
 								{name}
 							</Link>
 						</li>
