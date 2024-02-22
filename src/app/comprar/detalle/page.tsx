@@ -3,7 +3,7 @@ import { url } from '@/config/constants'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
 import storeCpra from '@/stores/store.pedidCpra'
-import {storeProduct} from '@/stores/store.product'
+import { storeProduct } from '@/stores/store.product'
 import { formatoPrecio } from '@/utils/price'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -103,12 +103,16 @@ const DetalleCompra = () => {
                 </table>
             </div>
             <div className='flex flex-row justify-center gap-3 py-4'>
+                <Link href="/comprar/">
+                    <button 
+                        className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:border-blue-300'>
+                        {'<'} Volver y cambiar pedido</button>
+                </Link>
                 <button
                     onClick={generarOC}
-                    className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300'>Generar orden de compra</button>
-                <Link href="/comprar/">
-                    <button className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300'>Volver y cambiar pedido</button>
-                </Link>
+                    className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300'>
+                    Generar orden de compra
+                </button>
             </div>
         </>
     )

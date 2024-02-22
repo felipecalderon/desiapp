@@ -6,20 +6,32 @@ import { formatoPrecio } from '@/utils/price'
 import storeSales from '@/stores/store.sales'
 import SalesResumeTable from '../SalesResumeTable'
 import storeDataStore from '@/stores/store.dataStore'
+import FiltroProductos from '../FiltroProductos'
+import ResumeCompra from '../tablas/ResumeCompra'
+import { storeProduct } from '@/stores/store.product'
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const {sales, totalSales, totalProducts} = storeSales()
+    const { sales, totalSales, totalProducts } = storeSales()
     const { stores } = storeDataStore()
+    const { products } = storeProduct()
 
     const contarTiendasQueHanVendido = () => {
-        if(sales){
+        if (sales) {
             const storeIDs = new Set(sales.map(sale => sale.storeID));
             return storeIDs.size;
         }
     }
 
     if (!user) return null
+    if (user.role === Role.Tercero) return (
+        <>
+            <div className="w-full mt-6 px-10">
+                <FiltroProductos products={products} />
+            </div>
+            <ResumeCompra />
+        </>
+    )
     if (user.role === Role.Admin) return (
         <>
             <div className='flex flex-col justify-center items-center p-20 gap-8 rounded-3xl'>

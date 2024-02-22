@@ -12,10 +12,10 @@ interface ListaCompra {
 	productos: ProductosCompra[];
 	totalProductos: number;
 	totalNeto: number;
-	cantidades:  {[key: string]: number};
-	setCantidades: (key: {[key: string]: number}) => void;
-	setStoreID: (storeID: string) => void
-	setUserID: (userID: string) => void
+	cantidades: { [key: string]: number };
+	setCantidades: (key: { [key: string]: number }) => void;
+	setStoreID: (storeID: string) => void;
+	setUserID: (userID: string) => void;
 	setPedido: (variacion: ProductosCompra) => void;
 	removePedido: (sku: string) => void;
 	clearPedido: () => void;
@@ -29,16 +29,18 @@ const storeCpra = create<ListaCompra>((set) => ({
 	totalProductos: 0,
 	totalNeto: 0,
 	cantidades: {},
-	setCantidades: (cantidades) => set({cantidades}),
-	setStoreID: (storeID) => set({storeID}),
-	setUserID: (userID) => set({userID}),
+	setCantidades: (cantidades) => set({ cantidades }),
+	setStoreID: (storeID) => set({ storeID }),
+	setUserID: (userID) => set({ userID }),
 	setPedido: (variacion) =>
-		set((state) => ({
-			...state,
-			productos: [...state.productos, variacion],
-			totalProductos: state.totalProductos + variacion.quantityOrdered,
-			totalNeto: state.totalNeto + Number(variacion.price),
-		})),
+		set((state) => {
+			return {
+				...state,
+				productos: [...state.productos, variacion],
+				totalProductos: state.totalProductos + variacion.quantityOrdered,
+				totalNeto: state.totalNeto + Number(variacion.price),
+			};
+		}),
 
 	removePedido: (variationID) =>
 		set((state) => {
@@ -54,7 +56,8 @@ const storeCpra = create<ListaCompra>((set) => ({
 				totalProductos:
 					state.totalProductos -
 					(removedProducto?.quantityOrdered || 0),
-				totalNeto: state.totalNeto - (Number(removedProducto?.price) || 0),
+				totalNeto:
+					state.totalNeto - (Number(removedProducto?.price) || 0),
 			};
 		}),
 
@@ -74,16 +77,19 @@ const storeCpra = create<ListaCompra>((set) => ({
 					? { ...producto, quantityOrdered: cantidad }
 					: producto
 			);
-
+			const filterProductos = updatedProductos.filter(({quantityOrdered}) => quantityOrdered > 0)
 			return {
 				...state,
-				productos: updatedProductos,
+				productos: filterProductos,
 				totalProductos: updatedProductos.reduce(
 					(acc, producto) => acc + Number(producto.quantityOrdered),
 					0
 				),
 				totalNeto: updatedProductos.reduce(
-					(acc, producto) => acc + Number(producto.price) * Number(producto.quantityOrdered),
+					(acc, producto) =>
+						acc +
+						Number(producto.price) *
+							Number(producto.quantityOrdered),
 					0
 				),
 			};

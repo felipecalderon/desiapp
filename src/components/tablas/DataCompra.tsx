@@ -1,5 +1,6 @@
 'use client'
-import { Producto, Variacion } from "@/config/interfaces"
+import { Producto, Role, Variacion } from "@/config/interfaces"
+import storeAuth from "@/stores/store.auth"
 import { formatoPrecio } from "@/utils/price"
 import { ChangeEvent } from "react"
 
@@ -10,7 +11,7 @@ export default function DataCompra({ message, products, cantidades, getStockCent
   getStockCentralBySku: (sku: string) => number,
   handleInputChange: (e: ChangeEvent<HTMLInputElement>, variation: Variacion) => void
 }) {
-
+  const { user } = storeAuth()
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
       <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -39,9 +40,6 @@ export default function DataCompra({ message, products, cantidades, getStockCent
               </>
             )}
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
-            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
-            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
-            <td className="py-3 px-2 text-center bg-blue-200">{formatoPrecio(variation.priceList)}</td>
             {
               getStockCentralBySku(variation.sku) === 0
                 ? <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
@@ -50,7 +48,10 @@ export default function DataCompra({ message, products, cantidades, getStockCent
                 : <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                   <span className='font-bold text-green-600'>{getStockCentralBySku(variation.sku) >= 10 ? '+10' : getStockCentralBySku(variation.sku)}</span>
                 </td>
-            }{
+            }
+            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
+            <td className="py-3 px-2 text-center bg-blue-200">{formatoPrecio(variation.priceList)}</td>
+            { user?.role !== Role.Tercero ? 
               variation.stockQuantity === 0
                 ? <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                   <span className='text-red-500'>{variation.stockQuantity}</span>
@@ -58,7 +59,9 @@ export default function DataCompra({ message, products, cantidades, getStockCent
                 : <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                   <span className='font-bold text-green-600'>{variation.stockQuantity >= 10 ? '+10' : variation.stockQuantity}</span>
                 </td>
+                : null
             }
+            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
             <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
               <input
                 type="text"

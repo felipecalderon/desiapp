@@ -62,8 +62,8 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
             e.target.value = maxStock.toString();
             return;
         }
-
-        setCantidades({ ...cantidades, [variation.variationID]: newCantidad });
+        const newCantidades = { ...cantidades, [variation.variationID]: newCantidad }
+        setCantidades(newCantidades);
 
         if (newCantidad > 0) {
             handleAgregarAlPedido(variation.variationID, newCantidad, variation.priceCost);
@@ -80,19 +80,25 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
     }, [])
 
     useEffect(() => {
-        console.log('nuevos productos: ', productos);
+        const newObj = Object.keys(cantidades).reduce((accumulator: {[key: string]: number}, key) => {
+            if (cantidades[key] > 0) {
+              accumulator[key] = cantidades[key];
+            }
+            return accumulator;
+          }, {});
+        setCantidades(newObj);
     }, [productos])
     if (user) return (
         <>
             <div className="flex flex-row justify-between items-center">
-                    <button className="bg-blue-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" 
+                    <button className="bg-blue-300 text-gray-900 font-semibold px-3 py-1 my-3 rounded-lg" 
                     onClick={() => agregarCantidadesGlobales(products)}>Agregar 1 par a todos</button>
 
-                    <button className="bg-red-300 text-gray-900 font-semibold px-7 py-1 my-3 rounded-lg" 
+                    <button className="bg-red-300 text-gray-900 font-semibold px-3 py-1 my-3 rounded-lg" 
                     onClick={() => agregarCantidadesGlobales(products, 0)}>Quitar todos los pares</button>
 
                     <p>Gestionando OC para: <span className="font-bold">{store?.name}</span> {store?.city}</p>
-                    <div className="bg-green-300 text-gray-900 italic px-7 py-1 my-3 rounded-lg">
+                    <div className="bg-green-300 text-gray-900 italic px-3 py-1 my-3 rounded-lg">
                         Markup: {store?.markup}
                     </div>
                 </div>
@@ -101,11 +107,11 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
                     <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
                         <th className="py-3 px-3 text-left">Nombre</th>
                         <th className="py-3 px-6 text-center">Código EAN</th>
-                        <th className="py-3 px-2 text-center">Talla</th>
+                        <th className="py-3 px-2 text-center">Disponible Central</th>
                         <th className="py-3 px-6 text-center">Costo Neto</th>
                         <th className="py-3 px-6 text-center bg-blue-300">Precio Plaza</th>
-                        <th className="py-3 px-2 text-center">Disponible Central</th>
-                        <th className="py-3 px-2 text-center">Disponible Tienda</th>
+                        { user.role !== Role.Tercero && <th className="py-3 px-2 text-center">Disponible Tienda</th> }
+                        <th className="py-3 px-2 text-center">Talla</th>
                         <th className="py-3 px-2 text-center">Pedido</th>
                         <th className="py-3 px-2 text-center">Subtotal</th>
                     </tr>
