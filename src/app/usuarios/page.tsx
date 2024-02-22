@@ -9,10 +9,10 @@ import { Card, CardBody, Tab, Tabs } from "@nextui-org/react"
 const UsuariosPage = () => {
     return (
         <>
-            <div className="flex w-full flex-col">
-                <Tabs aria-label="Options">
+            <div className="flex min-w-full flex-col">
+                <Tabs color="primary">
                     <Tab key="usuarios" title="Gestionar usuarios">
-                        <Card>
+                        <Card fullWidth={true}>
                             <CardBody>
                                 <div className="flex flex-row">
                                     <CrearUsuarios />
