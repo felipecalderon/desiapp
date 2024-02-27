@@ -14,27 +14,12 @@ import { fetchData } from '@/utils/fetchData'
 const Header = () => {
     const { user } = storeAuth()
     const { store } = storeDataStore()
-    const { totalSales, sales, setSales, updateTotals } = storeSales()
+    const { totalSales, sales, updateTotals } = storeSales()
     const [facturado, setFacturado] = useState(0)
 
     useEffect(() => {
         updateTotals();
     }, [sales])
-
-    useEffect(() => {
-        if (store && user) {
-            if (user.role === Role.Franquiciado) {
-                fetchData(`sale?storeID=${store.storeID}`)
-                    .then(res => setSales(res))
-            }
-        } else if (!store && user) {
-            if (user.role === Role.Admin) {
-                fetchData(`sale`)
-                    .then(res => setSales(res))
-            }
-        }
-
-    }, [store, user])
 
     useEffect(() => {
         fetchData('order')

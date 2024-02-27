@@ -103,7 +103,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
                     </div>
                 </div>
             <table className="min-w-full table-auto">
-                <thead>
+                <thead className="sticky top-0 z-10">
                     <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
                         <th className="py-3 px-3 text-left">Nombre</th>
                         <th className="py-3 px-6 text-center">Código EAN</th>

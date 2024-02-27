@@ -43,7 +43,7 @@ const GenerarTabla = () => {
             <button onClick={download} className="flex flex-row items-center bg-blue-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all">Descargar excel <RiFileExcel2Fill className='text-2xl ml-2' /></button>
             <InfoTotalStock />
         </div>
-            <div className="bg-white dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
+            <div className="bg-white dark:bg-gray-900 shadow-md rounded my-6">
                 <TablaProductos products={productosOrdenados}/>
             </div>
         </div>
