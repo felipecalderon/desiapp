@@ -19,47 +19,48 @@ const SalesResumeTable = () => {
     const route = useRouter()
 
     const redireccionVenta = (saleID: string, esOC: boolean | "" | undefined) => {
-        if(!esOC) route.push(`/vender/${saleID}`)
+        if (!esOC) route.push(`/vender/${saleID}`)
         else route.push(`/comprar/detalle/${saleID}`)
     }
 
     useEffect(() => {
 
         const obtainSales = async () => {
-        if (store && user) {
+            if (store && user) {
                 const res = await fetchData(`sale?storeID=${store.storeID}`)
                 setSales(res)
-        } else if (!store && user) {
-            if (user.role === Role.Admin) {
-                const ventas: Sales[] = await fetchData(`sale`)
-                const ventaTerceros: OrdendeCompra[] = await fetchData(`order/?terceros=true`)
-                const terceroFormato: any = []
+            } else if (!store && user) {
+                if (user.role === Role.Admin) {
+                    const ventas: Sales[] = await fetchData(`sale`)
+                    const ventaTerceros: OrdendeCompra[] = await fetchData(`order/?terceros=true`)
+                    const terceroFormato: any = []
 
-                ventaTerceros.forEach((orden) => {
-                    const newFormat = {
-                        saleID: orden.orderID,
-                        storeID: orden.Store.storeID,
-                        total: orden.total,
-                        status: orden.status,
-                        createdAt: orden.createdAt,
-                        updatedAt: orden.updatedAt,
-                        SaleProducts: orden.ProductVariations,
-                        Store: orden.Store,
-                        type: 'OC'
-                    }
-                    terceroFormato.push(newFormat)
-                })
-                const unificacion = [...ventas, ...terceroFormato].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-                setSales(unificacion)
-                console.log({terceroFormato, ventas});
+                    ventaTerceros.forEach((orden) => {
+                        const newFormat = {
+                            saleID: orden.orderID,
+                            storeID: orden.Store.storeID,
+                            total: orden.total,
+                            status: orden.status,
+                            createdAt: orden.createdAt,
+                            updatedAt: orden.updatedAt,
+                            SaleProducts: orden.ProductVariations,
+                            Store: orden.Store,
+                            type: 'OC'
+                        }
+                        terceroFormato.push(newFormat)
+                    })
+                    const unificacion = [...ventas, ...terceroFormato].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                    setSales(unificacion)
+                    console.log({ terceroFormato, ventas });
+                }
             }
-        }}
+        }
         obtainSales()
     }, [store, user])
 
     if (sales && sales.length > 0) return (
         <>
-            <p className="text-xl px-3 bg-blue-900 my-2 rounded-md text-white">{ deleteText }</p>
+            <p className="text-xl px-3 bg-blue-900 my-2 rounded-md text-white">{deleteText}</p>
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50 dark:bg-blue-950">
                     <tr>
@@ -73,7 +74,7 @@ const SalesResumeTable = () => {
                             Vendido
                         </th>
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-                            Cantidad
+                            Productos
                         </th>
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
                             Estado
@@ -85,11 +86,10 @@ const SalesResumeTable = () => {
                         const creacion = getFecha(createdAt);
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
                         const esOC = type && type === 'OC'
-
                         return (
-                            <tr key={saleID} 
-                            className={`${esOC ? 'bg-blue-200 hover:bg-blue-300 hover:cursor-pointer' : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
-                            onClick={() => redireccionVenta(saleID, esOC)}
+                            <tr key={saleID}
+                                className={`${esOC ? 'bg-blue-200 hover:bg-blue-300 hover:cursor-pointer' : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
+                                onClick={() => redireccionVenta(saleID, esOC)}
                             >
                                 {(user && user.role === Role.Admin) && <td className="px-6 py-4 whitespace-nowrap">
                                     {store && store.location}
@@ -100,8 +100,11 @@ const SalesResumeTable = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {formatoPrecio(total)}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                    {SaleProducts.length}
+                                <td className="px-6 py-4 whitespace-nowrap text-xs">
+                                    {
+                                        SaleProducts.length < 5 ? <p>{SaleProducts[0].quantitySold}x {SaleProducts[0].name} {SaleProducts.length - 1 !== 0 && <span>(+{SaleProducts.length - 1})</span>} </p>
+                                            : <p>{SaleProducts.length} pares vendidos</p>
+                                    }
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {status}

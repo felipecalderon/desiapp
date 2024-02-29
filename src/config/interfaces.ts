@@ -80,15 +80,21 @@ export interface OrdendeCompra {
 }
 
 export interface SaleProduct {
-    SaleProductID: string,
-    saleID: string,
-    storeProductID: string,
-    quantitySold: number,
-    unitPrice: number,
-    subtotal: number,
-    createdAt: Date,
-    updatedAt: Date,
-    variationID: string
+	Product: Producto;
+	ProductVariation: Variacion
+    SaleProductID: string;
+    saleID: string;
+    storeProductID: string;
+    quantitySold: number;
+    unitPrice: number;
+    subtotal: number;
+    createdAt: Date;
+    updatedAt: Date;
+    variationID: string;
+	name: string;
+	priceCost: string,
+	priceCostStore: string
+	sizeNumber: number
 }
 
 export interface Sales {
