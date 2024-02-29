@@ -66,11 +66,11 @@ export default function LoginForm() {
       return console.error('Error en la solicitud:', error)
     }
   }
-  useEffect(() => {
-    if(!user){
-      route.refresh()
-    }
-  }, [])
+  // useEffect(() => {
+  //   if(!user){
+  //     route.refresh()
+  //   }
+  // }, [])
   return (
     <div className='bg-blue-900 dark:bg-gray-900 py-10 mt-20'>
     <section className='shadow-md px-10'>
