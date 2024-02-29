@@ -51,15 +51,6 @@ export interface User {
 	exp: number
   }
 
-interface UserStore {
-	userID: string
-	UserStore: {
-		UserStoreID: string
-		userID: string
-		storeID: string
-	}
-}
-
 export interface ProductosdeOrden {
 	variationID: string
     productID: string
@@ -84,5 +75,30 @@ export interface OrdendeCompra {
 	updatedAt: Date;
 	dte?: string;
 	ProductVariations: ProductosdeOrden[];
-	Store: Store
+	Store: Store;
+	User: User
+}
+
+export interface SaleProduct {
+    SaleProductID: string,
+    saleID: string,
+    storeProductID: string,
+    quantitySold: number,
+    unitPrice: number,
+    subtotal: number,
+    createdAt: Date,
+    updatedAt: Date,
+    variationID: string
+}
+
+export interface Sales {
+    saleID: string,
+    storeID: string,
+    total: number,
+    status: string,
+    createdAt: Date,
+    updatedAt: Date,
+    SaleProducts: SaleProduct[]
+    Store: Store
+	type?: string
 }

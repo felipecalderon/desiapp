@@ -22,6 +22,17 @@ export default function ModalUI({ stores, onChange }: Props) {
         terceros: [],
     })
 
+    const renderSelectItems = (items: CustomStore[]) => [
+        <SelectItem key="todos" value="">
+            Ver Todo
+        </SelectItem>,
+        ...items.map((store) => (
+            <SelectItem key={store.storeID} value={store.storeID}>
+                {store.name}
+            </SelectItem>
+        )),
+    ];
+
     useEffect(() => {
         const franquiciados = stores.filter(({ Users }) => Users.some(({ role }) => role !== Role.Tercero))
         const terceros = stores.filter(({ Users }) => Users.some(({ role }) => role === Role.Tercero))
@@ -37,14 +48,7 @@ export default function ModalUI({ stores, onChange }: Props) {
                         onChange={onChange}
                         className="w-56"
                     >
-                        {tiendas && tiendas.franquiciados.map((store) => (
-                            <SelectItem
-                                key={store.storeID}
-                                value={store.storeID}
-                                >
-                                {store.name}
-                            </SelectItem>
-                        ))}
+                        {renderSelectItems(tiendas.franquiciados)}
                     </Select>
                 </Tab>
                 <Tab key="terceros" title="Terceros">
@@ -53,14 +57,7 @@ export default function ModalUI({ stores, onChange }: Props) {
                         onChange={onChange}
                         className="w-56"
                     >
-                        {tiendas && tiendas.terceros.map((store) => (
-                            <SelectItem
-                                key={store.storeID}
-                                value={store.storeID}
-                                >
-                                {store.name}
-                            </SelectItem>
-                        ))}
+                        {renderSelectItems(tiendas.terceros)}
                     </Select>
                 </Tab>
             </Tabs>

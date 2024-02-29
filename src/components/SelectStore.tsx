@@ -28,8 +28,8 @@ const SelectStore = () => {
             // Es un evento MouseEvent
             valorSeleccionado = (evento as MouseEvent<HTMLSelectElement, MouseEvent>).currentTarget.value;
         }
-
-        if (valorSeleccionado === '' || valorSeleccionado === 'Stock total') {
+        console.log({valorSeleccionado});
+        if (valorSeleccionado === '' || valorSeleccionado === 'todos') {
             cargarProductos();
             cleanStore()
         } else {

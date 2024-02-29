@@ -1,26 +1,5 @@
+import { Sales, Store } from '@/config/interfaces'
 import { create } from 'zustand'
-
-interface SaleProduct {
-    SaleProductID: string,
-    saleID: string,
-    storeProductID: string,
-    quantitySold: number,
-    unitPrice: number,
-    subtotal: number,
-    createdAt: Date,
-    updatedAt: Date,
-    variationID: string
-}
-
-interface Sales {
-    saleID: string,
-    storeID: string,
-    total: number,
-    status: string,
-    createdAt: Date,
-    updatedAt: Date,
-    SaleProducts: SaleProduct[]
-}
 
 interface SalesGlobalStore {
     sales: Sales[],

@@ -1,6 +1,6 @@
 'use client'
 
-import { Role } from "@/config/interfaces";
+import { OrdendeCompra, Role, Sales } from "@/config/interfaces";
 import storeAuth from "@/stores/store.auth";
 import storeDataStore from "@/stores/store.dataStore";
 import storeSales from "@/stores/store.sales";
@@ -18,20 +18,43 @@ const SalesResumeTable = () => {
     const { user } = storeAuth()
     const route = useRouter()
 
-    const redireccionVenta = (saleID: string) => {
-        route.push(`/vender/${saleID}`)
+    const redireccionVenta = (saleID: string, esOC: boolean | "" | undefined) => {
+        if(!esOC) route.push(`/vender/${saleID}`)
+        else route.push(`/comprar/detalle/${saleID}`)
     }
 
     useEffect(() => {
+
+        const obtainSales = async () => {
         if (store && user) {
-                fetchData(`sale?storeID=${store.storeID}`)
-                    .then(res => setSales(res))
+                const res = await fetchData(`sale?storeID=${store.storeID}`)
+                setSales(res)
         } else if (!store && user) {
             if (user.role === Role.Admin) {
-                fetchData(`sale`)
-                    .then(res => setSales(res))
+                const ventas: Sales[] = await fetchData(`sale`)
+                const ventaTerceros: OrdendeCompra[] = await fetchData(`order/?terceros=true`)
+                const terceroFormato: any = []
+
+                ventaTerceros.forEach((orden) => {
+                    const newFormat = {
+                        saleID: orden.orderID,
+                        storeID: orden.Store.storeID,
+                        total: orden.total,
+                        status: orden.status,
+                        createdAt: orden.createdAt,
+                        updatedAt: orden.updatedAt,
+                        SaleProducts: orden.ProductVariations,
+                        Store: orden.Store,
+                        type: 'OC'
+                    }
+                    terceroFormato.push(newFormat)
+                })
+                const unificacion = [...ventas, ...terceroFormato].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                setSales(unificacion)
+                console.log({terceroFormato, ventas});
             }
-        }
+        }}
+        obtainSales()
     }, [store, user])
 
     if (sales && sales.length > 0) return (
@@ -58,19 +81,21 @@ const SalesResumeTable = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
-                    {sales.map(({ total, status, createdAt, saleID, storeID, SaleProducts }) => {
+                    {sales.map(({ total, status, createdAt, saleID, storeID, SaleProducts, type }) => {
                         const creacion = getFecha(createdAt);
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
+                        const esOC = type && type === 'OC'
+
                         return (
                             <tr key={saleID} 
-                            className="hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer"
-                            onClick={() => redireccionVenta(saleID)}
+                            className={`${esOC ? 'bg-blue-200 hover:bg-blue-300 hover:cursor-pointer' : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
+                            onClick={() => redireccionVenta(saleID, esOC)}
                             >
                                 {(user && user.role === Role.Admin) && <td className="px-6 py-4 whitespace-nowrap">
                                     {store && store.location}
                                 </td>}
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    {creacion?.fecha} a las {creacion?.hora}
+                                    {creacion?.fecha} - {creacion?.hora}hrs
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {formatoPrecio(total)}
