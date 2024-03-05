@@ -94,6 +94,7 @@ export interface SaleProduct {
 	name: string;
 	priceCost: string,
 	priceCostStore: string
+	quantityOrdered: number;
 	sizeNumber: number
 }
 

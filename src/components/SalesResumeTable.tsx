@@ -51,7 +51,7 @@ const SalesResumeTable = () => {
                     })
                     const unificacion = [...ventas, ...terceroFormato].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                     setSales(unificacion)
-                    console.log({ terceroFormato, ventas });
+                    // console.log({ terceroFormato, ventas });
                 }
             }
         }
@@ -86,6 +86,10 @@ const SalesResumeTable = () => {
                         const creacion = getFecha(createdAt);
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
                         const esOC = type && type === 'OC'
+                        const ventasOC = SaleProducts.reduce((acc, variacion) => {
+                            if(variacion.quantityOrdered) return acc += variacion.quantityOrdered
+                            else return acc
+                        }, 0)
                         return (
                             <tr key={saleID}
                                 className={`${esOC ? 'bg-blue-200 hover:bg-blue-300 hover:cursor-pointer' : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
@@ -103,7 +107,7 @@ const SalesResumeTable = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-xs">
                                     {
                                         SaleProducts.length < 5 ? <p>{SaleProducts[0].quantitySold}x {SaleProducts[0].name} {SaleProducts.length - 1 !== 0 && <span>(+{SaleProducts.length - 1})</span>} </p>
-                                            : <p>{SaleProducts.length} pares vendidos</p>
+                                            : <p>{ventasOC} pares vendidos</p>
                                     }
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
