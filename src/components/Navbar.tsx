@@ -73,14 +73,16 @@ export default function Navbar() {
 		else if (user?.role === Role.Tercero) setUserMenu(menu.terceroMenu)
 	}, [user, isLoadingUser])
 
-	// useEffect(() => {
-	// 	if (!user && !isLoadingUser) {
-	// 		route.push('/login');
-	// 		localStorage.clear();
-	// 		setIsLogged(false);
-	// 		console.log('No está logueado');
-	// 	}
-	// }, [user, isLoadingUser]);
+	useEffect(() => {
+		if(currentPath !== '/login'){
+			if (!user && !isLoadingUser) {
+				route.push('/login');
+				localStorage.clear();
+				setIsLogged(false);
+				console.log('No está logueado');
+			}
+		}
+	}, [user, isLoadingUser]);
 
 	useEffect(() => {
 		return () => {
