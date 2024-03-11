@@ -12,13 +12,14 @@ import { storeProduct } from '@/stores/store.product'
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const { sales, totalSales, totalProducts } = storeSales()
+    const { sales, totalSales, totalProducts, filteredSales, filterMonth, filterYear } = storeSales()
     const { stores } = storeDataStore()
     const { products } = storeProduct()
+    const ventasFiltradas = filteredSales()
 
     const contarTiendasQueHanVendido = () => {
-        if (sales) {
-            const storeIDs = new Set(sales.map(sale => sale.storeID));
+        if (ventasFiltradas) {
+            const storeIDs = new Set(ventasFiltradas.map(sale => sale.storeID));
             return storeIDs.size;
         }
     }
@@ -34,15 +35,16 @@ const DashBoard = () => {
     )
     if (user.role === Role.Admin) return (
         <>
-            <div className='flex flex-col justify-center items-center p-20 gap-8 rounded-3xl'>
-                <Icon className="text-9xl text-blue-500" />
+            <div className='flex flex-col justify-center items-center p-20 gap-3 rounded-3xl'>
+                <Icon className="text-5xl text-blue-500" />
+                <div className='text-xl italic'>{filterMonth} {filterYear}</div>
                 <div className='flex flex-col gap-3 items-center'></div>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold'>
                         CALZADOS VENDIDOS:  {totalProducts} PARES
                     </h2>
                     <h2 className='text-lg font-semibold'>
-                        TOTAL VENTAS DEL MES A NIVEL NACIONAL: {sales.length}
+                        TOTAL VENTAS DEL MES A NIVEL NACIONAL: {ventasFiltradas.length}
                     </h2>
                     <h2 className='text-lg font-semibold'>
                         TIENDAS QUE HAN VENDIDO:  {contarTiendasQueHanVendido()} DE {stores.length}
@@ -61,10 +63,11 @@ const DashBoard = () => {
     return (
         <>
             <div className='flex flex-col justify-center items-center p-16 gap-8 rounded-3xl'>
-                <Icon className="text-9xl text-blue-500" />
+                <Icon className="text-5xl text-blue-500" />
+                <div className='text-xl italic'>{filterMonth} {filterYear}</div>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold whitespace-pre'>
-                        VENTAS DEL MES: {sales.length}
+                        VENTAS DEL MES: {ventasFiltradas.length}
                     </h2>
                     <h2 className='text-lg font-semibold'>
                         TOTAL:  {formatoPrecio(totalSales)} IVA. INC.

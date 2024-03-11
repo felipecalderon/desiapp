@@ -10,14 +10,13 @@ import { formatoPrecio } from "@/utils/price";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor } from "@nextui-org/react";
-
+import FiltroVentas from "./FiltroVentas";
 
 const SalesResumeTable = () => {
-    const { sales, setSales } = storeSales()
+    const { setSales, filteredSales } = storeSales()
     const { stores, store } = storeDataStore()
     const { user } = storeAuth()
     const route = useRouter()
-    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({ column: "$1", direction: 'descending' });
 
     const redireccionVenta = (saleID: string, esOC: boolean | "" | undefined) => {
         if (!esOC) route.push(`/vender/${saleID}`)
@@ -25,7 +24,6 @@ const SalesResumeTable = () => {
     }
 
     useEffect(() => {
-
         const obtainSales = async () => {
             if (store && user) {
                 const res = await fetchData(`sale?storeID=${store.storeID}`)
@@ -57,14 +55,12 @@ const SalesResumeTable = () => {
         }
         obtainSales()
     }, [store, user])
-    const onChangeSort = (descriptor: SortDescriptor) => {
-        const { column, direction } = descriptor
-        if (direction === 'ascending') setSortDescriptor({ column, direction: 'descending' });
-        else if (direction === 'descending') setSortDescriptor({ column, direction: 'ascending' });
-    }
-    if (sales && sales.length > 0) return (
+
+    const ventasFiltradas = filteredSales()
+    return (
         <>
-            <Table onSortChange={onChangeSort} sortDescriptor={sortDescriptor}>
+            <FiltroVentas />
+            <Table>
                 <TableHeader>
                     <TableColumn>Sucursal</TableColumn>
                     <TableColumn>Fecha de Venta</TableColumn>
@@ -73,7 +69,7 @@ const SalesResumeTable = () => {
                     <TableColumn>Estado</TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {sales.map(({ total, status, createdAt, saleID, storeID, SaleProducts, type }) => {
+                    {ventasFiltradas.map(({ total, status, createdAt, saleID, storeID, SaleProducts, type }) => {
                         const creacion = getFecha(createdAt);
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
                         const esOC = type && type === 'OC'
