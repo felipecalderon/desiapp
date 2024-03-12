@@ -4,12 +4,14 @@ import storeAuth from "@/stores/store.auth"
 import { formatoPrecio } from "@/utils/price"
 import { FaShoePrints } from "react-icons/fa6";
 import TooltipProducts from "../TooltipProductsStore"
+import storeDataStore from "@/stores/store.dataStore";
 interface StockAgregado {
   variationID: string
   totalQuantity: string
 }
 export default function DataTable({ message, products }: { message: string, products: Producto[] }) {
   const { user } = storeAuth()
+  const { store } = storeDataStore();
 
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
@@ -53,7 +55,7 @@ export default function DataTable({ message, products }: { message: string, prod
                     <span className='font-bold text-green-600'>{variation.stockQuantity}</span>
                   </td>
               }
-              {user && user.role === Role.Admin && 
+              {!store && user && user.role === Role.Admin && 
               <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                 <TooltipProducts variation={variation} />
               </td>

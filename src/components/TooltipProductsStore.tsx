@@ -5,16 +5,17 @@ import { Variacion } from "@/config/interfaces";
 
 export default function TooltipProducts({ variation }: { variation: Variacion }) {
     const [total, setTotal] = useState(0)
-
+    
     useEffect(() => {
-        const totalVariations = variation.StoreProducts.reduce((acc, variacion) => {
-            return acc + variacion.quantity
+        const totalVariations = variation?.StoreProducts?.reduce((acc, variacion) => {
+            if(variacion.quantity < 3) return acc + variacion.quantity
+            else return acc
         }, 0)
         setTotal(totalVariations)
     }, [])
 
-    const filtroStoreProducts = variation.StoreProducts.filter((variation) => variation.quantity > 0)
-    if (filtroStoreProducts.length) return (
+    const filtroStoreProducts = variation?.StoreProducts?.filter((variation) => variation.quantity > 0 && variation.quantity < 3)
+    if (filtroStoreProducts && filtroStoreProducts.length) return (
         <Tooltip 
             showArrow
             placement="left"
