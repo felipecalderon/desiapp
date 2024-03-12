@@ -1,25 +1,15 @@
 'use client'
 import { Producto, Role } from "@/config/interfaces"
 import storeAuth from "@/stores/store.auth"
-import storeSales from "@/stores/store.sales"
-import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
 import { FaShoePrints } from "react-icons/fa6";
-
-import { useEffect, useState } from "react"
+import TooltipProducts from "../TooltipProductsStore"
 interface StockAgregado {
   variationID: string
   totalQuantity: string
 }
 export default function DataTable({ message, products }: { message: string, products: Producto[] }) {
   const { user } = storeAuth()
-  const { sales } = storeSales()
-  const [stockAgregado, setStock] = useState<StockAgregado[]>([])
-
-  useEffect(() => {
-    fetchData('products/all')
-    .then((stockAgregado) => setStock(stockAgregado))
-  }, [])
 
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
@@ -34,12 +24,11 @@ export default function DataTable({ message, products }: { message: string, prod
         {products.map((producto) => {
           const totalStockQuantity = producto.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0;
           return producto.ProductVariations?.map((variation, index) => {
-            const quantitySold = stockAgregado.find((stockA) => stockA.variationID === variation.variationID)?.totalQuantity || 0
             const esPrimero = index === 0
             return <tr key={variation.variationID} className={`${esPrimero ? 'border-t-4 border-t-blue-300' : 'border-t'} text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300`}>
               {esPrimero && (
                 <>
-                  <td rowSpan={producto.ProductVariations?.length} className="py-3 px-3 text-left w-1/4 max-w-0">
+                  <td rowSpan={producto.ProductVariations?.length} className="py-1 px-3 text-left w-1/4 max-w-0">
                     <div className="flex flex-col items-center">
                       <img src={producto.image} alt={producto.name} className="w-40 h-30 object-cover" />
                       <span className="font-medium text-center">{producto.name}</span>
@@ -51,22 +40,22 @@ export default function DataTable({ message, products }: { message: string, prod
                   </td>
                 </>
               )}
-              <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
-              <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
-              <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
-              <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceList)}</td>
+              <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
+              <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
+              <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
+              <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceList)}</td>
               {
                 variation.stockQuantity === 0
-                  ? <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                  ? <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                     <span className='text-red-500'>{variation.stockQuantity}</span>
                   </td>
-                  : <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                  : <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                     <span className='font-bold text-green-600'>{variation.stockQuantity}</span>
                   </td>
               }
               {user && user.role === Role.Admin && 
-              <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                { quantitySold }
+              <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                <TooltipProducts variation={variation} />
               </td>
               }
             </tr>

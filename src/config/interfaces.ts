@@ -16,6 +16,7 @@ export interface Variacion {
 	sku: string
 	stockQuantity: number
 	storeProductID: string
+	StoreProducts: ProductosdeTienda[]
 }
 
 export enum Role {
@@ -50,6 +51,16 @@ export interface User {
 	Stores: Store[]
 	exp: number
   }
+export interface ProductosdeTienda {
+	Store: Store
+	createdAt: Date
+	updatedAt: Date
+	priceCostStore: string
+	quantity: number
+	storeID: string
+	storeProductID: string
+	variationID: string
+	}
 
 export interface ProductosdeOrden {
 	variationID: string
