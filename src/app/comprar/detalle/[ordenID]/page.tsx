@@ -22,7 +22,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const [editOrder, setEditOrder] = useState({
     orderID: params.ordenID,
     status: 'Pendiente',
-    dte: 0
+    dte: "",
+    expiration: ''
   })
 
   const deleteOrder = async () => {
@@ -152,7 +153,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         } <button onClick={editOrderHandle} className="px-6 rounded-lg bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
         {edit && user?.role === Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
         {edit && user?.role === Role.Admin && <Input
-          onChange={(e) => setEditOrder({ ...editOrder, dte: Number(e.target.value) })}
+          onChange={(e) => setEditOrder({ ...editOrder, dte: e.target.value })}
           type="number"
           min={0}
           color="primary"

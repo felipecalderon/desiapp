@@ -102,7 +102,7 @@ export interface Sales {
     saleID: string,
     storeID: string,
     total: number,
-    status: string,
+    status: 'Pendiente' | 'Pagado' | 'Recibido' | 'Enviado' | 'Facturado',
     createdAt: Date,
     updatedAt: Date,
     SaleProducts: SaleProduct[]

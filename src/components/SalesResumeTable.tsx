@@ -69,7 +69,7 @@ const SalesResumeTable = () => {
                     <TableColumn>Estado</TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {ventasFiltradas.map(({ total, status, createdAt, saleID, storeID, SaleProducts, type }) => {
+                    {ventasFiltradas.map(({ total, status, createdAt, saleID, storeID, SaleProducts, type }, index) => {
                         const creacion = getFecha(createdAt);
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
                         const esOC = type && type === 'OC'
@@ -77,10 +77,15 @@ const SalesResumeTable = () => {
                             if (variacion.quantityOrdered) return acc += variacion.quantityOrdered
                             else return acc
                         }, 0)
+                        const esUltimoDiaMes = index === ventasFiltradas.length - 1 || new Date(createdAt).getMonth() !== new Date(ventasFiltradas[index + 1].createdAt).getMonth();
+                        const noEsDelFinal = index !== ventasFiltradas.length - 1 && esUltimoDiaMes
                         return (
                             <TableRow key={saleID}
                                 onClick={() => redireccionVenta(saleID, esOC)}
-                                className={`${esOC ? 'bg-blue-200 hover:bg-blue-300 hover:cursor-pointer' : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
+                                className={`${noEsDelFinal && 'border-b-4 border-lime-300'}
+                                ${esOC 
+                                    ? 'bg-blue-100 hover:bg-blue-300 hover:cursor-pointer' 
+                                    : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
                             >
                                 <TableCell> {store && store.location} </TableCell>
                                 <TableCell> {creacion?.fecha} - {creacion?.hora}hrs </TableCell>

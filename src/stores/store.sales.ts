@@ -30,7 +30,12 @@ const storeSales = create<SalesGlobalStore>((set, get) => ({
 			return; // Salir de la función si sales no es un array
 		}
 
-		const totalSales = sales.reduce((acc, sale) => acc + sale.total, 0);
+		const totalSales = sales.reduce((acc, sale) => {
+			const estaVendido = sale.status === "Pagado" || sale.status === "Recibido"
+			if(estaVendido ) return acc + sale.total 
+			else return acc
+		}, 0);
+
 		const totalProducts = sales.reduce((acc, sale) => {
 			let acum = acc;
 			sale.SaleProducts.forEach((variations) => {

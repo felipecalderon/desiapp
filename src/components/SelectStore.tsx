@@ -19,16 +19,16 @@ const SelectStore = () => {
         setTotal()
     };
 
-    const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement, MouseEvent>) => {
+    const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement>) => {
         let valorSeleccionado: any;
         if ('target' in evento) {
             // Es un evento ChangeEvent
             valorSeleccionado = (evento as ChangeEvent<HTMLSelectElement>).target.value;
         } else {
             // Es un evento MouseEvent
-            valorSeleccionado = (evento as MouseEvent<HTMLSelectElement, MouseEvent>).currentTarget.value;
+            valorSeleccionado = (evento as MouseEvent<HTMLSelectElement>).currentTarget.value;
         }
-        console.log({valorSeleccionado});
+
         if (valorSeleccionado === '' || valorSeleccionado === 'todos') {
             cargarProductos();
             cleanStore()
