@@ -1,20 +1,21 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import { Tooltip, Button, Table, TableHeader, TableBody, TableColumn, TableCell, TableRow } from "@nextui-org/react";
-import { Variacion } from "@/config/interfaces";
+import { Role, Variacion } from "@/config/interfaces";
 
 export default function TooltipProducts({ variation }: { variation: Variacion }) {
     const [total, setTotal] = useState(0)
     
     useEffect(() => {
-        const totalVariations = variation?.StoreProducts?.reduce((acc, variacion) => {
-            if(variacion.quantity < 3) return acc + variacion.quantity
+        const totalVariations = variation.StoreProducts?.reduce((acc, variacion) => {
+            if(variacion.Store.role !== Role.Tercero) return acc + variacion.quantity
             else return acc
         }, 0)
         setTotal(totalVariations)
     }, [])
 
-    const filtroStoreProducts = variation?.StoreProducts?.filter((variation) => variation.quantity > 0 && variation.quantity < 3)
+    const filtroStoreProducts = variation.StoreProducts?.filter((variation) => variation.Store.role !== Role.Tercero && variation.quantity > 0)
+
     if (filtroStoreProducts && filtroStoreProducts.length) return (
         <Tooltip 
             showArrow

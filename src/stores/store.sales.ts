@@ -31,8 +31,8 @@ const storeSales = create<SalesGlobalStore>((set, get) => ({
 		}
 
 		const totalSales = sales.reduce((acc, sale) => {
-			const estaVendido = sale.status === "Pagado" || sale.status === "Recibido"
-			if(estaVendido ) return acc + sale.total 
+			const estaVendido = sale.status === "Pagado" || sale.status === "Recibido" || sale.status === "Facturado"
+			if(estaVendido ) return acc + sale.total
 			else return acc
 		}, 0);
 

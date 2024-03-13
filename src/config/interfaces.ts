@@ -32,6 +32,7 @@ export interface Store {
 	storeImg: string | null
 	location: string
 	rut: string
+	role: string;
 	phone: string
 	address: string
 	city: string
