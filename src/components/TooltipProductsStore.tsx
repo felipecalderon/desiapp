@@ -28,8 +28,8 @@ export default function TooltipProducts({ variation }: { variation: Variacion })
                         </TableHeader>
                         <TableBody>
                             {
-                                filtroStoreProducts.map(({ Store, quantity }) => {
-                                    return <TableRow className="h-fit">
+                                filtroStoreProducts.map(({ Store, quantity, storeProductID }) => {
+                                    return <TableRow className="h-fit" key={storeProductID}>
                                         <TableCell className="py-1 text-sm">{Store.name}</TableCell>
                                         <TableCell className="py-1 text-center text-sm">{quantity}</TableCell>
                                     </TableRow>
