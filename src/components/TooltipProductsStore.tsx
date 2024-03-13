@@ -24,7 +24,7 @@ export default function TooltipProducts({ variation }: { variation: Variacion })
                     <Table removeWrapper isStriped>
                         <TableHeader>
                             <TableColumn>Tienda</TableColumn>
-                            <TableColumn>Vendido</TableColumn>
+                            <TableColumn>Disponible</TableColumn>
                         </TableHeader>
                         <TableBody>
                             {

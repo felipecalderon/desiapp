@@ -132,6 +132,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     <h2 className="text-3xl font-bold my-3">Detalle de la O.C</h2>
     <p className="text-sm">Creación O.C: {creacion?.fecha} a las {creacion?.hora}</p>
     <p className="text-2xl font-semibold">{order.Store.name} - {order.Store.rut}</p>
+    <p className="text-2xl font-semibold">{order?.Store?.Users[0]?.email}</p>
     <p className="text-lg font-semibold">Subtotal: {formatoPrecio(order.total)}</p>
     <p className="text-lg font-semibold">IVA: {formatoPrecio(order.total * 0.19)}</p>
     {
