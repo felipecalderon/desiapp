@@ -91,22 +91,23 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   function groupAndSortProducts(products: ProductosdeOrden[]): ProductosdeOrden[] {
     const grouped = products.reduce<GroupedProducts>((acc, product) => {
       // Si el grupo aún no existe, inicialízalo
-      if (!acc[product.name]) {
-        acc[product.name] = [];
+      if (!acc[product.Product.name]) {
+        acc[product.Product.name] = [];
       }
       // Agrega el producto al grupo correspondiente
-      acc[product.name].push(product);
+      acc[product.Product.name].push(product);
       return acc;
     }, {});
     // Ordenar cada grupo por sizeNumber de menor a mayor y luego aplanar el resultado
     return Object.values(grouped).flatMap(group => group.sort((a, b) => Number(a.sizeNumber) - Number(b.sizeNumber)));
   }
+
   useEffect(() => {
     if (order) {
-      const newProducts = order.ProductVariations.filter(pv =>
+      const newProducts = order?.ProductVariations?.filter(pv =>
         !products.some(p => p.variationID === pv.variationID)
       );
-      if (newProducts.length > 0) {
+      if (newProducts && newProducts.length > 0) {
         const updatedProducts = [...products, ...newProducts];
         const groupedAndSorted = groupAndSortProducts(updatedProducts);
         setProducts(groupedAndSorted);
@@ -125,14 +126,13 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       .catch(e => console.log('error obteniendo orden', e))
   }, [])
 
-
   if (!order) return <p>Cargando...</p>
   const creacion = getFecha(order.createdAt)
   return <div ref={tablaRef} className="container mx-auto my-1 px-4">
     <h2 className="text-3xl font-bold my-3">Detalle de la O.C</h2>
     <p className="text-sm">Creación O.C: {creacion?.fecha} a las {creacion?.hora}</p>
-    <p className="text-2xl font-semibold">{order.Store.name} - {order.Store.rut}</p>
-    <p className="text-2xl font-semibold">{order?.Store?.Users[0]?.email}</p>
+    <p className="text-lg font-semibold">{order.Store.name} - {order.Store.rut}</p>
+    <p className="text-lg font-semibold">{order.Store.email}</p>
     <p className="text-lg font-semibold">Subtotal: {formatoPrecio(order.total)}</p>
     <p className="text-lg font-semibold">IVA: {formatoPrecio(order.total * 0.19)}</p>
     {
@@ -192,31 +192,29 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         </thead>
         <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
           {
-            products.map(({ name, priceCost, quantityOrdered, sizeNumber, sku, subtotal }, i) => {
+            products.map(({ priceCost, sizeNumber, sku, OrderProduct, Product }, i) => {
               // Comparar el nombre actual con el nombre de la fila anterior
-              let isDifferentGroup = i === 0 || name !== products[i - 1].name;
-              const barra = isDifferentGroup && 'border-t-2'
+              let isDifferentGroup = i === 0 || Product.name !== products[i - 1].Product.name;
+              const barra = isDifferentGroup && 'border-t-2 border-blue-300'
               return (
                 <tr key={sku} className={`hover:bg-gray-100 dark:hover:bg-blue-700`}>
-                  <td className={`px-0 py-2 text-center whitespace-nowrap`}>
+                  <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>
                     {i + 1}
                   </td>
-                  <td className={`flex flex-row justify-between px-2 py-2 ${barra}`}>
-                    <div>
-                      {name} <span className="text-sm font-thin">({sku})</span>
-                    </div>
+                  <td className={`${barra} px-2 py-2 text-left whitespace-nowrap`}>
+                    <span className="text-sm font-thin">({sku})</span> {Product.name}
                   </td>
-                  <td className="px-0 py-2 text-center whitespace-nowrap">
+                  <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>
                     {sizeNumber}
                   </td>
-                  <td className="px-2 py-2 text-center  whitespace-nowrap">
+                  <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
                     {formatoPrecio(priceCost)}
                   </td>
-                  <td className="px-0 py-2 text-center whitespace-nowrap">
-                    {quantityOrdered}
+                  <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>
+                    {OrderProduct.quantityOrdered}
                   </td>
-                  <td className="px-2 py-2 text-center  whitespace-nowrap">
-                    {formatoPrecio(subtotal)}
+                  <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
+                    {formatoPrecio(OrderProduct.subtotal)}
                   </td>
                 </tr>
               )

@@ -67,12 +67,13 @@ const ListaDeUsuarios = () => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Correo
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Rol
-                            </th>
+                            </th> */}
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Tiendas
                             </th>
+                            <th>Accion</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -102,7 +103,7 @@ const ListaDeUsuarios = () => {
                                         user.email
                                     )}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                {/* <td className="px-6 py-4 whitespace-nowrap">
                                     {editingUser && editingUser.userID === user.userID ? (
                                         <select
                                             value={editingUser.role}
@@ -122,7 +123,7 @@ const ListaDeUsuarios = () => {
                                             'tercero': 'Tercero'
                                         }[user.role]
                                     )}
-                                </td>
+                                </td> */}
                                 <td className="px-2 py-2 whitespace-nowrap">
                                     {
                                         user.Stores && user.Stores.length > 0 ?

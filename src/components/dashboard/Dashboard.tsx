@@ -14,6 +14,8 @@ import { PiTreeStructureFill } from "react-icons/pi";
 import { IoStorefront } from "react-icons/io5";
 import { FaLayerGroup } from "react-icons/fa";
 import { FiTable } from "react-icons/fi";
+import { useEffect, useState } from 'react'
+import BotonSiNo from '../SiNoBoton'
 
 const DashBoard = () => {
     const { user } = useUserLS()
@@ -21,6 +23,7 @@ const DashBoard = () => {
     const { stores } = storeDataStore()
     const { products } = storeProduct()
     const ventasFiltradas = filteredSales()
+    const [tiendasQueHanVendido, setTiendasQueHanVendido] = useState(0);
 
     const totales = ventasFiltradas.reduce((acc, sale) => {
         const sonTiendasPropias = sale.Store.role !== Role.Tercero;
@@ -59,14 +62,19 @@ const DashBoard = () => {
     })
 
     const filtrovtasTiendas = ventasFiltradas.filter((vta) => vta.Store.role !== Role.Tercero)
+
     const contarTiendasQueHanVendido = () => {
         if (ventasFiltradas) {
             const storeIDs = new Set(filtrovtasTiendas.map(sale => sale.storeID));
             return storeIDs.size;
-        }
+        }else return 0
     }
 
-    const tiendasQueHanVendido = contarTiendasQueHanVendido()
+    useEffect(() => {
+        const tiendasQueHanVendido = contarTiendasQueHanVendido()
+        setTiendasQueHanVendido(tiendasQueHanVendido);
+    }, [ventasFiltradas]);
+
     if (!user) return null
     if (user.role === Role.Tercero) return (
         <>
@@ -76,7 +84,10 @@ const DashBoard = () => {
             <ResumeCompra />
         </>
     )
-    const totalStores = stores.filter(({ role }) => role !== Role.Tercero)
+    const totalStores = stores.filter(({ role }) => {
+        return role !== Role.Tercero
+    })
+
     const totalVentas = totales.tiendasTerceros.ventas + totales.tiendasPropias.ventas
     const totalPares = totales.tiendasTerceros.pares + totales.tiendasPropias.pares
     if (user.role === Role.Admin) return (
@@ -85,7 +96,7 @@ const DashBoard = () => {
                 <Icon className="text-6xl text-blue-500" />
                 <div className='flex flex-col gap-3 items-center'></div>
                 <div className='text-center'>
-                    <div className='flex gap-3 justify-center mb-3'>
+                    <div className='flex gap-3 justify-center mb-6'>
                         <CardDataSale
                             icon={PiTreeStructureFill}
                             title='Tiendas Propias'
@@ -117,13 +128,19 @@ const DashBoard = () => {
                             icon={FiTable}
                             title='Resumen'
                         >
-                            <ul>
                                 <h2 className='max-w-[150px]'>
                                 <span className='font-bold text-blue-800'>{tiendasQueHanVendido}</span> de <span className='font-bold text-blue-800'>{totalStores.length}</span> tiendas han realizado ventas
                                 </h2>
-                            </ul>
                         </CardDataSale>
                     </div>
+                    <div className="flex gap-2 justify-center">
+                                {
+                                    tiendasQueHanVendido > 0 && totalStores.length && totalStores.map(store => {
+                                        const tiendaVendio = filtrovtasTiendas.some(tienda => tienda.Store.storeID === store.storeID)
+                                        return <BotonSiNo key={store.storeID} store={store} vendio={tiendaVendio} />
+                                    })
+                                }
+                            </div>
                 </div>
                 <div className='flex flex-col items-center'>
                     <div className='text-xl italic mb-3 text-blue-500'>{ filterMonth && `Filtrando por fecha: ${filterMonth}`} {filterYear && filterYear}</div>
