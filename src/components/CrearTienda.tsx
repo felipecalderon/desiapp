@@ -1,7 +1,9 @@
 'use client'
-import { User } from "@/config/interfaces";
+import { Role, User } from "@/config/interfaces";
+import storeDataStore from "@/stores/store.dataStore";
 import { fetchData, fetchPost } from "@/utils/fetchData";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react"
+import { Select, SelectItem } from "@nextui-org/react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react"
 
 const CrearTienda = () => {
     const initialForm = {
@@ -12,6 +14,7 @@ const CrearTienda = () => {
         phone: '',
         address: '',
         city: '',
+        role: 'tercero',
         markup: '1.8',
         isAdminStore: true
     }
@@ -25,6 +28,9 @@ const CrearTienda = () => {
         markup: '',
         city: '',
     }
+
+    const scrollToRef = useRef(null); // Referencia para el elemento a desplazar
+    const { setStores } = storeDataStore()
     const [form, setForm] = useState(initialForm)
     const [error, setError] = useState<string | null>(null)
     const [message, setMessage] = useState<string | null>(null)
@@ -39,7 +45,7 @@ const CrearTienda = () => {
             case 'name':
                 error = validateName(value);
                 break;
-            case 'userID':
+            case 'location':
                 error = validateLocation(value);
                 break;
             case 'password':
@@ -53,7 +59,7 @@ const CrearTienda = () => {
     }
 
     const validateName = (name: string) => {
-        if(name === '') return 'Debe ingresar un nombre para la tienda'
+        if (name === '') return 'Debe ingresar un nombre para la tienda'
         if (name.length < 3 || name.length > 35) {
             return "El nombre debe tener entre 3 y 35 caracteres.";
         }
@@ -61,8 +67,7 @@ const CrearTienda = () => {
     }
 
     const validateLocation = (location: string) => {
-        if(location === '') return 'Falta nombre del sector o referencia'
-        console.log({location});
+        if (location === '') return 'Falta nombre del sector o referencia'
         if (location.length < 3 || location.length > 25) {
             return "Sucursal debe tener entre 3 y 25 caracteres.";
         }
@@ -71,7 +76,7 @@ const CrearTienda = () => {
     }
 
     const validateRUT = (rut: string) => {
-        if(rut === '') return 'Ingrese RUT'
+        if (rut === '') return 'Ingrese RUT'
         if (rut.length < 8) {
             return "Faltan números en el rut";
         }
@@ -87,17 +92,22 @@ const CrearTienda = () => {
             location: validateLocation(form.location),
             rut: validateRUT(form.rut)
         };
-        setErrors({...initialErrors, ...newErrors});
+        setErrors({ ...initialErrors, ...newErrors });
 
         const arrayErrores = Object.values(errors).filter((error) => error !== '')
 
         if (arrayErrores.length > 0) {
             console.log('hay errores', arrayErrores);
             return
-        }else{
+        } else {
             const creacion = await fetchPost('store', form)
-            if(creacion.error) return setError(creacion.error)
-            else setMessage('Tienda creada exitosamente, Favor recargar el sitio')
+            if (creacion.error) return setError(creacion.error)
+            fetchData('store').then(res => setStores(res))
+            window.scrollTo({
+                top: 9999,
+                behavior: "smooth",
+            });
+
         }
         setForm(initialForm)
     }
@@ -105,13 +115,13 @@ const CrearTienda = () => {
     const getUsers = async () => {
         setUsuarios(await fetchData('users'))
     }
-    
+
     useEffect(() => {
         getUsers()
     }, [])
-    
+
     useEffect(() => {
-        if(usuarios && usuarios.length > 0) setForm({...form, userID: usuarios[0].userID})
+        if (usuarios && usuarios.length > 0) setForm({ ...form, userID: usuarios[0].userID })
     }, [usuarios])
 
     return (
@@ -148,7 +158,7 @@ const CrearTienda = () => {
                     </label>
                 </div>
                 <div className="mb-4 flex flex-row gap-3 justify-center">
-                <label className="mb-2">
+                    <label className="mb-2">
                         <span className="text-gray-700 text-sm">Dirección (calle y número)</span>
                         <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="Ej: Calle Nombre 111" type="text" name="address" autoComplete="off" onChange={changeForm} />
                         {errors.address !== '' && <p className="text-red-500 text-xs italic">{errors.address}</p>}
@@ -159,8 +169,39 @@ const CrearTienda = () => {
                         {errors.phone !== '' && <p className="text-red-500 text-xs italic">{errors.phone}</p>}
                     </label>
                 </div>
-                <div className="mb-6">
-                    <label className="mb-2">
+                <div className="mb-4 flex flex-row gap-3 justify-center">
+                    <Select
+                        name="role"
+                        variant="flat"
+                        label="Tipo de tienda"
+                        selectedKeys={[form.role]}
+                        onChange={changeForm}
+                    >
+                        {Object.values(Role).map((rol) => (
+                            <SelectItem key={rol} value={rol}>
+                                {
+                                    rol === Role.Admin ? "Admin"
+                                        : rol === Role.Consignado ? "Consignado"
+                                            : rol === Role.Franquiciado ? "Franquiciado"
+                                                : rol === Role.Tercero ? "Tercero" : "Otro"
+                                }
+                            </SelectItem>
+                        ))}
+                    </Select>
+                    {usuarios && <Select
+                        name="userID"
+                        variant="flat"
+                        label="Gestor de la tienda"
+                        selectedKeys={[form.userID]}
+                        onChange={changeForm}
+                    >
+                        {usuarios.map((usr) => (
+                            <SelectItem key={usr.userID} value={usr.userID}>
+                                { usr.name }
+                            </SelectItem>
+                        ))}
+                    </Select>}
+                    {/* <label className="mb-2">
                         <span className="text-gray-700 text-sm">Gestor de la tienda</span>
                         <select
                             name="userID"
@@ -174,12 +215,13 @@ const CrearTienda = () => {
                                 })
                             }
                         </select>
-                    </label>
+                    </label> */}
                 </div>
                 <button type="submit" className={`w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}>Crear Tienda</button>
                 {error && <p className='text-red-700 text-center bg-white p-3 italic text-xl font-semibold'>Error: {error}</p>}
                 {message && <p className='text-green-700 text-center bg-white p-3 italic text-xl font-semibold'>{message}</p>}
             </form>
+            <div ref={scrollToRef} />
         </div>
     )
 }

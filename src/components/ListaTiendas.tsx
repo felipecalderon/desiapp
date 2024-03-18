@@ -1,10 +1,13 @@
 'use client'
-import { Store } from '@/config/interfaces'
+import { Role, Store } from '@/config/interfaces'
 import { fetchData, fetchDelete, fetchUpdate } from '@/utils/fetchData';
 import React, { useEffect, useState } from 'react'
+import RoleVista from './RolesComponent';
+import { Select, SelectItem } from "@nextui-org/react";
+import storeDataStore from '@/stores/store.dataStore';
 
 const ListaTiendas = () => {
-    const [stores, setStores] = useState<Store[]>([])
+    const {stores, setStores} = storeDataStore()
     const [editingStore, setEditingStore] = useState<Store | null>(null);
     const [message, setMessage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -28,8 +31,8 @@ const ListaTiendas = () => {
             const update = await fetchUpdate(`store/${editingStore.storeID}`, cambios)
             if (!update) {
                 setError('No se pudo actualizar');
-            }else{
-                setMessage(`Tienda de ${editingStore.location} actualizada correctamente, refresca la página para ver cambios`)
+            } else {
+                fetchData('store').then(res => setStores(res))
             }
         }
 
@@ -40,19 +43,18 @@ const ListaTiendas = () => {
     const deletetienda = async (id: string) => {
         setLoading(true)
         await fetchDelete(`store?storeID=${id}`)
-        setMessage('Tienda eliminada, refresca la página para ver cambios')
+        fetchData('store').then(res => setStores(res))
         setLoading(false)
     }
 
     useEffect(() => {
         fetchData('store').then(res => setStores(res))
     }, [])
-    if(!stores) return <p>Cargando..</p>
+    if (!stores) return <p>Cargando..</p>
     return (
         <>
             <div className="overflow-x-auto shadow-md bg-white my-6">
-            {message && <p className='text-green-800 bg-white px-3 italic text-center py-3 text-2xl font-bold'>{message}</p>}
-            {error && <p className='text-red-800 bg-white px-3 italic text-center py-3 text-2xl font-bold'>{error}</p>}
+                {error && <p className='text-red-800 bg-white px-3 italic text-center py-3 text-2xl font-bold'>{error}</p>}
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -64,9 +66,6 @@ const ListaTiendas = () => {
                             </th>
                             <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Sucursal
-                            </th>
-                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Ciudad
                             </th>
                             <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 RUT
@@ -94,7 +93,7 @@ const ListaTiendas = () => {
                                         tienda.name
                                     )}
                                 </td>
-                                <td className="px-2 text-sm italic py-4">
+                                <td className="px-2 text-sm italic py-4 max-w-[200px]">
                                     {editingStore && editingStore.storeID === tienda.storeID ? (
                                         <input
                                             type="text"
@@ -104,6 +103,36 @@ const ListaTiendas = () => {
                                         />
                                     ) : (
                                         tienda.address
+                                    )}
+                                </td>
+                                <td className="px-2 text-sm italic py-4 max-w-[200px]">
+                                    {editingStore && editingStore.storeID === tienda.storeID ? (
+                                        // <input
+                                        //     type="text"
+                                        //     value={editingStore.role}
+                                        //     onChange={(e) => setEditingStore({ ...editingStore, role: e.target.value })}
+                                        //     className="bg-blue-100 pl-1 rounded-md py-1"
+                                        // />
+                                        <Select
+                                            variant="flat"
+                                            placeholder="Rol"
+                                            selectedKeys={[editingStore.role]}
+                                            className="min-w-full h-fit"
+                                            onChange={(e) => setEditingStore({ ...editingStore, role: e.target.value })}
+                                        >
+                                            {Object.values(Role).map((rol) => (
+                                                <SelectItem key={rol} value={rol}>
+                                                    { 
+                                                        rol === Role.Admin ? "Admin"
+                                                        : rol === Role.Consignado ? "Consignado"
+                                                        : rol === Role.Franquiciado ? "Franquiciado"
+                                                        : rol === Role.Tercero ? "Tercero" : "Otro"
+                                                    }
+                                                </SelectItem>
+                                            ))}
+                                        </Select>
+                                    ) : (
+                                        <RoleVista role={tienda.role} />
                                     )}
                                 </td>
                                 <td className="px-2 text-sm italic py-4">
@@ -116,18 +145,6 @@ const ListaTiendas = () => {
                                         />
                                     ) : (
                                         tienda.location
-                                    )}
-                                </td>
-                                <td className="px-2 text-sm italic py-4">
-                                    {editingStore && editingStore.storeID === tienda.storeID ? (
-                                        <input
-                                            type="text"
-                                            value={editingStore.city}
-                                            onChange={(e) => setEditingStore({ ...editingStore, city: e.target.value })}
-                                            className="bg-blue-100 pl-1 rounded-md py-1"
-                                        />
-                                    ) : (
-                                        tienda.city
                                     )}
                                 </td>
                                 <td className="px-2 text-sm italic py-4">
