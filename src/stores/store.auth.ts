@@ -8,12 +8,16 @@ export interface AuthState {
   user: User | null,
   setUser: (user: User | null) => void,
   isLoadingUser: boolean,
-  setIsLoading: (isLoadingUser: boolean) => void
+  setIsLoading: (isLoadingUser: boolean) => void,
+  users: User[],
+	setUsers: (users: User[]) => void;
 }
 
 const storeAuth = create<AuthState>((set) => ({
     isLogged: false,
     isLoadingUser: true,
+    users: [],
+    setUsers: (users: User[]) => set({users}),
     setIsLoading: (isLoadingUser: boolean) => set({isLoadingUser}),
     setIsLogged: (isLogged) => set({isLogged}),
     user: null,

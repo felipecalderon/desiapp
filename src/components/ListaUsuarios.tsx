@@ -1,10 +1,11 @@
 'use client'
 import { Role, User } from '@/config/interfaces'
+import storeAuth from '@/stores/store.auth'
 import { fetchData, fetchDelete, fetchUpdate } from '@/utils/fetchData'
 import React, { useEffect, useState } from 'react'
 
 const ListaDeUsuarios = () => {
-    const [users, setUsers] = useState<User[] | null>(null)
+    const {users, setUsers} = storeAuth()
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)

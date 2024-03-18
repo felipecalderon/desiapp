@@ -201,21 +201,6 @@ const CrearTienda = () => {
                             </SelectItem>
                         ))}
                     </Select>}
-                    {/* <label className="mb-2">
-                        <span className="text-gray-700 text-sm">Gestor de la tienda</span>
-                        <select
-                            name="userID"
-                            value={form.userID}
-                            onChange={changeForm}
-                            className="form-select block w-full mt-1 border-gray-300 shadow-sm rounded-md bg-gray-200 px-2"
-                        >
-                            {
-                                usuarios && usuarios.map((usr) => {
-                                    return <option key={usr.userID} value={usr.userID}>{usr.name}</option>
-                                })
-                            }
-                        </select>
-                    </label> */}
                 </div>
                 <button type="submit" className={`w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}>Crear Tienda</button>
                 {error && <p className='text-red-700 text-center bg-white p-3 italic text-xl font-semibold'>Error: {error}</p>}

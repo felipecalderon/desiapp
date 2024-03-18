@@ -1,5 +1,6 @@
 'use client'
-import { fetchPost } from "@/utils/fetchData";
+import storeAuth from "@/stores/store.auth";
+import { fetchData, fetchPost } from "@/utils/fetchData";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react"
 
 const CrearUsuarios = () => {
@@ -9,7 +10,7 @@ const CrearUsuarios = () => {
         password: '',
         role: 'store_manager'
     }
-
+    const {setUsers} = storeAuth()
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const [form, setForm] = useState(initialForm)
@@ -82,8 +83,13 @@ const CrearUsuarios = () => {
         }
         const creacion = await fetchPost('users', form)
         if(creacion.error) return setError(creacion.error)
-        else setMessage('Usuario creado exitosamente, Favor recargar el sitio')
+        const data = await fetchData('users');
+        setUsers(data);
         setForm(initialForm)
+        window.scrollTo({
+            top: 9999,
+            behavior: "smooth",
+        });
     }
 
     useEffect(() => {

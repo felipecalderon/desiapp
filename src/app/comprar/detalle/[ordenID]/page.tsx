@@ -152,14 +152,17 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             <option value={'Recibido'}>Recibido conforme</option>
           </select>
         } <button onClick={editOrderHandle} className="px-6 rounded-lg bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
-        {edit && user?.role === Role.Admin && <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>}
-        {edit && user?.role === Role.Admin && <Input
+        {edit && user?.role === Role.Admin && <>
+        <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>
+        <Input
           onChange={(e) => setEditOrder({ ...editOrder, dte: e.target.value })}
           type="number"
           min={0}
           color="primary"
           label="DTE"
           placeholder="Ingresar n° DTE" />
+          {/* <Input type="datetime-local" label="Fecha" /> */}
+        </>
         }
       </p>
       <button onClick={imprimirTabla} className="px-3 rounded-lg h-fit bg-blue-900 text-sm py-1 text-white">Imprimir</button>
