@@ -172,7 +172,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             label="Estado del Pago"
           >
             <SelectItem key={'Pendiente'} value={'Pendiente'}>Pendiente</SelectItem>
-            <SelectItem key={'Facturado'} value={'Facturado'}>Enviado</SelectItem>
+            <SelectItem key={'Enviado'} value={'Enviado'}>Enviado</SelectItem>
             <SelectItem key={'Pagado'} value={'Pagado'}>Pagado</SelectItem>
           </Select>
 
