@@ -8,7 +8,7 @@ import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
-import { Input } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
   const { user } = storeAuth()
@@ -19,11 +19,12 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const [products, setProducts] = useState<ProductosdeOrden[]>([])
   const [totalPares, setTotalPares] = useState(0)
   const tablaRef = useRef<HTMLTableElement>(null);
-  const [editOrder, setEditOrder] = useState({
+  const [editOrder, setEditOrder] = useState<Partial<OrdendeCompra>>({
     orderID: params.ordenID,
     status: 'Pendiente',
     dte: "",
-    expiration: ''
+    expiration: "",
+    type: "OCD"
   })
 
   const deleteOrder = async () => {
@@ -64,22 +65,20 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   };
 
   const editOrderHandle = async () => {
-    if (!edit) {
-      setEdit(!edit)
-    } else {
-      setEdit(false)
+    setEdit(!edit)
+    if (edit) {
       const formatoUpdateOrder = {
         ...editOrder, newProducts: [...products]
       }
-      if (order?.status === 'Recibido') return setMessage('Productos declarados como RECIBIDOS, no se puede cambiar')
-
       const data = await fetch(`${url.backend}/order`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formatoUpdateOrder)
       })
       const res = await data.json()
-      setMessage(`${res.message}, recargue para ver los cambios`)
+      fetchData(`order/${params.ordenID}`)
+        .then((res: OrdendeCompra) => setOrder(res))
+      setMessage(`${res.message}`)
       console.log({ res });
     }
   }
@@ -104,6 +103,16 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
 
   useEffect(() => {
     if (order) {
+      let dateValue = new Date();
+      dateValue.setUTCHours(12, 0, 0, 0); 
+
+      setEditOrder({ ...editOrder, 
+        dte: order.dte || "", 
+        status: order.status, 
+        expiration: order.expiration || dateValue.toISOString(), 
+        type: order.type 
+      })
+
       const newProducts = order?.ProductVariations?.filter(pv =>
         !products.some(p => p.variationID === pv.variationID)
       );
@@ -126,8 +135,16 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       .catch(e => console.log('error obteniendo orden', e))
   }, [])
 
+  // useEffect(() => {
+  //   console.log(editOrder);
+  // }, [editOrder])
+
   if (!order) return <p>Cargando...</p>
   const creacion = getFecha(order.createdAt)
+  const expiracion = order.expiration ? new Date(order.expiration) : new Date()
+  const { fecha } = getFecha(expiracion)
+  const [dia, mes, anio] = fecha.split('-')
+  const inputFecha = `${anio}-${mes}-${dia}`
   return <div ref={tablaRef} className="container mx-auto my-1 px-4">
     <h2 className="text-3xl font-bold my-3">Detalle de la O.C</h2>
     <p className="text-sm">Creación O.C: {creacion?.fecha} a las {creacion?.hora}</p>
@@ -137,36 +154,86 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     <p className="text-lg font-semibold">IVA: {formatoPrecio(order.total * 0.19)}</p>
     {
       order.dte ? <p className="text-lg font-semibold">N° DTE: <span className="italic font-normal">{order.dte}</span></p>
-      : <p className="text-lg font-semibold bg-red-300 px-2 rounded-sm w-fit">DTE Pendiente</p>
+        : <p className="text-lg font-semibold bg-red-300 px-2 rounded-sm w-fit">DTE Pendiente</p>
     }
-    <div className="flex flex-row items-center gap-3">
 
-      <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
-        Estado: {!edit
-          ? order.status
-          : <select defaultValue={order.status} onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}>
-            <option value={'Pendiente'}>Pendiente</option>
-            {edit && user?.role === Role.Admin && <option value={'Pagado'}>Pagado</option>}
-            {edit && user?.role === Role.Admin && <option value={'Enviado'}>Enviado</option>}
-            {edit && user?.role === Role.Admin && <option value={'Facturado'}>Facturado</option>}
-            <option value={'Recibido'}>Recibido conforme</option>
-          </select>
-        } <button onClick={editOrderHandle} className="px-6 rounded-lg bg-blue-800 text-white">{edit ? 'Confirmar' : 'Editar'}</button>
-        {edit && user?.role === Role.Admin && <>
-        <button onClick={deleteOrder} className="px-3 rounded-sm bg-red-800 text-white">Eliminar Orden</button>
-        <Input
-          onChange={(e) => setEditOrder({ ...editOrder, dte: e.target.value })}
-          type="number"
-          min={0}
-          color="primary"
-          label="DTE"
-          placeholder="Ingresar n° DTE" />
-          {/* <Input type="datetime-local" label="Fecha" /> */}
+    <p className={`text-lg font-semibold flex flex-row gap-3 my-3 ${order.status === 'Pagado' ? 'text-green-600' : 'text-yellow-600'}`}>
+        Estado: {order.status}
+    </p>
+    {!edit ? <Button onClick={editOrderHandle} variant="solid" color="success" className="mr-3">Editar</Button>
+    : user?.role === Role.Admin 
+    && <>
+        <div className="flex flex-row justify-between my-3 gap-3">
+          <Select
+            selectedKeys={[editOrder.status as string]}
+            onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}
+            variant="flat"
+            color="primary"
+            label="Estado del Pago"
+          >
+            <SelectItem key={'Pendiente'} value={'Pendiente'}>Pendiente</SelectItem>
+            <SelectItem key={'Pagado'} value={'Pagado'}>Pagado</SelectItem>
+            <SelectItem key={'Enviado'} value={'Enviado'}>Enviado</SelectItem>
+            <SelectItem key={'Facturado'} value={'Facturado'}>Facturado</SelectItem>
+            <SelectItem key={'Recibido'} value={'Recibido'}>Recibido conforme</SelectItem>
+          </Select>
+
+          <Select
+            name="accion"
+            variant="flat"
+            color="primary"
+            label="Naturaleza"
+            selectedKeys={[editOrder.type as string]}
+            onChange={(e) => {
+              const validTypes = ["OCD", "OCC", "OCR", "OCP"] as const;
+              const newValue = e.target.value as typeof validTypes[number];
+              if (validTypes.includes(newValue)) {
+                setEditOrder({ ...editOrder, type: newValue });
+              }else{
+                setEditOrder({ ...editOrder, type: 'OCD' })
+              }
+            }}
+          >
+            <SelectItem key="OCD" value="OCD">Compra Directa</SelectItem>
+            <SelectItem key="OCR" value="OCR">Reposición Automática</SelectItem>
+            <SelectItem key="OCC" value="OCC">Compra por Consignación</SelectItem>
+            <SelectItem key="OCP" value="OCP">Primera Carga</SelectItem>
+          </Select>
+          <Input
+            onChange={(e) => setEditOrder({ ...editOrder, dte: e.target.value })}
+            type="number"
+            min={0}
+            color="primary"
+            label="DTE"
+            defaultValue={order.dte}
+            placeholder="Ingresar n° DTE" />
+          <Input 
+            onChange={(e) => {
+              // Crear un objeto Date a partir del valor seleccionado
+              try {                
+                let dateValue = new Date(e.target.value);
+                dateValue.setUTCHours(12, 0, 0, 0); 
+                const fechaFormato = dateValue.toISOString()
+                setEditOrder({ ...editOrder, expiration: dateValue.toISOString() });
+              } catch (error) {
+                setEditOrder({ ...editOrder, expiration: undefined });
+              }
+            }}
+            type="date" 
+            color="primary"
+            label="Vencimiento OC"
+            defaultValue={inputFecha}
+            className="text-xs"
+            />
+        </div>
+        <div className="flex flex-row justify-start mb-3 gap-3">
+          <Button onClick={editOrderHandle} variant="solid" color="success">Guardar Orden</Button>
+          <Button onClick={deleteOrder} variant="solid" color="danger">Eliminar Orden</Button>
+        </div>
         </>
         }
-      </p>
-      <button onClick={imprimirTabla} className="px-3 rounded-lg h-fit bg-blue-900 text-sm py-1 text-white">Imprimir</button>
-    </div>
+      <Button onClick={imprimirTabla} variant="solid" color="warning">Imprimir</Button>
+
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-2 rounded-md text-white">{message}</p>}
     <div className="mt-2">
       <p className="text-xl font-semibold mb-2">Productos:</p>

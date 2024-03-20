@@ -3,8 +3,7 @@ interface FormatoFecha {
 	hora: string
 }
 
-export const getFecha = (inputFecha: Date) : FormatoFecha | null=> {
-    try {
+export const getFecha = (inputFecha: Date | string) : FormatoFecha => {
         if (!inputFecha) throw 'No se pudo convertir la fecha';
         const fechaformat = new Date(inputFecha);
         const opciones: Intl.DateTimeFormatOptions = {
@@ -20,12 +19,11 @@ export const getFecha = (inputFecha: Date) : FormatoFecha | null=> {
         };
 
         const hora = fechaformat.toLocaleTimeString('es-ES', opcionesHora);
-        const fecha = fechaformat.toLocaleDateString('es-ES', opciones); // Usará el formato dd/mm/aaaa
+        const partesFecha = fechaformat.toLocaleDateString('es-ES', opciones).split('/');
+        // Reordenamos y unimos con '-' para obtener el formato dd-mm-aaaa
+        const fecha = `${partesFecha[0]}-${partesFecha[1]}-${partesFecha[2]}`;
+
         return { fecha, hora } as FormatoFecha;
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
 }
 
 

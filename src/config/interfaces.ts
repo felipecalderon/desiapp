@@ -97,7 +97,8 @@ export interface OrdendeCompra {
 	createdAt: Date;
 	updatedAt: Date;
 	dte?: string;
-	expiration: Date | null;
+	expiration: string;
+	type: 'OCD' | 'OCC' | 'OCR' | 'OCP';
 	expirationPeriod: 'UNICO' | 'MENSUAL';
 	ProductVariations: ProductosdeOrden[];
 	Store: Store;

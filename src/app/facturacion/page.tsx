@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import storeAuth from "@/stores/store.auth"
 import storeDataStore from "@/stores/store.dataStore"
-import { OrdendeCompra, Role, Store } from "@/config/interfaces"
+import { OrdendeCompra, Role } from "@/config/interfaces"
 
 export default function Facturacion() {
     const route = useRouter()
@@ -22,7 +22,7 @@ export default function Facturacion() {
                 .then(res => setOrders(res))
         }
     }, [store, user])
-
+    const handleClickOrder = (orderID: string) => route.push(`/comprar/detalle/${orderID}`)
     if(orders?.length === 0) return <p>No hay órdenes creadas aún</p>
     if (orders) return (
         <div className='flex flex-col justify-start items-center text-center gap-6 px-8 pt-10'>
@@ -31,23 +31,27 @@ export default function Facturacion() {
                     <thead>
                         <tr className="dark:bg-blue-950">
                             <th className="border px-4 py-2">Sucursal</th>
-                            <th className="border px-4 py-2">Fecha</th>
-                            <th className="border px-4 py-2">Status</th>
+                            <th className="border px-4 py-2">Emisión</th>
+                            <th className="border px-4 py-2">Vencimiento</th>
+                            <th className="border px-4 py-2">Naturaleza OC</th>
+                            <th className="border px-4 py-2">Pago</th>
                             <th className="border px-4 py-2">Total</th>
                             <th className="border px-4 py-2">N° DTE</th>
                         </tr>
                     </thead>
                     <tbody>
                         {orders.map((order) => {
-                            const fecha = getFecha(order.createdAt)
-                            return <tr className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{fecha?.fecha}</td>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
-                                <td onClick={() => route.push(`/comprar/detalle/${order.orderID}`)} className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">
-                                    {order.dte}
-                                </td>
+                            const { fecha: emision } = getFecha(order.createdAt)
+                            const { fecha: vencimiento } = order.expiration ? getFecha(order.expiration) : { fecha: '' }
+
+                            return <tr onClick={() => handleClickOrder(order.orderID)} className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{emision}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{vencimiento}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700 text-xs">{Type(order.type)}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.dte}</td>
                             </tr>
                         })}
                     </tbody>
@@ -55,4 +59,12 @@ export default function Facturacion() {
             </div>
         </div>
     )
+}
+
+const Type = (type: 'OCD' | 'OCC' | 'OCR' | 'OCP') => {
+    if(type === "OCD") return 'Compra Directa'
+    if(type === "OCR") return 'Reposición Automática'
+    if(type === "OCC") return 'Compra por Consignación'
+    if(type === "OCP") return 'Primera Carga'
+    return 'Tipo no reconocido'
 }
