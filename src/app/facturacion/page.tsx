@@ -32,11 +32,11 @@ export default function Facturacion() {
                         <tr className="dark:bg-blue-950">
                             <th className="border px-4 py-2">Sucursal</th>
                             <th className="border px-4 py-2">Emisión</th>
-                            <th className="border px-4 py-2">Vencimiento</th>
                             <th className="border px-4 py-2">Tipo OC</th>
                             <th className="border px-4 py-2">Estado</th>
                             <th className="border px-4 py-2">Total</th>
                             <th className="border px-4 py-2">N° DTE</th>
+                            <th className="border px-4 py-2">Vencimiento</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,11 +47,11 @@ export default function Facturacion() {
                             return <tr onClick={() => handleClickOrder(order.orderID)} className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{emision}</td>
-                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{vencimiento}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700 text-xs">{Type(order.type)}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.dte}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{vencimiento}</td>
                             </tr>
                         })}
                     </tbody>
