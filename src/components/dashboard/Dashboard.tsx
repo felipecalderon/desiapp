@@ -19,7 +19,7 @@ import BotonSiNo from '../SiNoBoton'
 
 const DashBoard = () => {
     const { user } = useUserLS()
-    const { sales, totalSales, totalProducts, filteredSales, filterMonth, filterYear } = storeSales()
+    const { totalSales, filteredSales, filterMonth, filterYear } = storeSales()
     const { stores } = storeDataStore()
     const { products } = storeProduct()
     const ventasFiltradas = filteredSales()
@@ -27,14 +27,14 @@ const DashBoard = () => {
 
     const totales = ventasFiltradas.reduce((acc, sale) => {
         const sonTiendasPropias = sale.Store.role !== Role.Tercero;
-        const estaVendido = sale.status === "Pagado" || sale.status === "Recibido" || sale.status === "Facturado"
+        const estaVendido = sale.status === "Pagado" || sale.status === "Enviado"
         const paresVendidos = sale.SaleProducts.reduce((acc, variation) => {
             if (variation.quantityOrdered) {
                 return acc + variation.quantityOrdered
             }
             return acc + variation.quantitySold
         }, 0)
-
+        if(!sonTiendasPropias) console.log(sale);
         if (estaVendido && sonTiendasPropias) return {
             ...acc,
             tiendasPropias: {
@@ -62,12 +62,11 @@ const DashBoard = () => {
     })
 
     const filtrovtasTiendas = ventasFiltradas.filter((vta) => vta.Store.role !== Role.Tercero)
-
     const contarTiendasQueHanVendido = () => {
         if (ventasFiltradas) {
             const storeIDs = new Set(filtrovtasTiendas.map(sale => sale.storeID));
             return storeIDs.size;
-        }else return 0
+        } else return 0
     }
 
     useEffect(() => {
@@ -87,7 +86,7 @@ const DashBoard = () => {
     const totalStores = stores.filter(({ role }) => {
         return role !== Role.Tercero
     })
-
+    console.log(totales.tiendasTerceros);
     const totalVentas = totales.tiendasTerceros.ventas + totales.tiendasPropias.ventas
     const totalPares = totales.tiendasTerceros.pares + totales.tiendasPropias.pares
     if (user.role === Role.Admin) return (
@@ -128,22 +127,22 @@ const DashBoard = () => {
                             icon={FiTable}
                             title='Resumen'
                         >
-                                <h2 className='max-w-[150px]'>
+                            <h2 className='max-w-[150px]'>
                                 <span className='font-bold text-blue-800'>{tiendasQueHanVendido}</span> de <span className='font-bold text-blue-800'>{totalStores.length}</span> tiendas han realizado ventas
-                                </h2>
+                            </h2>
                         </CardDataSale>
                     </div>
                     <div className="flex gap-2 justify-center">
-                                {
-                                    tiendasQueHanVendido > 0 && totalStores.length && totalStores.map(store => {
-                                        const tiendaVendio = filtrovtasTiendas.some(tienda => tienda.Store.storeID === store.storeID)
-                                        return <BotonSiNo key={store.storeID} store={store} vendio={tiendaVendio} />
-                                    })
-                                }
-                            </div>
+                        {
+                            tiendasQueHanVendido > 0 && totalStores.length && totalStores.map(store => {
+                                const tiendaVendio = filtrovtasTiendas.some(tienda => tienda.Store.storeID === store.storeID)
+                                return <BotonSiNo key={store.storeID} store={store} vendio={tiendaVendio} />
+                            })
+                        }
+                    </div>
                 </div>
                 <div className='flex flex-col items-center'>
-                    <div className='text-xl italic mb-3 text-blue-500'>{ filterMonth && `Filtrando por fecha: ${filterMonth}`} {filterYear && filterYear}</div>
+                    <div className='text-xl italic mb-3 text-blue-500'>{filterMonth && `Filtrando por fecha: ${filterMonth}`} {filterYear && filterYear}</div>
                     <SalesResumeTable />
                 </div>
             </div>
