@@ -34,7 +34,7 @@ const DashBoard = () => {
             }
             return acc + variation.quantitySold
         }, 0)
-        if(!sonTiendasPropias) console.log(sale);
+
         if (estaVendido && sonTiendasPropias) return {
             ...acc,
             tiendasPropias: {
@@ -86,9 +86,10 @@ const DashBoard = () => {
     const totalStores = stores.filter(({ role }) => {
         return role !== Role.Tercero
     })
-    console.log(totales.tiendasTerceros);
+
     const totalVentas = totales.tiendasTerceros.ventas + totales.tiendasPropias.ventas
     const totalPares = totales.tiendasTerceros.pares + totales.tiendasPropias.pares
+    
     if (user.role === Role.Admin) return (
         <>
             <div className='flex flex-col justify-center items-center p-20 gap-3 rounded-3xl'>

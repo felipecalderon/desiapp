@@ -1,6 +1,5 @@
 'use client'
-
-import { OrdendeCompra, Role } from '@/config/interfaces'
+import { Role } from '@/config/interfaces'
 import FechaFormateada from '@/components/FechaFormat'
 import HoraFormateada from '@/components/HoraFormateada'
 import storeAuth from '@/stores/store.auth'
@@ -9,7 +8,6 @@ import { formatoRut } from '@/utils/rut'
 import storeSales from '@/stores/store.sales'
 import { formatoPrecio } from '@/utils/price'
 import { useEffect, useState } from 'react'
-import { fetchData } from '@/utils/fetchData'
 
 const Header = () => {
     const { user } = storeAuth()
@@ -19,20 +17,34 @@ const Header = () => {
 
     useEffect(() => {
         updateTotals();
+        const vtasdelMes = sales.filter((vta) => {
+            const saleDate = new Date(vta.createdAt);
+            const nowDate = new Date()
+            // Convierte la fecha de venta a mes y año para comparación
+            const saleMonth = saleDate.getMonth()
+            const saleYear = saleDate.getFullYear()
+    
+            const nowMonth = nowDate.getMonth()
+            const nowYear = nowDate.getFullYear()
+    
+            // Verifica si el filtro de mes y año es null y ajusta el filtrado
+            const isMonthMatch = saleMonth === nowMonth
+            const isYearMatch = saleYear === nowYear
+            // Devuelve la venta si coincide con los filtros de mes y año
+            return isMonthMatch && isYearMatch;
+        })
+
+        const total = vtasdelMes.reduce((acc, {total, status, Store}) => {
+            if(status !== 'Pagado'){
+                return acc + total
+            }else if(status === 'Pagado' && Store.role === Role.Franquiciado){
+                return acc + total
+            }
+            return acc
+        }, 0)
+        setFacturado(total);
     }, [sales])
 
-    useEffect(() => {
-        fetchData('order')
-            .then((order: OrdendeCompra[]) => {
-                const total = order.reduce((acc, {total, status}) => {
-                    if(status === 'Pendiente'){
-                        return acc + total
-                    }
-                    return acc
-                }, 0)
-                setFacturado(total);
-            })
-    }, [])
     if (!user) return null
     if (user.role === Role.Admin) {
         return (
