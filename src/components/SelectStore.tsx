@@ -28,7 +28,7 @@ const SelectStore = () => {
             // Es un evento MouseEvent
             valorSeleccionado = (evento as MouseEvent<HTMLSelectElement>).currentTarget.value;
         }
-
+        console.log({valorSeleccionado});
         if (valorSeleccionado === '' || valorSeleccionado === 'todos') {
             cargarProductos();
             cleanStore()
@@ -47,20 +47,17 @@ const SelectStore = () => {
                 let endpoint = `store`;
                 if (user.role !== Role.Admin) {
                     endpoint = `store/${user.userID}`;
-                }
-
-                const data: Store[] = await fetchData(endpoint);
-                setStores(data);
-
-                // Cargar productos al montar el componente para el usuario admin
-                if (user.role === Role.Admin) {
+                    const data: Store[] = await fetchData(endpoint);
+                    const filterStore = data.filter(({Users}) => Users.some(({userID}) => user.userID === userID))
+                    setStores(filterStore);
+                    setStore(filterStore[0])
+                } else{
+                    const data: Store[] = await fetchData(endpoint);
+                    setStores(data);
                     cargarProductos();
-                } else {
-                    setStore(data[0])
                 }
             }
         };
-
         cargarDatosIniciales();
     }, [user]);
 

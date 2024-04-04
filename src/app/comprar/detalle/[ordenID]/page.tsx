@@ -11,10 +11,11 @@ import { useEffect, useRef, useState } from "react"
 import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import CardDataSale from "@/components/CardDataSale"
 import { FaShop, FaCashRegister } from "react-icons/fa6";
+import storeCpra from "@/stores/store.pedidCpra"
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
-  const { user } = storeAuth()
   const route = useRouter()
+  const { productos, setPedido, updateCantidad, removePedido, cantidades, setCantidades } = storeCpra()
   const [order, setOrder] = useState<OrdendeCompra | null>(null)
   const [edit, setEdit] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -138,11 +139,9 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       .catch(e => console.log('error obteniendo orden', e))
   }, [])
 
-  // useEffect(() => {
-  //   console.log(editOrder);
-  // }, [editOrder])
-
+  
   if (!order) return <p>Cargando...</p>
+  console.log(productos);
   const creacion = getFecha(order.createdAt)
   const expiracion = order.expiration ? new Date(order.expiration) : new Date()
   const { fecha } = getFecha(expiracion)
