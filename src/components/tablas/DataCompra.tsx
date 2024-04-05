@@ -72,7 +72,6 @@ export default function DataCompra({ message, products, cantidades, getStockCent
                 name={variation.sku}
                 value={cantidades[variation.variationID] || ""}
                 onChange={(e) => handleInputChange(e, variation)}
-                disabled={true}
                 className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1"
                 />
             </td>
