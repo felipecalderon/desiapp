@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 const ResumeCompra = () => {
     const { productos, totalProductos, totalNeto } = storeCpra()
-
+    console.log({totalNeto});
     if (productos.length > 0) return (
         <footer
             className='fixed bottom-0 left-60 hover:scale-105 hover:shadow-xl transition-all shadow-blue-400 bg-green-500 text-gray-800 rounded-t-lg p-3'

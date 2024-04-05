@@ -141,7 +141,6 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
 
   
   if (!order) return <p>Cargando...</p>
-  console.log(productos);
   const creacion = getFecha(order.createdAt)
   const expiracion = order.expiration ? new Date(order.expiration) : new Date()
   const { fecha } = getFecha(expiracion)

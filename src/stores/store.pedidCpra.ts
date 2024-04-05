@@ -37,8 +37,6 @@ const storeCpra = create<ListaCompra>((set) => ({
 			return {
 				...state,
 				productos: [...state.productos, variacion],
-				totalProductos: state.totalProductos + variacion.quantityOrdered,
-				totalNeto: state.totalNeto + Number(variacion.price),
 			};
 		}),
 
@@ -78,6 +76,7 @@ const storeCpra = create<ListaCompra>((set) => ({
 					: producto
 			);
 			const filterProductos = updatedProductos.filter(({quantityOrdered}) => quantityOrdered > 0)
+			console.log(filterProductos);
 			return {
 				...state,
 				productos: filterProductos,
@@ -85,11 +84,8 @@ const storeCpra = create<ListaCompra>((set) => ({
 					(acc, producto) => acc + Number(producto.quantityOrdered),
 					0
 				),
-				totalNeto: updatedProductos.reduce(
-					(acc, producto) =>
-						acc +
-						Number(producto.price) *
-							Number(producto.quantityOrdered),
+				totalNeto: filterProductos.reduce(
+					(acc, producto) => acc + Number(producto.price) * Number(producto.quantityOrdered),
 					0
 				),
 			};

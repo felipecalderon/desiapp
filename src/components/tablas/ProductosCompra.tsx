@@ -22,6 +22,8 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
         } else {
             // Si la variación no existe, agrégala al estado
             setPedido({ variationID, quantityOrdered: cantidad, price });
+            updateCantidad(variationID, cantidad);
+
         }
     };
 
@@ -113,7 +115,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
                         { user.role !== Role.Tercero && <th className="py-3 px-2 text-center">Disponible Tienda</th> }
                         <th className="py-3 px-2 text-center">Talla</th>
                         <th className="py-3 px-2 text-center">Pedido</th>
-                        <th className="py-3 px-2 text-center">Subtotal</th>
+                        <th className="py-3 px-2 text-center">Subtotal Neto</th>
                     </tr>
                 </thead>
                 <DataCompra 

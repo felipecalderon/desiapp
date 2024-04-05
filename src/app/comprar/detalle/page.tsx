@@ -11,6 +11,7 @@ import React, { useEffect } from 'react'
 
 const DetalleCompra = () => {
     const { productos, totalProductos, totalNeto } = storeCpra()
+    console.log({totalNeto});
     const { user } = storeAuth()
     const { store } = storeDataStore()
     const { products } = storeProduct()
