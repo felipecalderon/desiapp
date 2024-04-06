@@ -64,7 +64,7 @@ const SalesResumeTable = () => {
                 <TableHeader>
                     <TableColumn>Sucursal</TableColumn>
                     <TableColumn>Fecha de Venta</TableColumn>
-                    <TableColumn>Vendido</TableColumn>
+                    <TableColumn>Venta Neta</TableColumn>
                     <TableColumn>Productos</TableColumn>
                     <TableColumn>Estado</TableColumn>
                 </TableHeader>
@@ -74,8 +74,7 @@ const SalesResumeTable = () => {
                         const store = stores && stores.find(({ storeID: ID }) => ID === storeID)
                         const esOC = type && type === 'OC'
                         const ventasOC = SaleProducts.reduce((acc, variacion) => {
-                            if (variacion.quantityOrdered) return acc += variacion.quantityOrdered
-                            else return acc
+                            return acc += variacion.quantityOrdered ? variacion.quantityOrdered : variacion.quantitySold
                         }, 0)
                         const esUltimoDiaMes = index === ventasFiltradas.length - 1 || new Date(createdAt).getMonth() !== new Date(ventasFiltradas[index + 1].createdAt).getMonth();
                         const noEsDelFinal = index !== ventasFiltradas.length - 1 && esUltimoDiaMes
@@ -89,10 +88,10 @@ const SalesResumeTable = () => {
                             >
                                 <TableCell> {store && store.location} </TableCell>
                                 <TableCell> {creacion?.fecha} - {creacion?.hora}hrs </TableCell>
-                                <TableCell> {formatoPrecio(total)} </TableCell>
+                                <TableCell> {formatoPrecio(total / 1.19)} </TableCell>
                                 <TableCell> {
-                                    SaleProducts.length < 5
-                                        ? <p>{SaleProducts[0].quantitySold}x {SaleProducts[0].name} {SaleProducts.length - 1 !== 0 && <span className="text-green-700 font-bold">(+{SaleProducts.length - 1})</span>} </p>
+                                    ventasOC < 3
+                                        ? <p>{SaleProducts[0].quantitySold}x {SaleProducts[0].name} {ventasOC > 1 && <span className="text-green-700 font-bold">(+{ventasOC-1})</span>} </p>
                                         : <p>{ventasOC} pares vendidos</p>
                                 } </TableCell>
                                 <TableCell> {status} </TableCell>
