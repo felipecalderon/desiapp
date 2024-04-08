@@ -103,6 +103,9 @@ export interface OrdendeCompra {
 	ProductVariations: ProductosdeOrden[];
 	Store: Store;
 	User: User;
+	discount: string,
+	startQuote: number,
+	endQuote: number
 }
 
 export interface SaleProduct {

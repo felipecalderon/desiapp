@@ -16,7 +16,8 @@ const CrearTienda = () => {
         city: '',
         role: 'tercero',
         markup: '1.8',
-        isAdminStore: true
+        isAdminStore: true,
+        email: ''
     }
     const initialErrors = {
         name: '',
@@ -135,14 +136,20 @@ const CrearTienda = () => {
                         {errors.rut !== '' && <p className="text-red-500 text-xs italic">{errors.rut}</p>}
                     </label>
                     <label className="mb-2">
-                        <span className="text-gray-700 text-sm">Markup</span>
-                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="Ej: 1.8" type="text" name="markup" autoComplete="off" onChange={changeForm} />
-                        {errors.markup !== '' && <p className="text-red-500 text-xs italic">{errors.markup}</p>}
-                    </label>
-                    <label className="mb-2">
                         <span className="text-gray-700 text-sm">Nombre</span>
                         <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="La tiendita" type="text" name="name" autoComplete="off" onChange={changeForm} />
                         {errors.name !== '' && <p className="text-red-500 text-xs italic">{errors.name}</p>}
+                    </label>
+                </div>
+                <div className="mb-4 flex flex-row gap-3 justify-center">
+                    <label className="mb-2">
+                        <span className="text-gray-700 text-sm">Email</span>
+                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="tiendita@gmail.com" type="text" name="email" autoComplete="off" onChange={changeForm} />
+                    </label>
+                    <label className="mb-2">
+                        <span className="text-gray-700 text-sm">Markup</span>
+                        <input className="px-2 bg-slate-100 mt-1 block w-full border-gray-300 shadow-sm rounded-md placeholder:text-sm" placeholder="Ej: 1.8" type="text" name="markup" autoComplete="off" onChange={changeForm} />
+                        {errors.markup !== '' && <p className="text-red-500 text-xs italic">{errors.markup}</p>}
                     </label>
                 </div>
                 <div className="mb-4 flex flex-row gap-3 justify-center">
