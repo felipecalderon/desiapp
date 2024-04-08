@@ -24,7 +24,7 @@ const menu = {
 		{ name: 'Inicio', path: '/' },
 		{ name: 'Stock', path: '/stock' },
 		{ name: 'Facturación', path: '/facturacion' },
-		{ name: 'Comprar', path: '/comprar' },
+		{ name: 'Crear OC', path: '/comprar' },
 		// { name: 'Quote', path: '/none' },
 		// { name: 'Returns', path: '/devoluciones' },
 		{ name: 'UTI', path: '/usuarios' },

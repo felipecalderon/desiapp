@@ -1,6 +1,7 @@
 'use client'
 import { Producto, Role, Variacion } from "@/config/interfaces"
 import storeAuth from "@/stores/store.auth"
+import storeDataStore from "@/stores/store.dataStore"
 import { formatoPrecio } from "@/utils/price"
 import { ChangeEvent } from "react"
 
@@ -12,6 +13,8 @@ export default function DataCompra({ message, products, cantidades, getStockCent
   handleInputChange: (e: ChangeEvent<HTMLInputElement>, variation: Variacion) => void
 }) {
   const { user } = storeAuth()
+  const { store } = storeDataStore()
+
   if (!products || products.length === 0) return (
     <tbody className="text-gray-600 dark:text-gray-400">
       <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -51,7 +54,7 @@ export default function DataCompra({ message, products, cantidades, getStockCent
             }
             <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
             <td className="py-3 px-2 text-center bg-blue-200">{formatoPrecio(variation.priceList)}</td>
-            { user?.role !== Role.Tercero ? 
+            { user && user.role !== Role.Tercero && store?.role !== Role.Tercero ? 
               variation.stockQuantity === 0
                 ? <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                   <span className='text-red-500'>{variation.stockQuantity}</span>
