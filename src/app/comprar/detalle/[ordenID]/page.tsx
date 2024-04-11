@@ -293,7 +293,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       <Input
         onChange={(e) => setEditOrder({ ...editOrder, startQuote: Number(e.target.value) })}
         type="number"
-        min={1}
+        min={0}
         color="primary"
         label="Cuota Actual"
         defaultValue={order.startQuote && order.startQuote.toString() || '1'}
@@ -373,12 +373,12 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
           }
         </tbody>
       </table>
-      {/* <Button
+      <Button
         onPress={onOpen}
         variant="solid"
         color="warning"
         className="mt-3"
-      >Editar productos</Button> */}
+      >Editar productos</Button>
       <p className="text-lg font-semibold text-right">Subtotal: {formatoPrecio(order.total)}</p>
       <p className="text-lg font-semibold text-right">IVA: {formatoPrecio(order.total * 0.19)}</p>
       <p className="text-lg font-semibold text-right">Total: {formatoPrecio(order.total * 1.19)} </p>

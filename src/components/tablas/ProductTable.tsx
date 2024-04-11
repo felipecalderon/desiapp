@@ -18,7 +18,7 @@ const TablaProductos = ({ products }: { products: Producto[] }) => {
                             <th className="py-3 px-2 text-center">Talla</th>
                             <th className="py-3 px-6 text-center">Precio Costo</th>
                             <th className="py-3 px-6 text-center">Precio Plaza</th>
-                            {store && store.role !== Role.Tercero && <th className="py-3 px-2 text-center">{store ? `Stock ${store.location}` : "Stock Central" }</th>}
+                            {store?.role !== Role.Tercero && <th className="py-3 px-2 text-center">{store ? `Stock ${store.location}` : "Stock Central" }</th>}
                             {!store && user?.role === Role.Admin && <th className="py-3 px-2 text-center">Stock agregado</th>}
                         </tr>
                     </thead>

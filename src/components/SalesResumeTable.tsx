@@ -88,7 +88,7 @@ const SalesResumeTable = () => {
                             >
                                 <TableCell> {store && store.location} </TableCell>
                                 <TableCell> {creacion?.fecha} - {creacion?.hora}hrs </TableCell>
-                                <TableCell> {formatoPrecio(total / 1.19)} </TableCell>
+                                <TableCell> {formatoPrecio(total)} </TableCell>
                                 <TableCell> {
                                     ventasOC < 3
                                         ? <p>{SaleProducts[0].quantitySold}x {SaleProducts[0].name} {ventasOC > 1 && <span className="text-green-700 font-bold">(+{ventasOC-1})</span>} </p>

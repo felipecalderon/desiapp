@@ -48,10 +48,10 @@ export default function DataTable({ message, products }: { message: string, prod
               <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceList)}</td>
               {
                 variation.stockQuantity === 0
-                  ? store && store.role !== Role.Tercero && <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                  ? store?.role !== Role.Tercero && <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                     <span className='text-red-500'>{variation.stockQuantity}</span>
                   </td>
-                  : store && store.role !== Role.Tercero && <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                  : store?.role !== Role.Tercero && <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                     <span className='font-bold text-green-600'>{variation.stockQuantity}</span>
                   </td>
               }
