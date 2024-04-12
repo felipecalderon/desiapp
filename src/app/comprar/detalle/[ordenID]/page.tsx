@@ -118,7 +118,9 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         dte: order.dte || "",
         status: order.status,
         expiration: order.expiration || dateValue.toISOString(),
-        type: order.type
+        type: order.type,
+        startQuote: order.startQuote ?? 0,
+        endQuote: order.endQuote ?? 1
       })
 
       const newProducts = order?.ProductVariations?.filter(pv =>
@@ -210,9 +212,10 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         icon={FaMoneyBillWave}
         title='Pagos'
       >
+        {order.endQuote && order.endQuote > 0 && <p className="text-sm">Valor cuota: {formatoPrecio(total * 1.19 / order.endQuote)}</p>}
         <p className="text-sm">Estado de cuota: {order.startQuote} de {order.endQuote}</p>
         <p className="text-sm">Vencimiento del pago: {fecha}</p>
-        {order.endQuote && order.endQuote > 0 && <p className="text-sm">Valor cuota: {formatoPrecio(total / order.endQuote)}</p>}
+        {order.endQuote && order.endQuote && <p className="text-sm">Pendiente: {formatoPrecio((total * 1.19 / order.endQuote)*(order.endQuote - order.startQuote))}</p>}
       </CardDataSale>
     </div>
     <div className="flex flex-row justify-between my-3 gap-3">
@@ -296,7 +299,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         min={0}
         color="primary"
         label="Cuota Actual"
-        defaultValue={order.startQuote && order.startQuote.toString() || '1'}
+        defaultValue={order.startQuote && order.startQuote.toString() || '0'}
         className="text-xs"
       />
       <Input
@@ -373,12 +376,12 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
           }
         </tbody>
       </table>
-      <Button
+      {/* <Button
         onPress={onOpen}
         variant="solid"
         color="warning"
         className="mt-3"
-      >Editar productos</Button>
+      >Editar productos</Button> */}
       <p className="text-lg font-semibold text-right">Subtotal: {formatoPrecio(order.total)}</p>
       <p className="text-lg font-semibold text-right">IVA: {formatoPrecio(order.total * 0.19)}</p>
       <p className="text-lg font-semibold text-right">Total: {formatoPrecio(order.total * 1.19)} </p>

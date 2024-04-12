@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import storeAuth from "@/stores/store.auth"
 import storeDataStore from "@/stores/store.dataStore"
 import { OrdendeCompra, Role } from "@/config/interfaces"
+import { isCaducatedDate } from "@/utils/compareDate"
 
 export default function Facturacion() {
     const route = useRouter()
@@ -33,9 +34,10 @@ export default function Facturacion() {
                             <th className="border px-4 py-2">Sucursal</th>
                             <th className="border px-4 py-2">Emisión</th>
                             <th className="border px-4 py-2">Tipo OC</th>
-                            <th className="border px-4 py-2">Estado</th>
+                            <th className="border px-4 py-2">Pago</th>
                             <th className="border px-4 py-2">Total</th>
                             <th className="border px-4 py-2">N° DTE</th>
+                            <th className="border px-4 py-2">Plan mensual</th>
                             <th className="border px-4 py-2">Vencimiento</th>
                         </tr>
                     </thead>
@@ -43,7 +45,10 @@ export default function Facturacion() {
                         {orders.map((order) => {
                             const { fecha: emision } = getFecha(order.createdAt)
                             const { fecha: vencimiento } = order.expiration ? getFecha(order.expiration) : { fecha: '' }
-
+                            const caduco = isCaducatedDate(vencimiento)
+                            const cuotas = typeof order.startQuote === 'number' && typeof order.endQuote === 'number' ? `${order.startQuote} de ${order.endQuote}` : '-'
+                            const pago = order.startQuote && order.endQuote ? order.endQuote - order.startQuote !== 0 : false
+                            if(order.Store.name === 'Multicentro') console.log({inicio: order.startQuote, fin: order.endQuote, cuotas: (order.startQuote && order.endQuote)});
                             return <tr onClick={() => handleClickOrder(order.orderID)} className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{emision}</td>
@@ -51,7 +56,8 @@ export default function Facturacion() {
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.status}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.dte}</td>
-                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{vencimiento}</td>
+                                <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{cuotas}</td>
+                                <td className={`border px-4 py-2 ${caduco && order.status === 'Pendiente' ? 'bg-red-300 hover:bg-red-500' : 'bg-green-300 hover:bg-green-500'}`}>{vencimiento}</td>
                             </tr>
                         })}
                     </tbody>
