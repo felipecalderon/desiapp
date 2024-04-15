@@ -34,7 +34,7 @@ export default function Facturacion() {
                             <th className="border px-4 py-2">Sucursal</th>
                             <th className="border px-4 py-2">Emisión</th>
                             <th className="border px-4 py-2">Tipo OC</th>
-                            <th className="border px-4 py-2">Pago</th>
+                            <th className="border px-4 py-2">Estado</th>
                             <th className="border px-4 py-2">Total</th>
                             <th className="border px-4 py-2">N° DTE</th>
                             <th className="border px-4 py-2">Plan mensual</th>
