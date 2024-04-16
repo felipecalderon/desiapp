@@ -64,7 +64,7 @@ const SalesResumeTable = () => {
                 <TableHeader>
                     <TableColumn>Sucursal</TableColumn>
                     <TableColumn>Fecha de Venta</TableColumn>
-                    <TableColumn>Venta Neta</TableColumn>
+                    <TableColumn>Venta con IVA</TableColumn>
                     <TableColumn>Productos</TableColumn>
                     <TableColumn>Estado</TableColumn>
                 </TableHeader>
