@@ -8,13 +8,18 @@ export default function TooltipProducts({ variation }: { variation: Variacion })
     
     useEffect(() => {
         const totalVariations = variation.StoreProducts?.reduce((acc, variacion) => {
-            if(variacion.Store.role !== Role.Tercero) return acc + variacion.quantity
+            const tienda = variacion.Store
+            if(tienda.role !== Role.Tercero && !tienda.isAdminStore) return acc + variacion.quantity
             else return acc
         }, 0)
         setTotal(totalVariations)
     }, [])
 
-    const filtroStoreProducts = variation.StoreProducts?.filter((variation) => variation.Store.role !== Role.Tercero && variation.quantity > 0)
+    const filtroStoreProducts = variation.StoreProducts?.filter(
+        (variation) =>  variation.Store.role !== Role.Tercero 
+                        && variation.quantity > 0
+                        && !variation.Store.isAdminStore
+        )
 
     if (filtroStoreProducts && filtroStoreProducts.length) return (
         <Tooltip 
