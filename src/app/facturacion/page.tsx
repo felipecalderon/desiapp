@@ -47,8 +47,9 @@ export default function Facturacion() {
                             const { fecha: vencimiento } = order.expiration ? getFecha(order.expiration) : { fecha: '' }
                             const caduco = isCaducatedDate(vencimiento)
                             const cuotas = typeof order.startQuote === 'number' && typeof order.endQuote === 'number' ? `${order.startQuote} de ${order.endQuote}` : '-'
-                            const pago = order.startQuote && order.endQuote ? order.endQuote - order.startQuote !== 0 : false
-                            if(order.Store.name === 'Multicentro') console.log({inicio: order.startQuote, fin: order.endQuote, cuotas: (order.startQuote && order.endQuote)});
+                            const pago = typeof order.startQuote === 'number' && typeof order.endQuote === 'number' ? Number(order.endQuote) !== Number(order.startQuote) : true
+                            const esBodega = order.Store.isAdminStore
+                            const validaciones = !esBodega && caduco && pago && order.status !== 'Pagado'
                             return <tr onClick={() => handleClickOrder(order.orderID)} className="cursor-pointer dark:bg-blue-800" key={order.orderID}>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.Store.name}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{emision}</td>
@@ -57,7 +58,7 @@ export default function Facturacion() {
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{formatoPrecio(order.total * 1.19)}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{order.dte}</td>
                                 <td className="border px-4 py-2 hover:bg-slate-200 dark:hover:bg-blue-700">{cuotas}</td>
-                                <td className={`border px-4 py-2 ${caduco && order.status === 'Pendiente' ? 'bg-red-300 hover:bg-red-500' : 'bg-green-300 hover:bg-green-500'}`}>{vencimiento}</td>
+                                <td className={`border px-4 py-2 ${ validaciones && 'bg-red-300 hover:bg-red-500'}`}>{vencimiento}</td>
                             </tr>
                         })}
                     </tbody>
