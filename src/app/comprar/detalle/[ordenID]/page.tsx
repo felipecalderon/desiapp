@@ -75,8 +75,15 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
 
   const editOrderHandle = async () => {
     setMessage(null)
+    let cuotasPagadas = false
+    if(editOrder.startQuote && editOrder.endQuote){
+      cuotasPagadas = editOrder.endQuote - editOrder.startQuote === 0
+    }
+    console.log(cuotasPagadas);
     const formatoUpdateOrder = {
-      ...editOrder, newProducts: [...products]
+      ...editOrder, 
+      newProducts: [...products],
+      status: cuotasPagadas ? 'Pagado' : order?.status
     }
     const data = await fetch(`${url.backend}/order`, {
       method: 'PUT',
@@ -146,7 +153,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   }, [])
 
   if (!order) return <p>Cargando...</p>
-  console.log({ oc: order });
+
   const creacion = getFecha(order.createdAt)
   const expiracion = order.expiration ? new Date(order.expiration) : new Date()
   const { fecha } = getFecha(expiracion)
@@ -276,7 +283,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         }}
         type="date"
         color="primary"
-        label="Vencimiento OC"
+        label="Llegada de mercadería"
         defaultValue={inputFecha}
         className="text-xs"
       />
@@ -382,9 +389,10 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         color="warning"
         className="mt-3"
       >Editar productos</Button> */}
-      <p className="text-lg font-semibold text-right">Subtotal: {formatoPrecio(order.total)}</p>
+      <p className="text-lg font-semibold text-right">Neto: {formatoPrecio(order.total)}</p>
       <p className="text-lg font-semibold text-right">IVA: {formatoPrecio(order.total * 0.19)}</p>
-      <p className="text-lg font-semibold text-right">Total: {formatoPrecio(order.total * 1.19)} </p>
+      { Number(order.discount) * 100 !== 0 && <p className="text-lg font-semibold text-right">Descuento: {Number(order.discount) * 100}%</p> }
+      <p className="text-lg font-semibold text-right">Total: {formatoPrecio(total * 1.19)} </p>
       <p className="text-lg font-semibold text-right">Total Pares: {totalPares}</p>
     </div>
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" scrollBehavior="inside">

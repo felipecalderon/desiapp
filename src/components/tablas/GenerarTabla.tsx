@@ -16,16 +16,25 @@ const GenerarTabla = () => {
     };
     useEffect(() => {
         const productosOrdenados = [...products].sort((a: Producto, b: Producto) => {
-            // Calcular la similitud con el filtro (puedes ajustar este criterio)
+            // Calcular la similitud con el filtro
             const similitudA = a.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
             const similitudB = b.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
-    
+
+            // calcular cantidades totales de variantes por cada producto
+            const totalVariantsA = a.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
+            const totalVariantsB = b.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
+
+            // Ordenar de forma descendente por cantidad
+            const resultado = totalVariantsB - totalVariantsA
             // Ordenar de forma descendente por similitud
-            return similitudB - similitudA;
+            if(filtro){
+                return similitudB - similitudA
+            }
+            return resultado - similitudB - similitudA;
         });
         setOrdenados(productosOrdenados)
     }, [filtro, products])
-
+    
     const download = () => {
         products && bajarExcel(products)
     }

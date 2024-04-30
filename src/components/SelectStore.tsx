@@ -10,13 +10,12 @@ import ModalUI from './Modal'
 const SelectStore = () => {
     const { setStore, cleanStore, setStores, stores } = storeDataStore();
     const { user } = storeAuth();
-    const { setProducts, setTotal } = storeProduct();
+    const { setProducts } = storeProduct();
 
     const cargarProductos = async (storeID?: string) => {
         const endpoint = storeID ? `products/?storeID=${storeID}` : 'products';
         const productos: Producto[] | void = await fetchData(endpoint);
         setProducts(productos as Producto[]);
-        setTotal()
     };
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement>) => {
