@@ -83,7 +83,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     const formatoUpdateOrder = {
       ...editOrder, 
       newProducts: [...products],
-      status: cuotasPagadas ? 'Pagado' : editOrder.status
+      status: cuotasPagadas ? 'Pagado' : order?.status === 'Pagado' ? 'Pendiente' : editOrder.status
     }
     const data = await fetch(`${url.backend}/order`, {
       method: 'PUT',
@@ -235,7 +235,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       >
         <SelectItem key={'Pendiente'} value={'Pendiente'}>Pendiente</SelectItem>
         <SelectItem key={'Enviado'} value={'Enviado'}>Enviado</SelectItem>
-        <SelectItem key={'Pagado'} value={'Pagado'}>Pagado</SelectItem>
+        <SelectItem className="pointer-events-none" key={'Pagado'} value={'Pagado'}>Pagado</SelectItem>
       </Select>
 
       <Select

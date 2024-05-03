@@ -13,6 +13,7 @@ import useUserLS from "@/hooks/getItemLocalStorage"
 import storeCpra from "@/stores/store.pedidCpra"
 import {storeProduct} from "@/stores/store.product"
 import storeSales from "@/stores/store.sales"
+import storeDataStore from "@/stores/store.dataStore"
 
 export type Menu = {
 	name: string
@@ -58,6 +59,7 @@ const menu = {
 export default function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const [userMenu, setUserMenu] = useState<Menu[] | null>(null)
+	const {store, setStore} = storeDataStore()
 	const { setIsLogged, setUser } = storeAuth()
 	const { isLoadingUser, user } = useUserLS()
 	const currentPath = usePathname()
@@ -65,19 +67,18 @@ export default function Navbar() {
 	const {clearPedido} = storeCpra()
 	const {setProducts} = storeProduct()
 	const {setSales} = storeSales()
-	
+
 	useEffect(() => {
-		if (user?.role === Role.Admin) setUserMenu(menu.adminMenu)
-		else if (user?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
-		else if (user?.role === Role.Consignado) setUserMenu(menu.consignadoMenu)
-		else if (user?.role === Role.Tercero) setUserMenu(menu.terceroMenu)
-	}, [user, isLoadingUser])
+		if (store?.role === Role.Franquiciado) setUserMenu(menu.storeManagerMenu)
+		else if (store?.role === Role.Consignado) setUserMenu(menu.consignadoMenu)
+		else if (store?.role === Role.Tercero) setUserMenu(menu.terceroMenu)
+		else setUserMenu(menu.adminMenu)
+	}, [store, isLoadingUser])
 
 	useEffect(() => {
 		if(currentPath !== '/login'){
 			if (!user && !isLoadingUser) {
 				route.push('/login');
-				localStorage.clear();
 				setIsLogged(false);
 				console.log('No está logueado');
 			}
