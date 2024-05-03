@@ -12,11 +12,10 @@ import { useEffect, useState } from 'react'
 const Header = () => {
     const { user } = storeAuth()
     const { store } = storeDataStore()
-    const { totalSales, sales, updateTotals } = storeSales()
+    const { totalSales, sales, orders } = storeSales()
     const [facturado, setFacturado] = useState(0)
-
+    const [totalPendienteOC, setTotalPendienteOC] = useState(0)
     useEffect(() => {
-        updateTotals();
         const vtasdelMes = sales.filter((vta) => {
             const saleDate = new Date(vta.createdAt);
             const nowDate = new Date()
@@ -33,7 +32,7 @@ const Header = () => {
             // Devuelve la venta si coincide con los filtros de mes y año
             return isMonthMatch && isYearMatch;
         })
-
+        
         const total = vtasdelMes.reduce((acc, {total, status, Store}) => {
             if(status !== 'Pagado'){
                 return acc + total
@@ -44,6 +43,21 @@ const Header = () => {
         }, 0)
         setFacturado(total);
     }, [sales])
+
+    useEffect(() => {
+        if(orders){
+            const pendienteOC = orders.reduce((acc, order) => {
+                if(order.status !== 'Pagado') {
+                    const total = Number(order.total) - Number(order.total) * Number(order.discount)
+                    const totalPendiente = order.endQuote && (order.endQuote && total * 1.19 / order.endQuote)*(order.endQuote - order.startQuote)
+                    console.log(totalPendiente);
+                    return acc + totalPendiente
+                }
+                return acc
+            }, 0)
+            setTotalPendienteOC(pendienteOC)
+        }
+    }, [orders])
 
     if (!user) return null
     if (user.role === Role.Admin) {
@@ -57,7 +71,8 @@ const Header = () => {
                     <p className='italic'><FechaFormateada /> | <HoraFormateada /></p>
                     <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>
                         <h2 className='text-base font-semibold whitespace-pre'>
-                            PAGO DE CLIENTES PENDIENTE: {formatoPrecio(facturado)}
+                            PAGO DE CLIENTES PENDIENTE: {formatoPrecio(facturado)} <br></br>
+                            PAGO DE OC PENDIENTES: {formatoPrecio(totalPendienteOC)}
                         </h2>
                     </div>
                 </div>

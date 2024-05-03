@@ -4,7 +4,7 @@ import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 
 const FiltroVentas = () => {
-  const { sales, setFilterMonth, setFilterYear, updateTotals } = storeSales();
+  const { sales, setFilterMonth, setFilterYear } = storeSales();
 
   // Preparación de datos para meses y años
   const months = useMemo(() => ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], []);
@@ -14,13 +14,11 @@ const FiltroVentas = () => {
   const monthSelectionChange = (key: React.Key) => {
     if(!key) setFilterMonth(null)
     else setFilterMonth(key.toString().toLowerCase());
-    updateTotals()
   };
   
   const yearSelectionChange = (key: React.Key) => {
     if(!key) setFilterYear(null)
     else setFilterYear(key.toString());
-    updateTotals()
   };
 
   const [nombreFecha, setFecha] = useState<{ mes: string | undefined, year: string | undefined }>({

@@ -24,7 +24,6 @@ const storeProduct = create<DataProduct>((set, get) => ({
 			})
 			return acc + totalVariations
 		}, 0)
-		console.log(totalProducts);
 		set({total: totalProducts})
 		set({ products: sortProductVariations(products) });
 	},

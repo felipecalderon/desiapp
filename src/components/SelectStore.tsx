@@ -1,22 +1,18 @@
 'use client'
-import { Producto, Role, Store } from '@/config/interfaces'
+import { OrdendeCompra, Producto, Role, Sales, Store } from '@/config/interfaces'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
 import { storeProduct } from '@/stores/store.product'
 import { fetchData } from '@/utils/fetchData'
 import { ChangeEvent, MouseEvent, useEffect } from 'react'
 import ModalUI from './Modal'
+import storeSales from '@/stores/store.sales'
 
 const SelectStore = () => {
-    const { setStore, cleanStore, setStores, stores } = storeDataStore();
+    const { setStore, cleanStore, setStores, stores, store } = storeDataStore();
+    const { setSales } = storeSales()
     const { user } = storeAuth();
     const { setProducts } = storeProduct();
-
-    const cargarProductos = async (storeID?: string) => {
-        const endpoint = storeID ? `products/?storeID=${storeID}` : 'products';
-        const productos: Producto[] | void = await fetchData(endpoint);
-        setProducts(productos as Producto[]);
-    };
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement>) => {
         let valorSeleccionado: any;
@@ -39,6 +35,45 @@ const SelectStore = () => {
             }
         }
     };
+    
+    const cargarProductos = async (storeID?: string) => {
+        const endpoint = storeID ? `products/?storeID=${storeID}` : 'products';
+        const productos: Producto[] | void = await fetchData(endpoint);
+        setProducts(productos as Producto[]);
+    };
+    
+    useEffect(() => {
+        const obtainSales = async () => {
+            if (store && user) {
+                const res = await fetchData(`sale?storeID=${store.storeID}`)
+                setSales(res)
+            } else if (!store && user) {
+                if (user.role === Role.Admin) {
+                    const ventas: Sales[] = await fetchData(`sale`)
+                    const ventaTerceros: OrdendeCompra[] = await fetchData(`order/?terceros=true`)
+                    const terceroFormato: any = []
+
+                    ventaTerceros.forEach((orden) => {
+                        const newFormat = {
+                            saleID: orden.orderID,
+                            storeID: orden.Store.storeID,
+                            total: orden.total * 1.19,
+                            status: orden.status,
+                            createdAt: orden.createdAt,
+                            updatedAt: orden.updatedAt,
+                            SaleProducts: orden.ProductVariations,
+                            Store: orden.Store,
+                            type: 'OC'
+                        }
+                        terceroFormato.push(newFormat)
+                    })
+                    const unificacion = [...ventas, ...terceroFormato].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                    setSales(unificacion)
+                }
+            }
+        }
+        obtainSales()
+    }, [store, user])
 
     useEffect(() => {
         const cargarDatosIniciales = async () => {
@@ -66,6 +101,8 @@ const SelectStore = () => {
             cargarProductos(storeID)
         }
     }, [stores])
+
+    
     return (
         <>
             {user?.role === Role.Admin

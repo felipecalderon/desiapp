@@ -1,60 +1,21 @@
 'use client'
-
-import { OrdendeCompra, Role, Sales } from "@/config/interfaces";
-import storeAuth from "@/stores/store.auth";
 import storeDataStore from "@/stores/store.dataStore";
 import storeSales from "@/stores/store.sales";
 import { getFecha } from "@/utils/fecha";
-import { fetchData } from "@/utils/fetchData";
 import { formatoPrecio } from "@/utils/price";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import FiltroVentas from "./FiltroVentas";
 
 const SalesResumeTable = () => {
-    const { setSales, filteredSales } = storeSales()
-    const { stores, store } = storeDataStore()
-    const { user } = storeAuth()
+    const { filteredSales } = storeSales()
+    const { stores } = storeDataStore()
     const route = useRouter()
 
     const redireccionVenta = (saleID: string, esOC: boolean | "" | undefined) => {
         if (!esOC) route.push(`/vender/${saleID}`)
         else route.push(`/comprar/detalle/${saleID}`)
     }
-
-    useEffect(() => {
-        const obtainSales = async () => {
-            if (store && user) {
-                const res = await fetchData(`sale?storeID=${store.storeID}`)
-                setSales(res)
-            } else if (!store && user) {
-                if (user.role === Role.Admin) {
-                    const ventas: Sales[] = await fetchData(`sale`)
-                    const ventaTerceros: OrdendeCompra[] = await fetchData(`order/?terceros=true`)
-                    const terceroFormato: any = []
-
-                    ventaTerceros.forEach((orden) => {
-                        const newFormat = {
-                            saleID: orden.orderID,
-                            storeID: orden.Store.storeID,
-                            total: orden.total * 1.19,
-                            status: orden.status,
-                            createdAt: orden.createdAt,
-                            updatedAt: orden.updatedAt,
-                            SaleProducts: orden.ProductVariations,
-                            Store: orden.Store,
-                            type: 'OC'
-                        }
-                        terceroFormato.push(newFormat)
-                    })
-                    const unificacion = [...ventas, ...terceroFormato].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-                    setSales(unificacion)
-                }
-            }
-        }
-        obtainSales()
-    }, [store, user])
 
     const ventasFiltradas = filteredSales()
     return (

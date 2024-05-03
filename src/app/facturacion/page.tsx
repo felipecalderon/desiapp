@@ -9,12 +9,13 @@ import storeDataStore from "@/stores/store.dataStore"
 import { OrdendeCompra, Role } from "@/config/interfaces"
 import { isCaducatedDate } from "@/utils/compareDate"
 import { calcularMesVto } from "@/utils/calcularMesVencimiento"
+import storeSales from "@/stores/store.sales"
 
 export default function Facturacion() {
     const route = useRouter()
     const { user } = storeAuth()
     const { store } = storeDataStore()
-    const [orders, setOrders] = useState<OrdendeCompra[] | null>(null)
+    const {orders, setOrders} = storeSales()
     useEffect(() => {
         if (store) {
             fetchData(`order/?storeID=${store.storeID}`)

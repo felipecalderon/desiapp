@@ -83,7 +83,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     const formatoUpdateOrder = {
       ...editOrder, 
       newProducts: [...products],
-      status: cuotasPagadas ? 'Pagado' : order?.status
+      status: cuotasPagadas ? 'Pagado' : editOrder.status
     }
     const data = await fetch(`${url.backend}/order`, {
       method: 'PUT',
@@ -211,7 +211,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         title='Desglose totales'
       >
         <p className="text-sm">Neto: {formatoPrecio(total)}</p>
-        <p className="text-sm">Descuento: {Number(order.discount) * 100}%</p>
+        {Number(order.discount) * 100 !== 0 && <p className="text-sm">Descuento: {Number(order.discount) * 100}%</p>}
         <p className="text-sm">IVA: {formatoPrecio(total * 0.19)}</p>
         <p className="text-sm">Total: <span className="font-bold">{formatoPrecio(total * 1.19)}</span></p>
       </CardDataSale>
