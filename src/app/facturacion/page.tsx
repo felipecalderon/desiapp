@@ -39,7 +39,7 @@ export default function Facturacion() {
                             <th className="border px-4 py-2">Estado</th>
                             <th className="border px-4 py-2">Total</th>
                             <th className="border px-4 py-2">N° DTE</th>
-                            <th className="border px-4 py-2">Plan mensual</th>
+                            <th className="border px-4 py-2">Cuota</th>
                             <th className="border px-4 py-2">Saldo Pendiente</th>
                             <th className="border px-4 py-2">Vencimiento</th>
                         </tr>
