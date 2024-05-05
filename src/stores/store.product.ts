@@ -24,8 +24,9 @@ const storeProduct = create<DataProduct>((set, get) => ({
 			})
 			return acc + totalVariations
 		}, 0)
+		const productosTallaOrden = sortProductVariations(products)
 		set({total: totalProducts})
-		set({ products: sortProductVariations(products) });
+		set({ products: productosTallaOrden });
 	},
 	clearStoreProduct: () =>
 		set((state) => ({
@@ -37,7 +38,7 @@ const storeProduct = create<DataProduct>((set, get) => ({
 }));
 
 const sortProductVariations = (products: Producto[]) => {
-	return products.map((product) => {
+	const tallasOrdenadas = products.map((product) => {
 		// Clonar las variaciones para no modificar el arreglo original
 		let sortedVariations = [...product.ProductVariations];
 
@@ -47,6 +48,8 @@ const sortProductVariations = (products: Producto[]) => {
 		// Retornar el producto con sus variaciones ordenadas
 		return { ...product, ProductVariations: sortedVariations };
 	});
+	
+	return tallasOrdenadas
 };
 
 export { storeProduct };

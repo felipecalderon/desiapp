@@ -10,30 +10,39 @@ export default function FiltroProductos({ products }: { products: Producto[] }) 
     };
 
     const productosOrdenados = [...products].sort((a: Producto, b: Producto) => {
-        // Calcular la similitud con el filtro (puedes ajustar este criterio)
+        // Calcular la similitud con el filtro
         const similitudA = a.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
         const similitudB = b.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
 
+        // calcular cantidades totales de variantes por cada producto
+        const totalVariantsA = a.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
+        const totalVariantsB = b.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
+
+        // Ordenar de forma descendente por cantidad
+        const resultado = totalVariantsB - totalVariantsA
         // Ordenar de forma descendente por similitud
-        return similitudB - similitudA;
+        if (filtro) {
+            return similitudB - similitudA
+        }
+        return resultado - similitudB - similitudA;
     });
 
-    if(products.length === 0) return null
+    if (products.length === 0) return null
     return (
         <>
-        <div className="mb-4 flex flex-row gap-3">
-            <input
-                className="px-2 py-1 bg-blue-200 mt-1 block w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
-                placeholder="Buscar producto aquí..."
-                type="text"
-                id="filtro"
-                value={filtro}
-                onChange={handleFiltroChange}
-            />
-        </div>
-        <ul>
-            <TablaProductosCompra products={productosOrdenados} />
-        </ul>
+            <div className="mb-4 flex flex-row gap-3">
+                <input
+                    className="px-2 py-1 bg-blue-200 mt-1 block w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
+                    placeholder="Buscar producto aquí..."
+                    type="text"
+                    id="filtro"
+                    value={filtro}
+                    onChange={handleFiltroChange}
+                />
+            </div>
+            <ul>
+                <TablaProductosCompra products={productosOrdenados} />
+            </ul>
         </>
     );
 }
