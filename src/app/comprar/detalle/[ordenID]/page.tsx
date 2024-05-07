@@ -22,6 +22,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const { products: globalProducts } = storeProduct()
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { productos, setPedido, updateCantidad, removePedido, cantidades, setCantidades } = storeCpra()
+  const { user } = storeAuth()
   const [order, setOrder] = useState<OrdendeCompra | null>(null)
   const [edit, setEdit] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -76,12 +77,12 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const editOrderHandle = async () => {
     setMessage(null)
     let cuotasPagadas = false
-    if(editOrder.startQuote && editOrder.endQuote){
+    if (editOrder.startQuote && editOrder.endQuote) {
       cuotasPagadas = editOrder.endQuote - editOrder.startQuote === 0
     }
     console.log(cuotasPagadas);
     const formatoUpdateOrder = {
-      ...editOrder, 
+      ...editOrder,
       newProducts: [...products],
       status: cuotasPagadas ? 'Pagado' : order?.status === 'Pagado' ? 'Pendiente' : editOrder.status
     }
@@ -222,109 +223,113 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         {order.endQuote && order.endQuote > 0 && <p className="text-sm">Valor cuota: {formatoPrecio(total * 1.19 / order.endQuote)}</p>}
         <p className="text-sm">Estado de cuota: {order.startQuote} de {order.endQuote}</p>
         <p className="text-sm">Vencimiento del pago: {fecha}</p>
-        {order.endQuote && order.endQuote && <p className="text-sm">Pendiente: {formatoPrecio((total * 1.19 / order.endQuote)*(order.endQuote - order.startQuote))}</p>}
+        {order.endQuote && order.endQuote && <p className="text-sm">Pendiente: {formatoPrecio((total * 1.19 / order.endQuote) * (order.endQuote - order.startQuote))}</p>}
       </CardDataSale>
     </div>
-    <div className="flex flex-row justify-between my-3 gap-3">
-      <Select
-        selectedKeys={[editOrder.status as string]}
-        onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}
-        variant="flat"
-        color="primary"
-        label="Estado del Pago"
-      >
-        <SelectItem key={'Pendiente'} value={'Pendiente'}>Pendiente</SelectItem>
-        <SelectItem key={'Enviado'} value={'Enviado'}>Enviado</SelectItem>
-        <SelectItem className="pointer-events-none" key={'Pagado'} value={'Pagado'}>Pagado</SelectItem>
-      </Select>
+    {/* Zona editable */}
+    {user && user.role === Role.Admin ? <div>
+      <div className="flex flex-row justify-between my-3 gap-3">
+        <Select
+          selectedKeys={[editOrder.status as string]}
+          onChange={(e) => setEditOrder({ ...editOrder, status: e.target.value })}
+          variant="flat"
+          color="primary"
+          label="Estado del Pago"
+        >
+          <SelectItem key={'Pendiente'} value={'Pendiente'}>Pendiente</SelectItem>
+          <SelectItem key={'Enviado'} value={'Enviado'}>Enviado</SelectItem>
+          <SelectItem className="pointer-events-none" key={'Pagado'} value={'Pagado'}>Pagado</SelectItem>
+        </Select>
 
-      <Select
-        name="accion"
-        variant="flat"
-        color="primary"
-        label="Naturaleza"
-        selectedKeys={[editOrder.type as string]}
-        onChange={(e) => {
-          const validTypes = ["OCD", "OCC", "OCR", "OCP"] as const;
-          const newValue = e.target.value as typeof validTypes[number];
-          if (validTypes.includes(newValue)) {
-            setEditOrder({ ...editOrder, type: newValue });
-          } else {
-            setEditOrder({ ...editOrder, type: 'OCD' })
-          }
-        }}
-      >
-        <SelectItem key="OCD" value="OCD">Compra Directa</SelectItem>
-        <SelectItem key="OCR" value="OCR">Reposición Automática</SelectItem>
-        <SelectItem key="OCC" value="OCC">Compra por Consignación</SelectItem>
-        <SelectItem key="OCP" value="OCP">Primera Carga</SelectItem>
-      </Select>
+        <Select
+          name="accion"
+          variant="flat"
+          color="primary"
+          label="Naturaleza"
+          selectedKeys={[editOrder.type as string]}
+          onChange={(e) => {
+            const validTypes = ["OCD", "OCC", "OCR", "OCP"] as const;
+            const newValue = e.target.value as typeof validTypes[number];
+            if (validTypes.includes(newValue)) {
+              setEditOrder({ ...editOrder, type: newValue });
+            } else {
+              setEditOrder({ ...editOrder, type: 'OCD' })
+            }
+          }}
+        >
+          <SelectItem key="OCD" value="OCD">Compra Directa</SelectItem>
+          <SelectItem key="OCR" value="OCR">Reposición Automática</SelectItem>
+          <SelectItem key="OCC" value="OCC">Compra por Consignación</SelectItem>
+          <SelectItem key="OCP" value="OCP">Primera Carga</SelectItem>
+        </Select>
+      </div>
+      <div className="flex flex-row justify-between my-3 gap-3">
+        <Input
+          onChange={(e) => setEditOrder({ ...editOrder, dte: e.target.value })}
+          type="number"
+          min={0}
+          color="primary"
+          label="DTE"
+          defaultValue={order.dte}
+          placeholder="Ingresar n° DTE" />
+        <Input
+          onChange={(e) => {
+            // Crear un objeto Date a partir del valor seleccionado
+            try {
+              let dateValue = new Date(e.target.value);
+              dateValue.setUTCHours(12, 0, 0, 0);
+              const fechaFormato = dateValue.toISOString()
+              setEditOrder({ ...editOrder, expiration: fechaFormato });
+            } catch (error) {
+              setEditOrder({ ...editOrder, expiration: undefined });
+            }
+          }}
+          type="date"
+          color="primary"
+          label="Llegada de mercadería"
+          defaultValue={inputFecha}
+          className="text-xs"
+        />
+      </div>
+      <div className="flex flex-row justify-between my-3 gap-3">
+        <Input
+          onChange={(e) => setEditOrder({ ...editOrder, discount: e.target.value })}
+          type="number"
+          min={0}
+          max={1}
+          step={0.05}
+          color="primary"
+          label="Descuento"
+          defaultValue={order.discount}
+          className="text-xs"
+        />
+        <Input
+          onChange={(e) => setEditOrder({ ...editOrder, startQuote: Number(e.target.value) })}
+          type="number"
+          min={0}
+          color="primary"
+          label="Cuota Actual"
+          defaultValue={order.startQuote && order.startQuote.toString() || '0'}
+          className="text-xs"
+        />
+        <Input
+          onChange={(e) => setEditOrder({ ...editOrder, endQuote: Number(e.target.value) })}
+          type="number"
+          min={1}
+          color="primary"
+          label="Cuota Final"
+          defaultValue={order.endQuote && order.endQuote.toString() || '1'}
+          className="text-xs"
+        />
+      </div>
+      <div className="flex flex-row justify-between mb-3 gap-3">
+        <Button onClick={imprimirTabla} variant="solid" color="warning">Imprimir</Button>
+        <Button onClick={editOrderHandle} variant="solid" color="success">Guardar Orden</Button>
+        <Button onClick={deleteOrder} variant="solid" color="danger">Eliminar OC</Button>
+      </div>
     </div>
-    <div className="flex flex-row justify-between my-3 gap-3">
-      <Input
-        onChange={(e) => setEditOrder({ ...editOrder, dte: e.target.value })}
-        type="number"
-        min={0}
-        color="primary"
-        label="DTE"
-        defaultValue={order.dte}
-        placeholder="Ingresar n° DTE" />
-      <Input
-        onChange={(e) => {
-          // Crear un objeto Date a partir del valor seleccionado
-          try {
-            let dateValue = new Date(e.target.value);
-            dateValue.setUTCHours(12, 0, 0, 0);
-            const fechaFormato = dateValue.toISOString()
-            setEditOrder({ ...editOrder, expiration: fechaFormato });
-          } catch (error) {
-            setEditOrder({ ...editOrder, expiration: undefined });
-          }
-        }}
-        type="date"
-        color="primary"
-        label="Llegada de mercadería"
-        defaultValue={inputFecha}
-        className="text-xs"
-      />
-    </div>
-    <div className="flex flex-row justify-between my-3 gap-3">
-      <Input
-        onChange={(e) => setEditOrder({ ...editOrder, discount: e.target.value })}
-        type="number"
-        min={0}
-        max={1}
-        step={0.05}
-        color="primary"
-        label="Descuento"
-        defaultValue={order.discount}
-        className="text-xs"
-      />
-      <Input
-        onChange={(e) => setEditOrder({ ...editOrder, startQuote: Number(e.target.value) })}
-        type="number"
-        min={0}
-        color="primary"
-        label="Cuota Actual"
-        defaultValue={order.startQuote && order.startQuote.toString() || '0'}
-        className="text-xs"
-      />
-      <Input
-        onChange={(e) => setEditOrder({ ...editOrder, endQuote: Number(e.target.value) })}
-        type="number"
-        min={1}
-        color="primary"
-        label="Cuota Final"
-        defaultValue={order.endQuote && order.endQuote.toString() || '1'}
-        className="text-xs"
-      />
-    </div>
-    <div className="flex flex-row justify-between mb-3 gap-3">
-      <Button onClick={imprimirTabla} variant="solid" color="warning">Imprimir</Button>
-      <Button onClick={editOrderHandle} variant="solid" color="success">Guardar Orden</Button>
-      <Button onClick={deleteOrder} variant="solid" color="danger">Eliminar OC</Button>
-    </div>
-
+      :  <Button onClick={imprimirTabla} variant="solid" color="warning">Imprimir</Button>
+    }
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-1 mx-auto rounded-full text-white italic">{message}</p>}
     <div className="mt-2">
       <p className="text-xl font-semibold mb-2">Productos:</p>
@@ -391,7 +396,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       >Editar productos</Button> */}
       <p className="text-lg font-semibold text-right">Neto: {formatoPrecio(order.total)}</p>
       <p className="text-lg font-semibold text-right">IVA: {formatoPrecio(order.total * 0.19)}</p>
-      { Number(order.discount) * 100 !== 0 && <p className="text-lg font-semibold text-right">Descuento: {Number(order.discount) * 100}%</p> }
+      {Number(order.discount) * 100 !== 0 && <p className="text-lg font-semibold text-right">Descuento: {Number(order.discount) * 100}%</p>}
       <p className="text-lg font-semibold text-right">Total: {formatoPrecio(total * 1.19)} </p>
       <p className="text-lg font-semibold text-right">Total Pares: {totalPares}</p>
     </div>
