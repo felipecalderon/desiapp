@@ -20,7 +20,6 @@ interface Props {
 }
 
 export default function ModalUI({ stores, onChange }: Props) {
-    const { cleanStore, setStore } = storeDataStore();
     const [tiendas, setTiendas] = useState<Tiendas>({
         franquiciados: [],
         terceros: [],
@@ -38,16 +37,15 @@ export default function ModalUI({ stores, onChange }: Props) {
     ];
 
     useEffect(() => {
-        const franquiciados = stores.filter(({ Users }) => Users.some(({ role }) => role !== Role.Tercero))
-        const terceros = stores.filter(({ Users }) => Users.some(({ role }) => role === Role.Tercero))
+        const franquiciados = stores.filter(({ role }) => role !== Role.Tercero)
+        const terceros = stores.filter(({ role }) => role === Role.Tercero)
         setTiendas({ franquiciados, terceros })
+        console.log(franquiciados.length);
     }, [stores])
 
-    const evento = {
-        target: {
-            value: ''
-        }
-    } as ChangeEvent<HTMLSelectElement>
+    const franquiciados = renderSelectItems(tiendas.franquiciados)
+    const terceros = renderSelectItems(tiendas.terceros)
+    console.log(terceros.length);
     return (
         <>
             <Tabs>
@@ -57,7 +55,7 @@ export default function ModalUI({ stores, onChange }: Props) {
                         onChange={onChange}
                         className=""
                     >
-                        {renderSelectItems(tiendas.franquiciados)}
+                        {franquiciados}
                     </Select>
                     {/* <IoMdCloseCircle className="w-6 h-6 ml-2 text-red-700 bg-white rounded-full" 
                     onClick={() => {
@@ -70,8 +68,9 @@ export default function ModalUI({ stores, onChange }: Props) {
                         label="Seleccione una tienda tercero"
                         onChange={onChange}
                         className="w-56"
+                        
                     >
-                        {renderSelectItems(tiendas.terceros)}
+                        {terceros}
                     </Select>
                 </Tab>
             </Tabs>

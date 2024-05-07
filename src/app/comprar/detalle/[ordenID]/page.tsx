@@ -210,7 +210,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
       >
         <p className="text-sm">{order.Store.name}</p>
         <p className="text-sm">RUT: {order.Store.rut}</p>
-        <p className="text-sm">{order.Store.email ?? order.Store.email}</p>
+        <p className="text-sm">{order.Store.address}, {order.Store.city}</p>
+        <p className="text-sm">{order.Store.email ?? order.User.email}</p>
       </CardDataSale>
       <CardDataSale
         icon={FaCashRegister}
