@@ -14,12 +14,8 @@ export default function FiltroProductos({ products }: { products: Producto[] }) 
         const similitudA = a.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
         const similitudB = b.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
 
-        // calcular cantidades totales de variantes por cada producto
-        const totalVariantsA = a.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
-        const totalVariantsB = b.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
-
         // Ordenar de forma descendente por cantidad
-        const resultado = totalVariantsB - totalVariantsA
+        const resultado = b.totalProducts - a.totalProducts
         // Ordenar de forma descendente por similitud
         if (filtro) {
             return similitudB - similitudA

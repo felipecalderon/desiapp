@@ -4,7 +4,6 @@ import { create } from 'zustand';
 interface DataProduct {
 	products: Producto[];
 	product: Producto | null;
-	total: number;
 	setProduct: (product: Producto | null) => void;
 	setProducts: (products: Producto[]) => void;
 	clearStoreProduct: () => void;
@@ -13,19 +12,9 @@ interface DataProduct {
 const storeProduct = create<DataProduct>((set, get) => ({
 	products: [],
 	product: null,
-	total: 0,
 	setProduct: (product: Producto | null) => set({ product }),
 	setProducts: (products: Producto[]) => {
-		const stateProducts = get().products
-		const totalProducts = stateProducts.reduce((acc, { ProductVariations }) => {
-			let totalVariations = 0
-			ProductVariations.forEach((variacion) => {
-				totalVariations += variacion.stockQuantity
-			})
-			return acc + totalVariations
-		}, 0)
 		const productosTallaOrden = sortProductVariations(products)
-		set({total: totalProducts})
 		set({ products: productosTallaOrden });
 	},
 	clearStoreProduct: () =>
@@ -48,7 +37,6 @@ const sortProductVariations = (products: Producto[]) => {
 		// Retornar el producto con sus variaciones ordenadas
 		return { ...product, ProductVariations: sortedVariations };
 	});
-	
 	return tallasOrdenadas
 };
 

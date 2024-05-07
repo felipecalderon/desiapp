@@ -4,6 +4,7 @@ export interface Producto {
 	name: string;
 	image: string;
 	cantidad: number;
+	totalProducts: number;
 	ProductVariations: Variacion[];
 }
 

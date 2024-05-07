@@ -90,6 +90,7 @@ const TablaProductosCompra = ({ products }: { products: Producto[] }) => {
           }, {});
         setCantidades(newObj);
     }, [productos])
+
     if (user) return (
         <>
             <div className="flex flex-row justify-between items-center">
