@@ -16,6 +16,7 @@ import { FaMoneyBillWave } from "react-icons/fa";
 import TablaProductosCompra from "@/components/tablas/ProductosCompra"
 import { storeProduct } from "@/stores/store.product"
 import DataCompra from "@/components/tablas/DataCompra"
+import storeSales from "@/stores/store.sales"
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
   const route = useRouter()
@@ -23,6 +24,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { productos, setPedido, updateCantidad, removePedido, cantidades, setCantidades } = storeCpra()
   const { user } = storeAuth()
+  const { setOrders } = storeSales()
+    
   const [order, setOrder] = useState<OrdendeCompra | null>(null)
   const [edit, setEdit] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -41,6 +44,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     const data = await fetch(`${url.backend}/order?orderID=${params.ordenID}`, { method: 'DELETE' })
     const res = await data.json()
     setMessage(res.message)
+    const orders = await fetchData(`order`)
+    setOrders(orders)
     route.push('/facturacion')
   }
 
