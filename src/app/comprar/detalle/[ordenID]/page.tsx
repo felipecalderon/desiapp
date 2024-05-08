@@ -25,7 +25,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
   const { productos, setPedido, updateCantidad, removePedido, cantidades, setCantidades } = storeCpra()
   const { user } = storeAuth()
   const { setOrders } = storeSales()
-    
+
   const [order, setOrder] = useState<OrdendeCompra | null>(null)
   const [edit, setEdit] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -307,7 +307,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
           color="primary"
           label="Descuento"
           defaultValue={order.discount}
-          className="text-xs"
+          className="text-xs print:hidden"
         />
         <Input
           onChange={(e) => setEditOrder({ ...editOrder, startQuote: Number(e.target.value) })}
@@ -334,7 +334,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         <Button onClick={deleteOrder} variant="solid" color="danger">Eliminar OC</Button>
       </div>
     </div>
-      :  <Button onClick={imprimirTabla} variant="solid" color="warning">Imprimir</Button>
+      : <Button onClick={imprimirTabla} variant="solid" color="warning">Imprimir</Button>
     }
     {message && <p className="bg-green-800 px-3 py-2 w-fit mt-1 mx-auto rounded-full text-white italic">{message}</p>}
     <div className="mt-2">
@@ -394,17 +394,39 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
           }
         </tbody>
       </table>
+      <table className="min-w-full">
+        <tbody className="print:text-md print:py-0 print:font-normal">
+          <tr className="font-normal text-md">
+            <td className="bg-white" align="right">Pares totales:</td>
+            <td className="bg-white pl-2" align="left">{totalPares}</td>
+          </tr>
+          <tr className="font-bold text-lg">
+            <td className="bg-white" align="right">Neto:</td>
+            <td className="bg-white pl-2" align="left">{formatoPrecio(order.total)}</td>
+          </tr>
+          <tr className="font-bold text-lg">
+            <td className="bg-white" align="right">IVA:</td>
+            <td className="bg-white pl-2" align="left">{formatoPrecio(order.total * 0.19)}</td>
+          </tr>
+          {Number(order.discount) * 100 !== 0 &&
+            <tr className="font-bold text-lg">
+
+              <td className="bg-white" align="right">Descuento:</td>
+              <td className="bg-white pl-2" align="left">{Number(order.discount) * 100}%</td>
+            </tr>
+          }
+          <tr className="font-bold text-lg">
+            <td className="bg-white rounded-bl-2xl" align="right">TOTAL:</td>
+            <td className="bg-white pl-2 rounded-br-2xl" align="left">{formatoPrecio(total * 1.19)}</td>
+          </tr>
+        </tbody>
+      </table>
       {/* <Button
         onPress={onOpen}
         variant="solid"
         color="warning"
         className="mt-3"
       >Editar productos</Button> */}
-      <p className="text-lg font-semibold text-right">Neto: {formatoPrecio(order.total)}</p>
-      <p className="text-lg font-semibold text-right">IVA: {formatoPrecio(order.total * 0.19)}</p>
-      {Number(order.discount) * 100 !== 0 && <p className="text-lg font-semibold text-right">Descuento: {Number(order.discount) * 100}%</p>}
-      <p className="text-lg font-semibold text-right">Total: {formatoPrecio(total * 1.19)} </p>
-      <p className="text-lg font-semibold text-right">Total Pares: {totalPares}</p>
     </div>
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" scrollBehavior="inside">
       <ModalContent>
