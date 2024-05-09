@@ -209,6 +209,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         title='Tienda asociada'
       >
         <p className="text-sm">{order.Store.name}</p>
+        <p className="text-sm">{order.Store.phone}</p>
         <p className="text-sm">RUT: {order.Store.rut}</p>
         <p className="text-sm">{order.Store.address}, {order.Store.city}</p>
         <p className="text-sm">{order.Store.email ?? order.User.email}</p>
@@ -394,33 +395,31 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
           }
         </tbody>
       </table>
-      <table className="min-w-full">
-        <tbody className="print:text-md print:py-0 print:font-normal">
-          <tr className="font-normal text-md">
-            <td className="bg-white" align="right">Pares totales:</td>
-            <td className="bg-white pl-2" align="left">{totalPares}</td>
-          </tr>
-          <tr className="font-bold text-lg">
-            <td className="bg-white" align="right">Neto:</td>
-            <td className="bg-white pl-2" align="left">{formatoPrecio(order.total)}</td>
-          </tr>
-          <tr className="font-bold text-lg">
-            <td className="bg-white" align="right">IVA:</td>
-            <td className="bg-white pl-2" align="left">{formatoPrecio(order.total * 0.19)}</td>
-          </tr>
+      <div className="w-fit bg-white ml-auto px-3 rounded-b-xl py-2">
+          <div className="flex flex-row gap-2 justify-between text-sm">
+            <p>Pares totales:</p>
+            <p>{totalPares}</p>
+          </div>
+          <div className="flex flex-row gap-2 justify-between">
+            <p>Neto:</p>
+            <p className="font-semibold">{formatoPrecio(order.total)}</p>
+          </div>
+          <div className="flex flex-row gap-2 justify-between">
+            <p>IVA:</p>
+            <p className="font-semibold">{formatoPrecio(order.total * 0.19)}</p>
+          </div>
           {Number(order.discount) * 100 !== 0 &&
-            <tr className="font-bold text-lg">
+            <div className="flex flex-row gap-2 justify-between">
 
-              <td className="bg-white" align="right">Descuento:</td>
-              <td className="bg-white pl-2" align="left">{Number(order.discount) * 100}%</td>
-            </tr>
+              <p>Descuento:</p>
+              <p className="font-semibold">{Number(order.discount) * 100}%</p>
+            </div>
           }
-          <tr className="font-bold text-lg">
-            <td className="bg-white rounded-bl-2xl" align="right">TOTAL:</td>
-            <td className="bg-white pl-2 rounded-br-2xl" align="left">{formatoPrecio(total * 1.19)}</td>
-          </tr>
-        </tbody>
-      </table>
+          <div className="flex flex-row gap-2 justify-between">
+            <p>TOTAL:</p>
+            <p className="font-semibold">{formatoPrecio(total * 1.19)}</p>
+          </div>
+      </div>
       {/* <Button
         onPress={onOpen}
         variant="solid"
