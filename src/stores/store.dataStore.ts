@@ -4,7 +4,7 @@ import { create } from 'zustand';
 interface StoreData {
 	stores: Store[]
 	store: Store | null,
-	setStore: (store: Store) => void;
+	setStore: (store: Store | null) => void;
 	setStores: (stores: Store[]) => void
 	cleanStore: () => void;
 }

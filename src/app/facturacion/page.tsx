@@ -19,7 +19,7 @@ export default function Facturacion() {
     useEffect(() => {
         if (store) {
             fetchData(`order/?storeID=${store.storeID}`)
-                .then(res => setOrders(res))
+            .then(res => setOrders(res))
         } else if (user?.role === Role.Admin) {
             fetchData('order')
                 .then(res => setOrders(res))

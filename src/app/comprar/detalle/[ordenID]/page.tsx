@@ -17,17 +17,19 @@ import TablaProductosCompra from "@/components/tablas/ProductosCompra"
 import { storeProduct } from "@/stores/store.product"
 import DataCompra from "@/components/tablas/DataCompra"
 import storeSales from "@/stores/store.sales"
+import storeDataStore from "@/stores/store.dataStore"
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
   const route = useRouter()
   const { products: globalProducts } = storeProduct()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { productos, setPedido, updateCantidad, removePedido, cantidades, setCantidades } = storeCpra()
+  const { isOpen, onOpenChange } = useDisclosure();
+  const { removePedido, cantidades, setCantidades } = storeCpra()
   const { user } = storeAuth()
   const { setOrders } = storeSales()
+  const { setStore } = storeDataStore()
+  const { cleanStore } = storeDataStore();
 
   const [order, setOrder] = useState<OrdendeCompra | null>(null)
-  const [edit, setEdit] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [products, setProducts] = useState<ProductosdeOrden[]>([])
   const [totalPares, setTotalPares] = useState(0)
@@ -45,6 +47,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     const res = await data.json()
     setMessage(res.message)
     const orders = await fetchData(`order`)
+    console.log(orders);
+    setStore(null)
     setOrders(orders)
     route.push('/facturacion')
   }
@@ -365,7 +369,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         </thead>
         <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
           {
-            products.map(({ priceCost, sizeNumber, sku, OrderProduct, Product }, i) => {
+            products.map(({ priceList, sizeNumber, sku, OrderProduct, Product }, i) => {
               // Comparar el nombre actual con el nombre de la fila anterior
               let isDifferentGroup = i === 0 || Product.name !== products[i - 1].Product.name;
               const barra = isDifferentGroup && 'border-t-2 border-blue-300'
@@ -381,7 +385,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                     {sizeNumber}
                   </td>
                   <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
-                    {formatoPrecio(priceCost)}
+                    {formatoPrecio(Number(priceList) / Number(order.Store.markup))}
                   </td>
                   <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>
                     {OrderProduct.quantityOrdered}
