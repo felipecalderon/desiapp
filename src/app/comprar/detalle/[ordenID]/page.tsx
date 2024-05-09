@@ -213,7 +213,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         title='Tienda asociada'
       >
         <p className="text-sm">{order.Store.name}</p>
-        <p className="text-sm">{order.Store.phone}</p>
+        <p className="text-sm">Tel: {order.Store.phone}</p>
         <p className="text-sm">RUT: {order.Store.rut}</p>
         <p className="text-sm">{order.Store.address}, {order.Store.city}</p>
         <p className="text-sm">{order.Store.email ?? order.User.email}</p>
