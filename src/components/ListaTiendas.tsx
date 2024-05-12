@@ -66,6 +66,9 @@ const ListaTiendas = () => {
                                 Dirección
                             </th>
                             <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Tipo
+                            </th>
+                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Sucursal
                             </th>
                             <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -76,6 +79,9 @@ const ListaTiendas = () => {
                             </th>
                             <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Gestores
+                            </th>
+                            <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                -
                             </th>
                         </tr>
                     </thead>

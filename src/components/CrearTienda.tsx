@@ -16,7 +16,7 @@ const CrearTienda = () => {
         city: '',
         role: 'tercero',
         markup: '1.8',
-        isAdminStore: true,
+        isAdminStore: false,
         email: ''
     }
     const initialErrors = {
