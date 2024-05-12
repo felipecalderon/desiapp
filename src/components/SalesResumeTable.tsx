@@ -47,7 +47,7 @@ const SalesResumeTable = () => {
                                     ? 'bg-blue-100 hover:bg-blue-300 hover:cursor-pointer' 
                                     : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'}`}
                             >
-                                <TableCell> {store && store.location} </TableCell>
+                                <TableCell> {store && store.name} </TableCell>
                                 <TableCell> {creacion?.fecha} - {creacion?.hora}hrs </TableCell>
                                 <TableCell> {formatoPrecio(total)} </TableCell>
                                 <TableCell> {
