@@ -34,10 +34,8 @@ const Header = () => {
             return isMonthMatch && isYearMatch;
         })
 
-        const total = vtasdelMes.reduce((acc, { total, status, Store }) => {
-            if (status !== 'Pagado') {
-                return acc + total
-            } else if (status === 'Pagado' && Store.role === Role.Franquiciado) {
+        const total = vtasdelMes.reduce((acc, { total, status, Store, type }) => {
+            if (status === 'Pagado' && !type) {
                 return acc + total
             }
             return acc
