@@ -1,30 +1,15 @@
 'use client'
 import { getFecha } from "@/utils/fecha"
-import { fetchData } from "@/utils/fetchData"
 import { formatoPrecio } from "@/utils/price"
-import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
-import storeAuth from "@/stores/store.auth"
-import storeDataStore from "@/stores/store.dataStore"
-import { OrdendeCompra, Role } from "@/config/interfaces"
 import { isCaducatedDate } from "@/utils/compareDate"
 import { calcularMesVto } from "@/utils/calcularMesVencimiento"
 import storeSales from "@/stores/store.sales"
 
 export default function Facturacion() {
     const route = useRouter()
-    const { user } = storeAuth()
-    const { store } = storeDataStore()
-    const {orders, setOrders} = storeSales()
-    useEffect(() => {
-        if (store) {
-            fetchData(`order/?storeID=${store.storeID}`)
-            .then(res => setOrders(res))
-        } else if (user?.role === Role.Admin) {
-            fetchData('order')
-                .then(res => setOrders(res))
-        }
-    }, [store, user])
+    const { orders } = storeSales()
+    
     const handleClickOrder = (orderID: string) => route.push(`/comprar/detalle/${orderID}`)
     if (orders?.length === 0) return <p>No hay órdenes creadas aún</p>
     if (orders) return (

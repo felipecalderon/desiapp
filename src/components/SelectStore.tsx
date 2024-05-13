@@ -10,9 +10,9 @@ import storeSales from '@/stores/store.sales'
 
 const SelectStore = () => {
     const { setStore, cleanStore, setStores, stores, store } = storeDataStore();
-    const { setSales } = storeSales()
     const { user } = storeAuth();
     const { setProducts } = storeProduct();
+    const { setOrders, setSales } = storeSales()
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement>) => {
         let valorSeleccionado: any;
@@ -40,6 +40,17 @@ const SelectStore = () => {
         const productos: Producto[] | void = await fetchData(endpoint);
         setProducts(productos as Producto[]);
     };
+
+    useEffect(() => {
+        if (store) {
+            fetchData(`order/?storeID=${store.storeID}`)
+            .then(res => setOrders(res))
+        } else if (user?.role === Role.Admin) {
+            fetchData('order')
+                .then(res => setOrders(res))
+        }
+    }, [store, user])
+
     
     useEffect(() => {
         const obtainSales = async () => {
