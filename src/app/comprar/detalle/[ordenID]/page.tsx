@@ -13,9 +13,7 @@ import CardDataSale from "@/components/CardDataSale"
 import { FaShop, FaCashRegister } from "react-icons/fa6";
 import storeCpra from "@/stores/store.pedidCpra"
 import { FaMoneyBillWave } from "react-icons/fa";
-import TablaProductosCompra from "@/components/tablas/ProductosCompra"
 import { storeProduct } from "@/stores/store.product"
-import DataCompra from "@/components/tablas/DataCompra"
 import storeSales from "@/stores/store.sales"
 import storeDataStore from "@/stores/store.dataStore"
 
@@ -148,6 +146,23 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         const groupedAndSorted = groupAndSortProducts(updatedProducts);
         setProducts(groupedAndSorted);
       }
+      const cantidades: {[key: string]: number} = order.ProductVariations.reduce((acc, producto) => {
+        return (
+          {
+            ...acc,
+            [producto.variationID]: producto.OrderProduct.quantityOrdered,
+          }
+        )
+      }, {})
+      setCantidades(cantidades);
+      globalProducts.sort((prods) => {
+        const existe = prods.ProductVariations.some((v) => (cantidades[v.variationID]))
+        if(existe){
+          return -1
+        } else {
+          return 1
+        }
+      })
     }
   }, [order]);
 
@@ -198,11 +213,12 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
     setCantidades(newCantidades);
 
     if (newCantidad > 0) {
-      console.log(variation.variationID, newCantidad, variation.priceCost);
+      console.log({ cantidades });
     } else {
       removePedido(variation.variationID);
     }
   }
+
   return <div ref={tablaRef} className="mx-auto my-1 px-4">
     <h2 className="text-3xl font-bold my-3 text-blue-800">Detalle de la O.C</h2>
     <p className="text-sm">Emitida el: {creacion?.fecha} a las {creacion?.hora}</p>
@@ -400,42 +416,42 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
         </tbody>
       </table>
       <div className="w-fit bg-white ml-auto px-3 rounded-b-xl py-2">
-          <div className="flex flex-row gap-2 justify-between text-sm">
-            <p>Pares totales:</p>
-            <p>{totalPares}</p>
-          </div>
+        <div className="flex flex-row gap-2 justify-between text-sm">
+          <p>Pares totales:</p>
+          <p>{totalPares}</p>
+        </div>
+        <div className="flex flex-row gap-2 justify-between">
+          <p>Neto:</p>
+          <p className="font-semibold">{formatoPrecio(order.total)}</p>
+        </div>
+        <div className="flex flex-row gap-2 justify-between">
+          <p>IVA:</p>
+          <p className="font-semibold">{formatoPrecio(order.total * 0.19)}</p>
+        </div>
+        {Number(order.discount) * 100 !== 0 &&
           <div className="flex flex-row gap-2 justify-between">
-            <p>Neto:</p>
-            <p className="font-semibold">{formatoPrecio(order.total)}</p>
-          </div>
-          <div className="flex flex-row gap-2 justify-between">
-            <p>IVA:</p>
-            <p className="font-semibold">{formatoPrecio(order.total * 0.19)}</p>
-          </div>
-          {Number(order.discount) * 100 !== 0 &&
-            <div className="flex flex-row gap-2 justify-between">
 
-              <p>Descuento:</p>
-              <p className="font-semibold">{Number(order.discount) * 100}%</p>
-            </div>
-          }
-          <div className="flex flex-row gap-2 justify-between">
-            <p>TOTAL:</p>
-            <p className="font-semibold">{formatoPrecio(total * 1.19)}</p>
+            <p>Descuento:</p>
+            <p className="font-semibold">{Number(order.discount) * 100}%</p>
           </div>
+        }
+        <div className="flex flex-row gap-2 justify-between">
+          <p>TOTAL:</p>
+          <p className="font-semibold">{formatoPrecio(total * 1.19)}</p>
+        </div>
       </div>
-      {/* <Button
-        onPress={onOpen}
+      <Button
+        onPress={onOpenChange}
         variant="solid"
         color="warning"
         className="mt-3"
-      >Editar productos</Button> */}
+      >Editar productos</Button>
     </div>
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl" scrollBehavior="outside">
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">Modificar Productos de la O.C</ModalHeader>
             <ModalBody>
               <table className="min-w-full table-auto">
                 <thead className="sticky top-0 z-10">

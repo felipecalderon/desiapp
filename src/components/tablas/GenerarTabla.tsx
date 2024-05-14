@@ -40,7 +40,7 @@ const GenerarTabla = () => {
     }
     return (
         <div className="container mx-auto px-10 dark:bg-gray-800">
-        <div className="mb-4 flex flex-row gap-3 items-center h-auto">
+        <div className="mb-4 flex flex-row gap-3 items-center">
             <input
                 className="px-2 py-1 bg-blue-200 mt-3 w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
                 placeholder="Buscar producto aquí..."
