@@ -11,7 +11,7 @@ import storeSales from '@/stores/store.sales'
 const SelectStore = () => {
     const { setStore, cleanStore, setStores, stores, store } = storeDataStore();
     const { user } = storeAuth();
-    const { setProducts } = storeProduct();
+    const { setProducts, setGlobalProducts } = storeProduct();
     const { setOrders, setSales } = storeSales()
 
     const seleccionarOpcion = async (evento: ChangeEvent<HTMLSelectElement> | MouseEvent<HTMLSelectElement>) => {
@@ -36,9 +36,14 @@ const SelectStore = () => {
     };
     
     const cargarProductos = async (storeID?: string) => {
-        const endpoint = storeID ? `products/?storeID=${storeID}` : 'products';
-        const productos: Producto[] | void = await fetchData(endpoint);
-        setProducts(productos as Producto[]);
+        const globalProducts = await fetchData('products')
+        setGlobalProducts(globalProducts)
+        if(storeID){
+            const productos = await fetchData(`products/?storeID=${storeID}`);
+            setProducts(productos as Producto[]);
+        }else{
+            setProducts(globalProducts)
+        }
     };
 
     useEffect(() => {

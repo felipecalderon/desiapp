@@ -20,7 +20,7 @@ import { calcularMesVto } from "@/utils/calcularMesVencimiento"
 
 export default function DetalleOrden({ params }: { params: { ordenID: string } }) {
 	const route = useRouter()
-	const { products: globalProducts } = storeProduct()
+	const { globalProducts } = storeProduct()
 	const { isOpen, onOpenChange } = useDisclosure();
 	const { removePedido, cantidades, setCantidades } = storeCpra()
 	const { user } = storeAuth()
@@ -99,7 +99,9 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
 		})
 		const res = await data.json()
 		const resOC: OrdendeCompra = await fetchData(`order/${params.ordenID}`)
-		onOpenChange()
+		if(isOpen){
+			onOpenChange()
+		}
 		setOrder(resOC)
 		setProducts(resOC.ProductVariations)
 		setMessage(`${res.message}`)
