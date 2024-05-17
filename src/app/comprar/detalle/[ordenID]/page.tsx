@@ -160,14 +160,16 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
 		}
 	}, [order]);
 
-	globalProducts.sort((prods) => {
-		const existe = prods.ProductVariations.some((v) => (cantidades[v.variationID]))
-		if (existe) {
-			return -1
-		} else {
-			return 1
-		}
-	})
+	useEffect(() => {
+		globalProducts.sort((prods) => {
+			const existe = prods.ProductVariations.some((v) => (cantidades[v.variationID]))
+			if (existe) {
+				return -1
+			} else {
+				return 1
+			}
+		})
+	}, [cantidades])
 
 	useEffect(() => {
 		const paresTotales = calcularParesTotales(products)
