@@ -20,7 +20,7 @@ import BotonSiNo from '../SiNoBoton'
 const DashBoard = () => {
     const { user } = useUserLS()
     const { totalSales, filteredSales, filterMonth, filterYear } = storeSales()
-    const { stores } = storeDataStore()
+    const { stores, store } = storeDataStore()
     const { products } = storeProduct()
     const ventasFiltradas = filteredSales()
     const [tiendasQueHanVendido, setTiendasQueHanVendido] = useState(0);
@@ -75,7 +75,8 @@ const DashBoard = () => {
     }, [ventasFiltradas]);
 
     if (!user) return null
-    if (user.role === Role.Tercero) return (
+
+    if (store && store.role === Role.Tercero) return (
         <>
             <div className="w-full mt-6 px-10">
                 <FiltroProductos products={products} />
@@ -89,7 +90,7 @@ const DashBoard = () => {
 
     const totalVentas = totales.tiendasTerceros.ventas + totales.tiendasPropias.ventas
     const totalPares = totales.tiendasTerceros.pares + totales.tiendasPropias.pares
-    
+
     if (user.role === Role.Admin) return (
         <>
             <div className='flex flex-col justify-center items-center p-20 gap-3 rounded-3xl'>
@@ -156,10 +157,10 @@ const DashBoard = () => {
                 <div className='text-xl italic'>{filterMonth} {filterYear}</div>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold whitespace-pre'>
-                        VENTAS DEL MES: {ventasFiltradas.length}
+                        VENTAS DEL MES: {totalPares}
                     </h2>
                     <h2 className='text-lg font-semibold'>
-                        TOTAL:  {formatoPrecio(totalSales)} IVA. INC.
+                        TOTAL:  {formatoPrecio(totalVentas)} IVA. INC.
                     </h2>
                 </div>
                 <div className='flex flex-col items-center'>

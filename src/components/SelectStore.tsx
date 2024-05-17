@@ -34,7 +34,6 @@ const SelectStore = () => {
             }
         }
     };
-    
     const cargarProductos = async (storeID?: string) => {
         const globalProducts = await fetchData('products')
         setGlobalProducts(globalProducts)
