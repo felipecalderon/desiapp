@@ -18,7 +18,7 @@ const Header = () => {
     const [totalPendienteOC, setTotalPendienteOC] = useState(0)
     useEffect(() => {
         const vtasdelMes = sales.filter((vta) => {
-            const saleDate = new Date(vta.createdAt);
+            const saleDate = new Date(vta.createdAt)
             const nowDate = new Date()
             // Convierte la fecha de venta a mes y año para comparación
             const saleMonth = saleDate.getMonth()
@@ -31,24 +31,32 @@ const Header = () => {
             const isMonthMatch = saleMonth === nowMonth
             const isYearMatch = saleYear === nowYear
             // Devuelve la venta si coincide con los filtros de mes y año
-            return isMonthMatch && isYearMatch;
+            return isMonthMatch && isYearMatch
         })
 
-        const total = vtasdelMes.reduce((acc, { total, status, Store, type }) => {
-            if (status === 'Pagado' && !type) {
-                return acc + total
-            }
-            return acc
-        }, 0)
-        setFacturado(total);
+        const total = vtasdelMes.reduce(
+            (acc, { total, status, Store, type }) => {
+                if (status === 'Pagado' && !type) {
+                    return acc + total
+                }
+                return acc
+            },
+            0
+        )
+        setFacturado(total)
     }, [sales])
 
     useEffect(() => {
         if (orders) {
             const pendienteOC = orders.reduce((acc, order) => {
-                if (order.status !== 'Pagado') {
-                    const total = Number(order.total) - Number(order.total) * Number(order.discount)
-                    const totalPendiente = order.endQuote && (order.endQuote && total * 1.19 / order.endQuote) * (order.endQuote - order.startQuote)
+                if (order.status !== 'Pagado' && order.status !== 'Anulado') {
+                    const total =
+                        Number(order.total) -
+                        Number(order.total) * Number(order.discount)
+                    const totalPendiente =
+                        order.endQuote &&
+                        (order.endQuote && (total * 1.19) / order.endQuote) *
+                            (order.endQuote - order.startQuote)
                     return acc + totalPendiente
                 }
                 return acc
@@ -60,30 +68,52 @@ const Header = () => {
     if (!user) return null
     if (user.role === Role.Admin) {
         return (
-            <div className='flex flex-row justify-between items-center w-full px-4 pt-8'>
-                <div className='text-left'>
-                    <h1 className='text-3xl font-semibold'>Welcome to Central D3SI AVOCCO</h1>
-                    <h2 suppressHydrationWarning={true} className='text-lg font-light'>You are at D3SI AVOCCO HQ | {user.name} </h2>
+            <div className="flex flex-row justify-between items-center w-full px-4 pt-8">
+                <div className="text-left">
+                    <h1 className="text-3xl font-semibold">
+                        Welcome to Central D3SI AVOCCO
+                    </h1>
+                    <h2
+                        suppressHydrationWarning={true}
+                        className="text-lg font-light"
+                    >
+                        You are at D3SI AVOCCO HQ | {user.name}{' '}
+                    </h2>
                 </div>
-                <div className='flex flex-col gap-1'>
-                    <p className='italic'><FechaFormateada /> | <HoraFormateada /></p>
-                    <Button color='primary'>PAGO DE VENTAS PENDIENTE: {formatoPrecio(facturado)}</Button>
-                    {totalPendienteOC !== 0 && <Button color='warning'>PAGO DE OC PENDIENTES: {formatoPrecio(totalPendienteOC)}</Button>}
+                <div className="flex flex-col gap-1">
+                    <p className="italic">
+                        <FechaFormateada /> | <HoraFormateada />
+                    </p>
+                    <Button color="primary">
+                        PAGO DE VENTAS PENDIENTE: {formatoPrecio(facturado)}
+                    </Button>
+                    {totalPendienteOC !== 0 && (
+                        <Button color="warning">
+                            PAGO DE OC PENDIENTES:{' '}
+                            {formatoPrecio(totalPendienteOC)}
+                        </Button>
+                    )}
                 </div>
             </div>
         )
     }
     return (
-        <div className='flex flex-row justify-between items-center w-full px-4 pt-8'>
-            <div className='text-left'>
-                <h1 className='text-3xl font-semibold'>Bienvenido al portal D3SI AVOCCO</h1>
+        <div className="flex flex-row justify-between items-center w-full px-4 pt-8">
+            <div className="text-left">
+                <h1 className="text-3xl font-semibold">
+                    Bienvenido al portal D3SI AVOCCO
+                </h1>
                 <p>RUT: {formatoRut(store?.rut)}</p>
-                <p>Tienda de {store?.location}, {store?.city}</p>
+                <p>
+                    Tienda de {store?.location}, {store?.city}
+                </p>
             </div>
             <div>
-                <p className='italic'><FechaFormateada /> | <HoraFormateada /></p>
-                <div className='bg-blue-700 p-3 text-white rounded-lg h-fit'>
-                    <h2 className='text-base font-semibold whitespace-pre'>
+                <p className="italic">
+                    <FechaFormateada /> | <HoraFormateada />
+                </p>
+                <div className="bg-blue-700 p-3 text-white rounded-lg h-fit">
+                    <h2 className="text-base font-semibold whitespace-pre">
                         VENTAS DEL MES: {formatoPrecio(totalSales)}
                     </h2>
                 </div>
