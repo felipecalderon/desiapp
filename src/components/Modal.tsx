@@ -1,13 +1,11 @@
 'use client'
-import { Role, Store } from "@/config/interfaces";
-import storeDataStore from "@/stores/store.dataStore";
-import { Select, SelectItem, Tab, Tabs } from "@nextui-org/react";
-import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
-import { IoMdCloseCircle } from "react-icons/io";
+import { Role, Store } from '@/config/interfaces'
+import { Select, SelectItem, Tab, Tabs } from '@nextui-org/react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 
-type RequiredProps = Pick<Store, 'storeID' | 'name'>;
-type OptionalProps = Partial<Omit<Store, 'storeID' | 'name'>>;
-type CustomStore = RequiredProps & OptionalProps;
+type RequiredProps = Pick<Store, 'storeID' | 'name'>
+type OptionalProps = Partial<Omit<Store, 'storeID' | 'name'>>
+type CustomStore = RequiredProps & OptionalProps
 
 interface Tiendas {
     franquiciados: CustomStore[]
@@ -16,60 +14,47 @@ interface Tiendas {
 
 interface Props {
     stores: Store[]
-    onChange: (event: ChangeEvent<HTMLSelectElement>) => void
+    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 export default function ModalUI({ stores, onChange }: Props) {
-    const [tiendas, setTiendas] = useState<Tiendas>({
-        franquiciados: [],
-        terceros: [],
-    })
+    const [tiendas, setTiendas] = useState<Tiendas>({ franquiciados: [], terceros: [] })
 
-    const renderSelectItems = (items: CustomStore[]) => [
-        <SelectItem key="todos" value="">
-            Ver Todo
-        </SelectItem>,
-        ...items.map((store) => (
-            <SelectItem key={store.storeID} value={store.storeID}>
-                {store.name}
-            </SelectItem>
-        )),
-    ];
-
+    // Filtrar tiendas solo cuando cambian
     useEffect(() => {
         const franquiciados = stores.filter(({ role }) => role !== Role.Tercero)
         const terceros = stores.filter(({ role }) => role === Role.Tercero)
         setTiendas({ franquiciados, terceros })
-        console.log(franquiciados.length);
     }, [stores])
 
-    const franquiciados = renderSelectItems(tiendas.franquiciados)
-    const terceros = renderSelectItems(tiendas.terceros)
-    console.log(terceros.length);
+    // Memorizar las opciones para evitar recalcularlas en cada render
+    const renderSelectItems = useCallback(
+        (items: CustomStore[]) => [
+            <SelectItem key="todos" value="">
+                Ver Todo
+            </SelectItem>,
+            ...items.map((store) => (
+                <SelectItem key={store.storeID} value={store.storeID}>
+                    {store.name}
+                </SelectItem>
+            )),
+        ],
+        []
+    )
+
+    const franquiciados = useMemo(() => renderSelectItems(tiendas.franquiciados), [tiendas.franquiciados, renderSelectItems])
+    const terceros = useMemo(() => renderSelectItems(tiendas.terceros), [tiendas.terceros, renderSelectItems])
+
     return (
         <>
             <Tabs>
                 <Tab key="franquiciados" title="Tiendas Principales" className="flex flex-row w-full items-center">
-                    <Select
-                        label="Selecciona tienda"
-                        onChange={onChange}
-                        className=""
-                    >
+                    <Select label="Selecciona tienda" onChange={onChange}>
                         {franquiciados}
                     </Select>
-                    {/* <IoMdCloseCircle className="w-6 h-6 ml-2 text-red-700 bg-white rounded-full" 
-                    onClick={() => {
-                        onChange(evento)
-                        cleanStore()
-                    }}/>  */}
                 </Tab>
                 <Tab key="terceros" title="Terceros">
-                    <Select
-                        label="Seleccione una tienda tercero"
-                        onChange={onChange}
-                        className="w-56"
-                        
-                    >
+                    <Select label="Seleccione una tienda tercero" onChange={onChange} className="w-56">
                         {terceros}
                     </Select>
                 </Tab>
