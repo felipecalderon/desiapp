@@ -1,7 +1,11 @@
 'use client'
 import { useState } from 'react'
 import { Button, Input, Card, CardBody, CardHeader, Divider } from '@nextui-org/react'
-import { BiMinusCircle, BiPackage, BiPlusCircle, BiTrash } from 'react-icons/bi'
+import { BiCloudUpload, BiMinusCircle, BiPackage, BiPlusCircle, BiSend, BiTrash } from 'react-icons/bi'
+import { url } from '@/config/constants'
+import { fetchData } from '@/utils/fetchData'
+import { storeProduct } from '@/stores/store.product'
+import { useRouter } from 'next/navigation'
 
 type Variant = {
     sizeNumber: number
@@ -18,6 +22,10 @@ interface StatusProducts {
 }
 
 export default function NuevoProductoPage() {
+    const router = useRouter()
+    const { setGlobalProducts, setProducts: setProductsStore } = storeProduct()
+    const [loading, setLoading] = useState(false)
+    const [uploading, setUploading] = useState<{ [key: number]: boolean }>({})
     const [products, setProducts] = useState<StatusProducts[]>([
         {
             name: '',
@@ -33,6 +41,50 @@ export default function NuevoProductoPage() {
             ],
         },
     ])
+    const [errors, setErrors] = useState<string[]>([]) // Estado para errores
+
+    // Validar productos antes de enviar
+    const validateProducts = (): boolean => {
+        const validationErrors: string[] = []
+
+        products.forEach((product, productIndex) => {
+            if (!product.name.trim()) {
+                validationErrors.push(`El nombre del producto #${productIndex + 1} está vacío.`)
+            }
+
+            if (!product.image.trim()) {
+                validationErrors.push(`Falta agregar imagen al producto #${productIndex + 1}.`)
+            }
+
+            product.sizes.forEach((variant, variantIndex) => {
+                if (!variant.sku.trim()) {
+                    validationErrors.push(`El SKU de la variante #${variantIndex + 1} del producto #${productIndex + 1} está vacío.`)
+                }
+                if (!variant.stockQuantity.trim()) {
+                    validationErrors.push(
+                        `La cantidad en stock de la variante #${variantIndex + 1} del producto #${productIndex + 1} está vacía.`
+                    )
+                }
+                if (Number(variant.priceCost) > Number(variant.priceList)) {
+                    validationErrors.push(
+                        `El precio costo no puede ser mayor al precio lista en la variante #${variantIndex + 1} del producto #${
+                            productIndex + 1
+                        }.`
+                    )
+                }
+                if (Number(variant.priceCost) === 0 || Number(variant.priceList) === 0) {
+                    validationErrors.push(
+                        `El precio costo y el precio lista no pueden ser 0 en la variante #${variantIndex + 1} del producto #${
+                            productIndex + 1
+                        }.`
+                    )
+                }
+            })
+        })
+
+        setErrors(validationErrors)
+        return validationErrors.length === 0
+    }
 
     const addProduct = () => {
         setProducts([
@@ -55,6 +107,29 @@ export default function NuevoProductoPage() {
 
     const removeProduct = (index: number) => {
         setProducts(products.filter((_, i) => i !== index))
+    }
+
+    // Función para manejar la subida de imagen
+    const handleImageUpload = async (productIndex: number, file: File) => {
+        try {
+            setUploading({ ...uploading, [productIndex]: true })
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            })
+
+            if (!response.ok) throw new Error('Error al subir la imagen')
+
+            const data = await response.json()
+            handleProductChange(productIndex, 'image', data.url)
+        } catch (error) {
+            console.error('Error:', error)
+        } finally {
+            setUploading({ ...uploading, [productIndex]: false })
+        }
     }
 
     const handleProductChange = (index: number, field: 'name' | 'image', value: any) => {
@@ -91,6 +166,33 @@ export default function NuevoProductoPage() {
         setProducts(updatedProducts)
     }
 
+    const handleSubmit = async () => {
+        if (validateProducts()) {
+            try {
+                setLoading(true)
+                const URL = `${url.backend}/products/crear-masivo`
+                const res = await fetch(URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ products }),
+                })
+                console.log({ res })
+                const globalProducts = await fetchData('products')
+                setGlobalProducts(globalProducts)
+                setProductsStore(globalProducts)
+                if (res.ok) {
+                    router.push('/stock')
+                }
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
+
     return (
         <div className="p-4 max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -116,13 +218,25 @@ export default function NuevoProductoPage() {
                                     onChange={(e) => handleProductChange(productIndex, 'name', e.target.value)}
                                 />
                                 <Input
-                                    label="URL de la Imagen"
-                                    placeholder="https://..."
-                                    value={product.image}
-                                    onChange={(e) => handleProductChange(productIndex, 'image', e.target.value)}
+                                    type="file"
+                                    accept="image/*"
+                                    description="Click para subir la img del producto"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0]
+                                        if (file) handleImageUpload(productIndex, file)
+                                    }}
+                                    endContent={
+                                        uploading[productIndex] ? (
+                                            <div className="text-sm text-default-400">Cargando imagen...</div>
+                                        ) : (
+                                            <BiCloudUpload className="text-2xl text-default-400" />
+                                        )
+                                    }
                                 />
                             </div>
-
+                            <div className="flex flex-col gap-2">
+                                {product.image && <img src={product.image} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />}
+                            </div>
                             <div className="flex justify-between items-center">
                                 <p className="text-sm font-medium">Variantes del Producto</p>
                                 <Button
@@ -161,8 +275,8 @@ export default function NuevoProductoPage() {
                                             />
                                             <Input
                                                 type="number"
-                                                label="Precio Lista"
-                                                placeholder="0.00"
+                                                label="Precio Neto"
+                                                placeholder="0"
                                                 startContent={
                                                     <div className="pointer-events-none flex items-center">
                                                         <span className="text-default-400 text-small">$</span>
@@ -176,7 +290,7 @@ export default function NuevoProductoPage() {
                                             <Input
                                                 type="number"
                                                 label="Precio Costo"
-                                                placeholder="0.00"
+                                                placeholder="0"
                                                 startContent={
                                                     <div className="pointer-events-none flex items-center">
                                                         <span className="text-default-400 text-small">$</span>
@@ -209,7 +323,6 @@ export default function NuevoProductoPage() {
                                     </CardBody>
                                 </Card>
                             ))}
-
                             <div className="flex justify-end">
                                 <Button
                                     color="danger"
@@ -217,7 +330,7 @@ export default function NuevoProductoPage() {
                                     startContent={<BiMinusCircle size={20} />}
                                     onPress={() => removeProduct(productIndex)}
                                 >
-                                    Eliminar Producto
+                                    Quitar Producto #{productIndex + 1}
                                 </Button>
                             </div>
                         </div>
@@ -225,17 +338,31 @@ export default function NuevoProductoPage() {
                 </Card>
             ))}
 
-            <div className="flex justify-center mt-6">
+            {errors.length > 0 && (
+                <div className="mt-6 text-red-600">
+                    <h2 className="font-bold">Errores:</h2>
+                    <ul>
+                        {errors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+            <div className="flex justify-center mt-6 gap-3">
                 <Button color="success" size="lg" startContent={<BiPlusCircle size={20} />} onPress={addProduct}>
-                    Agregar Nuevo Producto
+                    Agregar otro producto
+                </Button>
+                <Button
+                    color="primary"
+                    size="lg"
+                    startContent={<BiSend size={20} />}
+                    onPress={handleSubmit}
+                    isLoading={loading}
+                    disabled={loading}
+                >
+                    Crear Productos
                 </Button>
             </div>
-
-            <Card className="mt-6">
-                <CardBody>
-                    <pre className="text-sm overflow-auto">{JSON.stringify({ products }, null, 2)}</pre>
-                </CardBody>
-            </Card>
         </div>
     )
 }
