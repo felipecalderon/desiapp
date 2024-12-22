@@ -1,6 +1,6 @@
 'use client'
 
-import PDFView from '@/app/settings/components/PDFView'
+import PDFView from '@/components/PDFView'
 import { Role } from '@/config/interfaces'
 import useUploadFile from '@/hooks/uploadFile'
 import storeAuth from '@/stores/store.auth'

@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import Logout from '@/app/settings/components/Logout'
+import Logout from '@/components/Logout'
 import Image from 'next/image'
-import ProfileMenu from '@/app/settings/components/ProfileMenu'
+import ProfileMenu from '@/components/ProfileMenu'
 import useTokenLS from '@/hooks/getTokenLS'
 import { usePathname, useRouter } from 'next/navigation'
 import storeAuth from '@/stores/store.auth'
@@ -24,6 +24,7 @@ const menu = {
     adminMenu: [
         { name: 'Inicio', path: '/' },
         { name: 'Stock', path: '/stock' },
+        { name: 'Agregar productos', path: '/nuevoproducto' },
         { name: 'Facturación', path: '/facturacion' },
         { name: 'Crear OC', path: '/comprar' },
         // { name: 'Quote', path: '/none' },

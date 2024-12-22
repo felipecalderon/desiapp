@@ -1,6 +1,6 @@
 import { Producto } from '@/config/interfaces'
 import { useState } from 'react'
-import TablaProductosCompra from '@/app/settings/components/tablas/ProductosCompra'
+import TablaProductosCompra from '@/components/tablas/ProductosCompra'
 
 export default function FiltroProductos({ products }: { products: Producto[] }) {
     const [filtro, setFiltro] = useState<string>('')

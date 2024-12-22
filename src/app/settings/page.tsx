@@ -1,5 +1,5 @@
-import Input from '@/app/settings/components/InputBarcode'
-import ProductAdminDetail from '@/app/settings/components/ProductAdminDetail'
+import Input from '@/components/InputBarcode'
+import ProductAdminDetail from '@/components/ProductAdminDetail'
 import React from 'react'
 
 const Settings = () => {

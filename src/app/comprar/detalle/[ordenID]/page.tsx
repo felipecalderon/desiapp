@@ -22,7 +22,7 @@ import {
     SelectItem,
     useDisclosure,
 } from '@nextui-org/react'
-import CardDataSale from '@/app/settings/components/CardDataSale'
+import CardDataSale from '@/components/CardDataSale'
 import { FaShop, FaCashRegister } from 'react-icons/fa6'
 import storeCpra from '@/stores/store.pedidCpra'
 import { FaMoneyBillWave } from 'react-icons/fa'

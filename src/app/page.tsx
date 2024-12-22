@@ -1,4 +1,4 @@
-import Dashboard from '@/app/settings/components/dashboard/Dashboard'
+import Dashboard from '@/components/dashboard/Dashboard'
 
 export default function Home() {
     return <Dashboard />

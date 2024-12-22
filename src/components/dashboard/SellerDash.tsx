@@ -1,6 +1,6 @@
 import React from 'react'
-import FechaFormateada from '@/app/settings/components/FechaFormat'
-import HoraFormateada from '@/app/settings/components/HoraFormateada'
+import FechaFormateada from '@/components/FechaFormat'
+import HoraFormateada from '@/components/HoraFormateada'
 import { FaCashRegister as Icon } from 'react-icons/fa'
 
 const SellerDash = () => {

@@ -1,7 +1,7 @@
 'use client'
 import useUserLS from '@/hooks/getItemLocalStorage'
 import Image from 'next/image'
-import SelectStore from '@/app/settings/components/SelectStore'
+import SelectStore from '@/components/SelectStore'
 
 const ProfileMenu = () => {
     const { user } = useUserLS()

@@ -1,6 +1,6 @@
 'use client'
-import FiltroProductos from '@/app/settings/components/FiltroProductos'
-import ResumeCompra from '@/app/settings/components/tablas/ResumeCompra'
+import FiltroProductos from '@/components/FiltroProductos'
+import ResumeCompra from '@/components/tablas/ResumeCompra'
 import storeDataStore from '@/stores/store.dataStore'
 import { storeProduct } from '@/stores/store.product'
 

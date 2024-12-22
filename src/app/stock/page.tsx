@@ -1,4 +1,4 @@
-import GenerarTablaStock from '@/app/settings/components/tablas/GenerarTabla'
+import GenerarTablaStock from '@/components/tablas/GenerarTabla'
 
 export default function Productos() {
     return (

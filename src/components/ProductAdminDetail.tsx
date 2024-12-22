@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
-import CrearCalzado from '@/app/settings/components/FormCalzadoNuevo'
-import ActualizarCalzado from '@/app/settings/components/FormActualizarCalzado'
+import CrearCalzado from '@/components/FormCalzadoNuevo'
+import ActualizarCalzado from '@/components/FormActualizarCalzado'
 
 const ProductAdminDetail = () => {
     return (

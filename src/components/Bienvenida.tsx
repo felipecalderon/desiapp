@@ -1,5 +1,5 @@
-import FechaFormateada from '@/app/settings/components/FechaFormat'
-import HoraFormateada from '@/app/settings/components/HoraFormateada'
+import FechaFormateada from '@/components/FechaFormat'
+import HoraFormateada from '@/components/HoraFormateada'
 
 const BienvenidaDashboard = () => {
     return (

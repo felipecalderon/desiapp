@@ -1,8 +1,8 @@
-import Navbar from '@/app/settings/components/Navbar'
+import Navbar from '@/components/Navbar'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
-import Header from '@/app/settings/components/Header'
+import Header from '@/components/Header'
 import { NextUIProvider } from '@nextui-org/react'
 
 const font = Montserrat({ subsets: ['latin'] })

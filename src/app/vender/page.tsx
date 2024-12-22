@@ -1,7 +1,7 @@
 'use client'
-import Input from '@/app/settings/components/InputBarcode'
-import SingleProduct from '@/app/settings/components/SingleProduct'
-import TablaPedidosCompraVenta from '@/app/settings/components/tablas/TablaPedidos'
+import Input from '@/components/InputBarcode'
+import SingleProduct from '@/components/SingleProduct'
+import TablaPedidosCompraVenta from '@/components/tablas/TablaPedidos'
 
 export default function Producto() {
     return (

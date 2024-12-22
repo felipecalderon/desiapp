@@ -1,4 +1,4 @@
-import BotonesAccionVenta from '@/app/settings/components/BotonesAccionVenta'
+import BotonesAccionVenta from '@/components/BotonesAccionVenta'
 import { url } from '@/config/constants'
 export default async function PaginaVentaID({ params }: { params: { saleID: string } }) {
     try {
