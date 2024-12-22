@@ -1,5 +1,5 @@
-import BotonesAccionVenta from "@/components/BotonesAccionVenta"
-import { url } from "@/config/constants"
+import BotonesAccionVenta from '@/app/settings/components/BotonesAccionVenta'
+import { url } from '@/config/constants'
 export default async function PaginaVentaID({ params }: { params: { saleID: string } }) {
     try {
         const res = await fetch(`${url.backend}/sale/${params.saleID}`)
@@ -31,8 +31,12 @@ export default async function PaginaVentaID({ params }: { params: { saleID: stri
                                 <tbody>
                                     {detalleVenta.SaleProducts.map((product: any) => (
                                         <tr key={product.SaleProductID}>
-                                            <td className="border px-1 md:px-4 py-2">{product.StoreProduct.ProductVariation.Product.name}</td>
-                                            <td className="border px-1 md:px-4 py-2 text-center">{product.StoreProduct.ProductVariation.sizeNumber}</td>
+                                            <td className="border px-1 md:px-4 py-2">
+                                                {product.StoreProduct.ProductVariation.Product.name}
+                                            </td>
+                                            <td className="border px-1 md:px-4 py-2 text-center">
+                                                {product.StoreProduct.ProductVariation.sizeNumber}
+                                            </td>
                                             <td className="border px-1 md:px-4 py-2 text-center">{product.quantitySold}</td>
                                             <td className="border px-1 md:px-4 py-2 text-center">${product.unitPrice.toLocaleString()}</td>
                                             <td className="border px-1 md:px-4 py-2 text-center">${product.subtotal.toLocaleString()}</td>
@@ -44,7 +48,7 @@ export default async function PaginaVentaID({ params }: { params: { saleID: stri
                         </div>
                     </div>
                 </div>
-                <BotonesAccionVenta saleID={params.saleID}/>
+                <BotonesAccionVenta saleID={params.saleID} />
             </>
         )
     } catch (error) {

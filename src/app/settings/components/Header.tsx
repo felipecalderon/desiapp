@@ -1,7 +1,7 @@
 'use client'
 import { Role } from '@/config/interfaces'
-import FechaFormateada from '@/components/FechaFormat'
-import HoraFormateada from '@/components/HoraFormateada'
+import FechaFormateada from '@/app/settings/components/FechaFormat'
+import HoraFormateada from '@/app/settings/components/HoraFormateada'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
 import { formatoRut } from '@/utils/rut'
@@ -34,15 +34,12 @@ const Header = () => {
             return isMonthMatch && isYearMatch
         })
 
-        const total = vtasdelMes.reduce(
-            (acc, { total, status, Store, type }) => {
-                if (status === 'Pagado' && !type) {
-                    return acc + total
-                }
-                return acc
-            },
-            0
-        )
+        const total = vtasdelMes.reduce((acc, { total, status, Store, type }) => {
+            if (status === 'Pagado' && !type) {
+                return acc + total
+            }
+            return acc
+        }, 0)
         setFacturado(total)
     }, [sales])
 
@@ -50,13 +47,9 @@ const Header = () => {
         if (orders) {
             const pendienteOC = orders.reduce((acc, order) => {
                 if (order.status !== 'Pagado' && order.status !== 'Anulado') {
-                    const total =
-                        Number(order.total) -
-                        Number(order.total) * Number(order.discount)
+                    const total = Number(order.total) - Number(order.total) * Number(order.discount)
                     const totalPendiente =
-                        order.endQuote &&
-                        (order.endQuote && (total * 1.19) / order.endQuote) *
-                            (order.endQuote - order.startQuote)
+                        order.endQuote && (order.endQuote && (total * 1.19) / order.endQuote) * (order.endQuote - order.startQuote)
                     return acc + totalPendiente
                 }
                 return acc
@@ -70,13 +63,8 @@ const Header = () => {
         return (
             <div className="flex flex-row justify-between items-center w-full px-4 pt-8">
                 <div className="text-left">
-                    <h1 className="text-3xl font-semibold">
-                        Welcome to Central D3SI AVOCCO
-                    </h1>
-                    <h2
-                        suppressHydrationWarning={true}
-                        className="text-lg font-light"
-                    >
+                    <h1 className="text-3xl font-semibold">Welcome to Central D3SI AVOCCO</h1>
+                    <h2 suppressHydrationWarning={true} className="text-lg font-light">
                         You are at D3SI AVOCCO HQ | {user.name}{' '}
                     </h2>
                 </div>
@@ -84,13 +72,12 @@ const Header = () => {
                     <p className="italic">
                         <FechaFormateada /> | <HoraFormateada />
                     </p>
-                    <Button color="primary">
+                    <Button color="primary" size="sm">
                         PAGO DE VENTAS PENDIENTE: {formatoPrecio(facturado)}
                     </Button>
                     {totalPendienteOC !== 0 && (
-                        <Button color="warning">
-                            PAGO DE OC PENDIENTES:{' '}
-                            {formatoPrecio(totalPendienteOC)}
+                        <Button color="warning" size="sm">
+                            PAGO DE OC PENDIENTES: {formatoPrecio(totalPendienteOC)}
                         </Button>
                     )}
                 </div>
@@ -100,9 +87,7 @@ const Header = () => {
     return (
         <div className="flex flex-row justify-between items-center w-full px-4 pt-8">
             <div className="text-left">
-                <h1 className="text-3xl font-semibold">
-                    Bienvenido al portal D3SI AVOCCO
-                </h1>
+                <h1 className="text-3xl font-semibold">Bienvenido al portal D3SI AVOCCO</h1>
                 <p>RUT: {formatoRut(store?.rut)}</p>
                 <p>
                     Tienda de {store?.location}, {store?.city}
@@ -113,9 +98,7 @@ const Header = () => {
                     <FechaFormateada /> | <HoraFormateada />
                 </p>
                 <div className="bg-blue-700 p-3 text-white rounded-lg h-fit">
-                    <h2 className="text-base font-semibold whitespace-pre">
-                        VENTAS DEL MES: {formatoPrecio(totalSales)}
-                    </h2>
+                    <h2 className="text-base font-semibold whitespace-pre">VENTAS DEL MES: {formatoPrecio(totalSales)}</h2>
                 </div>
             </div>
         </div>

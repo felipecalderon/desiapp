@@ -1,10 +1,10 @@
 'use client'
-import AgregarUsuariosATienda from "@/components/AgregarUsuarioenTienda"
-import CrearTienda from "@/components/CrearTienda"
-import CrearUsuarios from "@/components/CrearUsuarios"
-import ListaTiendas from "@/components/ListaTiendas"
-import ListaDeUsuarios from "@/components/ListaUsuarios"
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react"
+import AgregarUsuariosATienda from '@/app/settings/components/AgregarUsuarioenTienda'
+import CrearTienda from '@/app/settings/components/CrearTienda'
+import CrearUsuarios from '@/app/settings/components/CrearUsuarios'
+import ListaTiendas from '@/app/settings/components/ListaTiendas'
+import ListaDeUsuarios from '@/app/settings/components/ListaUsuarios'
+import { Card, CardBody, Tab, Tabs } from '@nextui-org/react'
 
 const UsuariosPage = () => {
     return (

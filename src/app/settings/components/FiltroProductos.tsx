@@ -1,18 +1,18 @@
-import { Producto } from "@/config/interfaces";
-import { useState } from "react";
-import TablaProductosCompra from "@/components/tablas/ProductosCompra";
+import { Producto } from '@/config/interfaces'
+import { useState } from 'react'
+import TablaProductosCompra from '@/app/settings/components/tablas/ProductosCompra'
 
 export default function FiltroProductos({ products }: { products: Producto[] }) {
-    const [filtro, setFiltro] = useState<string>('');
+    const [filtro, setFiltro] = useState<string>('')
 
     const handleFiltroChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFiltro(event.target.value);
-    };
+        setFiltro(event.target.value)
+    }
 
     const productosOrdenados = [...products].sort((a: Producto, b: Producto) => {
         // Calcular la similitud con el filtro
-        const similitudA = a.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
-        const similitudB = b.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0;
+        const similitudA = a.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0
+        const similitudB = b.name.toLowerCase().includes(filtro.toLowerCase()) ? 1 : 0
 
         // Ordenar de forma descendente por cantidad
         const resultado = b.totalProducts - a.totalProducts
@@ -20,8 +20,8 @@ export default function FiltroProductos({ products }: { products: Producto[] }) 
         if (filtro) {
             return similitudB - similitudA
         }
-        return resultado - similitudB - similitudA;
-    });
+        return resultado - similitudB - similitudA
+    })
 
     if (products.length === 0) return null
     return (
@@ -40,5 +40,5 @@ export default function FiltroProductos({ products }: { products: Producto[] }) 
                 <TablaProductosCompra products={productosOrdenados} />
             </ul>
         </>
-    );
+    )
 }

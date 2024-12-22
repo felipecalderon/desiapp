@@ -8,8 +8,21 @@ import { fetchData } from '@/utils/fetchData'
 import { formatoPrecio } from '@/utils/price'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ScrollShadow, Select, SelectItem, useDisclosure } from '@nextui-org/react'
-import CardDataSale from '@/components/CardDataSale'
+import {
+    Button,
+    Chip,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ScrollShadow,
+    Select,
+    SelectItem,
+    useDisclosure,
+} from '@nextui-org/react'
+import CardDataSale from '@/app/settings/components/CardDataSale'
 import { FaShop, FaCashRegister } from 'react-icons/fa6'
 import storeCpra from '@/stores/store.pedidCpra'
 import { FaMoneyBillWave } from 'react-icons/fa'
@@ -282,12 +295,18 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                     </p>
                 </CardDataSale>
                 <CardDataSale icon={FaMoneyBillWave} title="Pagos">
-                    {order.endQuote && order.endQuote > 0 && <p className="text-sm">Valor cuota: {formatoPrecio((total * 1.19) / order.endQuote)}</p>}
+                    {order.endQuote && order.endQuote > 0 && (
+                        <p className="text-sm">Valor cuota: {formatoPrecio((total * 1.19) / order.endQuote)}</p>
+                    )}
                     <p className="text-sm">
                         Estado de cuota: {order.startQuote} de {order.endQuote}
                     </p>
                     <p className="text-sm">Vencimiento del pago: {vencimiento.fecha}</p>
-                    {order.endQuote && order.endQuote && <p className="text-sm">Pendiente: {formatoPrecio(((total * 1.19) / order.endQuote) * (order.endQuote - order.startQuote))}</p>}
+                    {order.endQuote && order.endQuote && (
+                        <p className="text-sm">
+                            Pendiente: {formatoPrecio(((total * 1.19) / order.endQuote) * (order.endQuote - order.startQuote))}
+                        </p>
+                    )}
                 </CardDataSale>
             </div>
             {/* Zona editable */}
@@ -462,22 +481,40 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50 dark:bg-blue-950">
                         <tr>
-                            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                            <th
+                                scope="col"
+                                className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                            >
                                 #
                             </th>
-                            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                            <th
+                                scope="col"
+                                className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                            >
                                 Detalle
                             </th>
-                            <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                            <th
+                                scope="col"
+                                className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                            >
                                 Talla
                             </th>
-                            <th scope="col" className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                            <th
+                                scope="col"
+                                className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                            >
                                 Costo
                             </th>
-                            <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                            <th
+                                scope="col"
+                                className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                            >
                                 Cantidad
                             </th>
-                            <th scope="col" className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                            <th
+                                scope="col"
+                                className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
+                            >
                                 Subtotal
                             </th>
                         </tr>
@@ -494,9 +531,13 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                         <span className="text-sm font-thin">({sku})</span> {Product.name}
                                     </td>
                                     <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{sizeNumber}</td>
-                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>{formatoPrecio(Number(priceList) / Number(order.Store.markup))}</td>
+                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
+                                        {formatoPrecio(Number(priceList) / Number(order.Store.markup))}
+                                    </td>
                                     <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{OrderProduct.quantityOrdered}</td>
-                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>{formatoPrecio(OrderProduct.subtotal)}</td>
+                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
+                                        {formatoPrecio(OrderProduct.subtotal)}
+                                    </td>
                                 </tr>
                             )
                         })}
@@ -560,30 +601,56 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                     const subtotal = variation.priceCost * cantidad
                                                     const esPrimero = index === 0
                                                     return (
-                                                        <tr key={variation.variationID} className={`${esPrimero ? 'border-t-4 border-t-blue-300' : 'border-t'} text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300`}>
+                                                        <tr
+                                                            key={variation.variationID}
+                                                            className={`${
+                                                                esPrimero ? 'border-t-4 border-t-blue-300' : 'border-t'
+                                                            } text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300`}
+                                                        >
                                                             {esPrimero && (
                                                                 <>
-                                                                    <td rowSpan={producto.ProductVariations?.length} className="py-3 px-3 text-left w-1/4 max-w-0">
+                                                                    <td
+                                                                        rowSpan={producto.ProductVariations?.length}
+                                                                        className="py-3 px-3 text-left w-1/4 max-w-0"
+                                                                    >
                                                                         <div className="flex flex-col items-center">
-                                                                            <img src={producto.image} alt={producto.name} className="w-40 h-30 object-cover" />
+                                                                            <img
+                                                                                src={producto.image}
+                                                                                alt={producto.name}
+                                                                                className="w-40 h-30 object-cover"
+                                                                            />
                                                                             <span className="font-medium text-center">{producto.name}</span>
                                                                         </div>
                                                                     </td>
                                                                 </>
                                                             )}
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                                {variation.sku}
+                                                            </td>
                                                             {getStockCentralBySku(variation.sku) === 0 ? (
                                                                 <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                                                                    <span className="text-red-500">{getStockCentralBySku(variation.sku)}</span>
+                                                                    <span className="text-red-500">
+                                                                        {getStockCentralBySku(variation.sku)}
+                                                                    </span>
                                                                 </td>
                                                             ) : (
                                                                 <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                                                                    <span className="font-bold text-green-600">{getStockCentralBySku(variation.sku) >= 10 ? '+10' : getStockCentralBySku(variation.sku)}</span>
+                                                                    <span className="font-bold text-green-600">
+                                                                        {getStockCentralBySku(variation.sku) >= 10
+                                                                            ? '+10'
+                                                                            : getStockCentralBySku(variation.sku)}
+                                                                    </span>
                                                                 </td>
                                                             )}
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(variation.priceCost)}</td>
-                                                            <td className="py-3 px-2 text-center bg-blue-200">{formatoPrecio(variation.priceList)}</td>
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                                {formatoPrecio(variation.priceCost)}
+                                                            </td>
+                                                            <td className="py-3 px-2 text-center bg-blue-200">
+                                                                {formatoPrecio(variation.priceList)}
+                                                            </td>
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                                {variation.sizeNumber}
+                                                            </td>
                                                             <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
                                                                 <input
                                                                     type="text"
@@ -597,7 +664,9 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                                     className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1"
                                                                 />
                                                             </td>
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{formatoPrecio(subtotal)}</td>
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                                {formatoPrecio(subtotal)}
+                                                            </td>
                                                         </tr>
                                                     )
                                                 })

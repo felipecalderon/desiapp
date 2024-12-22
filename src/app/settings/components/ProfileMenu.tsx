@@ -1,7 +1,7 @@
 'use client'
-import useUserLS from "@/hooks/getItemLocalStorage"
-import Image from "next/image"
-import SelectStore from "@/components/SelectStore"
+import useUserLS from '@/hooks/getItemLocalStorage'
+import Image from 'next/image'
+import SelectStore from '@/app/settings/components/SelectStore'
 
 const ProfileMenu = () => {
     const { user } = useUserLS()
@@ -63,21 +63,17 @@ const ProfileMenu = () => {
     if (!user) return null
     return (
         <>
-            {
-                user.userImg &&
-                <div className='md:mx-auto rounded-sm w-10 h-10 md:w-20 md:h-20 md:rounded-full overflow-hidden' onClick={handleImageClick}>
-                    <div className='relative w-full h-full'>
-                        <Image
-                            src={user?.userImg}
-                            alt={user.name}
-                            layout='fill'
-                            objectFit='cover'
-                            className='block'
-                        />
+            {user.userImg && (
+                <div className="md:mx-auto rounded-sm w-10 h-10 md:w-20 md:h-20 md:rounded-full overflow-hidden" onClick={handleImageClick}>
+                    <div className="relative w-full h-full">
+                        <Image src={user?.userImg} alt={user.name} layout="fill" objectFit="cover" className="block" />
                     </div>
                 </div>
-            }
-            <p className="py-2 text-lg text-center">¡Hola <br />{user.name}!</p>
+            )}
+            <p className="py-2 text-lg text-center">
+                ¡Hola <br />
+                {user.name}!
+            </p>
             <SelectStore />
         </>
     )

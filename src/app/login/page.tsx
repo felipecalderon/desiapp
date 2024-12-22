@@ -1,10 +1,8 @@
-import Loginform from '@/components/Loginform'
+import Loginform from '@/app/settings/components/Loginform'
 import React from 'react'
 
 const LoginPage = () => {
-  return (
-      <Loginform />
-  )
+    return <Loginform />
 }
 
 export default LoginPage
