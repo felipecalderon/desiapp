@@ -177,7 +177,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                 return 1
             }
         })
-    }, [cantidades])
+    }, [])
 
     useEffect(() => {
         const paresTotales = calcularParesTotales(products)
@@ -568,7 +568,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                     </div>
                 </div>
                 {order.status === 'Pendiente' && (
-                    <Button onPress={onOpenChange} variant="solid" color="warning" className="mt-3">
+                    <Button onPress={onOpenChange} variant="solid" color="warning" className="-translate-y-20">
                         Editar productos
                     </Button>
                 )}

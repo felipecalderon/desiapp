@@ -1,11 +1,12 @@
-import Input from '@/components/InputBarcode'
-import ProductAdminDetail from '@/components/ProductAdminDetail'
+import ActualizarCalzado from '@/components/FormActualizarCalzado'
+import CrearCalzado from '@/components/FormCalzadoNuevo'
 import React from 'react'
 
 const Settings = () => {
     return (
         <>
-            <ProductAdminDetail />
+            <CrearCalzado />
+            <ActualizarCalzado />
         </>
     )
 }

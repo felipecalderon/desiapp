@@ -1,11 +1,13 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Input, Card, CardBody, CardHeader, Divider } from '@nextui-org/react'
 import { BiCloudUpload, BiMinusCircle, BiPackage, BiPlusCircle, BiSend, BiTrash } from 'react-icons/bi'
 import { url } from '@/config/constants'
 import { fetchData } from '@/utils/fetchData'
 import { storeProduct } from '@/stores/store.product'
 import { useRouter } from 'next/navigation'
+import XmlFileUploader from '@/components/XML-upload'
+import { useFileStore } from '@/stores/store.file'
 
 type Variant = {
     sizeNumber: number
@@ -23,13 +25,14 @@ interface StatusProducts {
 
 export default function NuevoProductoPage() {
     const router = useRouter()
-    const { setGlobalProducts, setProducts: setProductsStore } = storeProduct()
+    const { jsonFile } = useFileStore()
+    const { setGlobalProducts, setProducts: setProductsStore, globalProducts } = storeProduct()
     const [loading, setLoading] = useState(false)
     const [uploading, setUploading] = useState<{ [key: number]: boolean }>({})
     const [products, setProducts] = useState<StatusProducts[]>([
         {
             name: '',
-            image: '',
+            image: 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt',
             sizes: [
                 {
                     sizeNumber: 0,
@@ -91,7 +94,7 @@ export default function NuevoProductoPage() {
             ...products,
             {
                 name: '',
-                image: '',
+                image: 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt',
                 sizes: [
                     {
                         sizeNumber: 0,
@@ -193,13 +196,35 @@ export default function NuevoProductoPage() {
         }
     }
 
+    useEffect(() => {
+        if (jsonFile) {
+            const { Documento } = jsonFile
+            // const findProduct = globalProducts.find((p) =>
+            //     p.ProductVariations.some((v) => Documento.Detalle.some((d) => d.CdgItem.VlrCodigo === v.sku))
+            // )
+            const products: StatusProducts[] = Documento.Detalle.map((p) => ({
+                image: 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt',
+                name: p.NmbItem,
+                sizes: [
+                    {
+                        priceCost: p.PrcItem,
+                        priceList: p.PrcItem,
+                        sizeNumber: 0,
+                        sku: p.CdgItem.VlrCodigo,
+                        stockQuantity: p.QtyItem.toString(),
+                    },
+                ],
+            }))
+            setProducts(products)
+        }
+    }, [jsonFile])
     return (
         <div className="p-4 max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
                 <BiPackage className="w-6 h-6" />
                 Crear Productos
             </h1>
-
+            {/* <XmlFileUploader /> */}
             {products.map((product, productIndex) => (
                 <Card key={productIndex} className="mb-6">
                     <CardHeader className="flex gap-3">
@@ -303,7 +328,7 @@ export default function NuevoProductoPage() {
                                             />
                                             <Input
                                                 type="number"
-                                                label="Cantidad en Stock"
+                                                label="Stock de entrada"
                                                 placeholder="0"
                                                 value={variant.stockQuantity}
                                                 onChange={(e) =>
