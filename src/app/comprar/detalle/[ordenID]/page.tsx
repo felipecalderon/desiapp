@@ -177,7 +177,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                 return 1
             }
         })
-    }, [])
+    }, [globalProducts])
 
     useEffect(() => {
         const paresTotales = calcularParesTotales(products)
@@ -207,7 +207,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             cantidad: cantidades[variacion.variationID],
         }))
     )
-    console.log({ variantesCompradas })
+
     const totalesCompra = variantesCompradas.reduce(
         (acc, v) => {
             return {
