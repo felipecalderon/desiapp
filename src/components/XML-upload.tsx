@@ -1,6 +1,6 @@
 'use client'
 import type React from 'react'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { xmlToJson } from '@/utils/fileXML'
 import { Upload, AlertCircle, File } from 'lucide-react'
 import { Detalle, DTE } from '@/config/interfaces'
@@ -11,63 +11,118 @@ const XmlFileUploader: React.FC = () => {
     const { setJsonFile } = useFileStore()
     const [error, setError] = useState<string | null>(null)
     const [file, setFile] = useState<File | null>(null)
+    const [isDragActive, setIsDragActive] = useState(false)
+    const [dragCounter, setDragCounter] = useState(0)
+
+    // Función que procesa el archivo (ya sea obtenido por input o drop)
+    const processFile = async (file: File) => {
+        const fileType = file.name.split('.').pop()?.toLowerCase() as 'xml' | 'xlsx' | 'xls'
+
+        if (file.size > 1000000) {
+            setError('El archivo supera el tamaño máximo permitido (1MB).')
+            setFile(null)
+            setJsonFile(null)
+            return
+        }
+
+        if (fileType === 'xml') {
+            setError('Tipo de archivo no soportado. Debe ser EXCEL')
+            return
+            try {
+                const xmlContent = await file.text()
+                const DTE = await xmlToJson<DTE>(xmlContent)
+                setFile(file)
+                setJsonFile(DTE.Documento.Detalle)
+                setError(null)
+            } catch (err) {
+                setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
+                setFile(null)
+                setJsonFile(null)
+            }
+        } else {
+            try {
+                const DTE = await excelTOJSON(file)
+                const formatDTE: Detalle[] = DTE.map((p) => ({
+                    NmbItem: `${p.item} ${p.marca} ${p.modelo} - ${p.talla}`,
+                    PrcItem: p.precioplaza.toString(),
+                    QtyItem: p.cantidad,
+                    CdgItem: {
+                        VlrCodigo: p.sku,
+                        TpoCodigo: '',
+                    },
+                    PrcRef: '',
+                    UnmdItem: '',
+                    NroLinDet: '',
+                    MontoItem: '',
+                }))
+                setFile(file)
+                setJsonFile(formatDTE)
+                setError(null)
+            } catch (error) {
+                console.log(error)
+                setError('Error al procesar el archivo EXCEL. Por favor, asegúrese de que es un archivo EXCEL válido.')
+                setFile(null)
+                setJsonFile(null)
+            }
+        }
+    }
+
+    // Manejador para el input file
     const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
-            const fileType = file.name.split('.').pop()?.toLowerCase() as 'xml' | 'xlsx' | 'xls'
-
-            if (file.size > 1000000) {
-                setError('El archivo supera el tamaño máximo permitido (1MB).')
-                setFile(null)
-                setJsonFile(null)
-                return
-            }
-            if (fileType === 'xml') {
-                try {
-                    const xmlContent = await file.text()
-                    const DTE = await xmlToJson<DTE>(xmlContent)
-                    setFile(file)
-                    setJsonFile(DTE.Documento.Detalle)
-                    setError(null)
-                } catch (err) {
-                    setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
-                    setFile(null)
-                    setJsonFile(null)
-                }
-            } else {
-                const DTE = await excelTOJSON(file)
-                try {
-                    const formatDTE: Detalle[] = DTE.map((p) => ({
-                        NmbItem: `${p.item} ${p.marca} ${p.modelo} - ${p.talla}`,
-                        PrcItem: p.precioplaza.toString(),
-                        QtyItem: p.cantidad,
-                        CdgItem: {
-                            VlrCodigo: p.sku,
-                            TpoCodigo: '',
-                        },
-                        PrcRef: '',
-                        UnmdItem: '',
-                        NroLinDet: '',
-                        MontoItem: '',
-                    }))
-                    setJsonFile(formatDTE)
-                    setError(null)
-                } catch (error) {
-                    console.log(error)
-                    setError('Error al procesar el archivo EXCEL. Por favor, asegúrese de que es un archivo EXCEL válido.')
-                    setFile(null)
-                    setJsonFile(null)
-                }
-            }
+            await processFile(file)
         }
     }, [])
 
+    // Manejadores para drag & drop utilizando un contador
+    const handleDragEnter = (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setDragCounter((prev) => prev + 1)
+        setIsDragActive(true)
+    }
+
+    const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setDragCounter((prev) => {
+            const newCounter = prev - 1
+            if (newCounter === 0) {
+                setIsDragActive(false)
+            }
+            return newCounter
+        })
+    }
+
+    const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+
+    const handleDrop = async (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setDragCounter(0)
+        setIsDragActive(false)
+        const droppedFile = event.dataTransfer.files?.[0]
+        if (droppedFile) {
+            await processFile(droppedFile)
+        }
+    }
+
     return (
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-4xl mx-auto">
             <div className="mb-8">
                 <label
                     htmlFor="file"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-300 ease-in-out"
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer transition duration-300 ease-in-out ${
+                        isDragActive ? 'bg-gray-200 border-blue-500 shadow-lg' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
                 >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         {file ? (
@@ -77,6 +132,14 @@ const XmlFileUploader: React.FC = () => {
                                     Archivo cargado: <span className="font-semibold">{file.name}</span>
                                 </p>
                                 <p className="text-xs text-gray-500">{(file.size / 1000).toFixed(1)} Kb</p>
+                            </>
+                        ) : isDragActive ? (
+                            <>
+                                <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                                <p className="mb-2 text-sm text-gray-500">
+                                    <span className="font-semibold">Suelta el archivo aquí</span>
+                                </p>
+                                <p className="text-xs text-gray-500">XML (máx. 1MB)</p>
                             </>
                         ) : (
                             <>
@@ -89,7 +152,6 @@ const XmlFileUploader: React.FC = () => {
                         )}
                     </div>
                     <input id="file" type="file" accept=".xlsx, .xls" className="hidden" onChange={handleFileChange} />
-                    {/* <input id="file" type="file" accept=".xml, .xlsx, .xls" className="hidden" onChange={handleFileChange} /> */}
                 </label>
             </div>
 
