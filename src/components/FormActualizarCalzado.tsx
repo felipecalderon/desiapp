@@ -38,7 +38,7 @@ const ActualizarCalzado = () => {
     }, [])
 
     const cargarProductos = async (storeID?: string) => {
-        const endpoint = storeID ? `products/?storeID=${storeID}` : 'products'
+        const endpoint = storeID ? `products/?storeId=${storeID}` : 'products'
         const productos: Producto[] = await fetchData(endpoint)
         setProducts(productos)
         setGlobalProducts(productos)

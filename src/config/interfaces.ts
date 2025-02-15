@@ -151,7 +151,7 @@ export interface DTE {
 export interface Documento {
     ID: string
     Encabezado: Encabezado
-    Detalle: Detalle[]
+    Detalle: Detalle[] | Detalle
     TED: TED
     TmstFirma: string
 }

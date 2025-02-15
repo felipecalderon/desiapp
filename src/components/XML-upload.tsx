@@ -3,8 +3,9 @@ import type React from 'react'
 import { useState, useCallback, useEffect } from 'react'
 import { xmlToJson } from '@/utils/fileXML'
 import { Upload, AlertCircle, File } from 'lucide-react'
-import { DTE } from '@/config/interfaces'
+import { Detalle, DTE } from '@/config/interfaces'
 import { useFileStore } from '@/stores/store.file'
+import { excelTOJSON } from '@/utils/toExcel'
 
 const XmlFileUploader: React.FC = () => {
     const { setJsonFile } = useFileStore()
@@ -13,22 +14,50 @@ const XmlFileUploader: React.FC = () => {
     const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
+            const fileType = file.name.split('.').pop()?.toLowerCase() as 'xml' | 'xlsx' | 'xls'
+
             if (file.size > 1000000) {
                 setError('El archivo supera el tamaño máximo permitido (1MB).')
                 setFile(null)
                 setJsonFile(null)
                 return
             }
-            try {
-                const xmlContent = await file.text()
-                const { DTE } = await xmlToJson<{ DTE: DTE }>(xmlContent)
-                setFile(file)
-                setJsonFile(DTE)
-                setError(null)
-            } catch (err) {
-                setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
-                setFile(null)
-                setJsonFile(null)
+            if (fileType === 'xml') {
+                try {
+                    const xmlContent = await file.text()
+                    const DTE = await xmlToJson<DTE>(xmlContent)
+                    setFile(file)
+                    setJsonFile(DTE.Documento.Detalle)
+                    setError(null)
+                } catch (err) {
+                    setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
+                    setFile(null)
+                    setJsonFile(null)
+                }
+            } else {
+                const DTE = await excelTOJSON(file)
+                try {
+                    const formatDTE: Detalle[] = DTE.map((p) => ({
+                        NmbItem: `${p.item} ${p.marca} ${p.modelo} - ${p.talla}`,
+                        PrcItem: p.precioplaza.toString(),
+                        QtyItem: p.cantidad,
+                        CdgItem: {
+                            VlrCodigo: p.sku,
+                            TpoCodigo: '',
+                        },
+                        PrcRef: '',
+                        UnmdItem: '',
+                        NroLinDet: '',
+                        MontoItem: '',
+                    }))
+                    setJsonFile(formatDTE)
+                    setError(null)
+                } catch (error) {
+                    console.log(error)
+                    setError('Error al procesar el archivo EXCEL. Por favor, asegúrese de que es un archivo EXCEL válido.')
+                    setFile(null)
+                    setJsonFile(null)
+                }
             }
         }
     }, [])
@@ -37,7 +66,7 @@ const XmlFileUploader: React.FC = () => {
         <div className="max-w-4xl mx-auto p-4">
             <div className="mb-8">
                 <label
-                    htmlFor="xml-file"
+                    htmlFor="file"
                     className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-300 ease-in-out"
                 >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -53,13 +82,14 @@ const XmlFileUploader: React.FC = () => {
                             <>
                                 <Upload className="w-10 h-10 mb-3 text-gray-400" />
                                 <p className="mb-2 text-sm text-gray-500">
-                                    <span className="font-semibold">Haga clic para cargar</span> o arrastra y suelta el archivo XML
+                                    <span className="font-semibold">Haga clic para cargar</span> o arrastra y suelta el archivo EXCEL
                                 </p>
                                 <p className="text-xs text-gray-500">XML (máx. 1MB)</p>
                             </>
                         )}
                     </div>
-                    <input id="xml-file" type="file" accept=".xml" className="hidden" onChange={handleFileChange} />
+                    <input id="file" type="file" accept=".xlsx, .xls" className="hidden" onChange={handleFileChange} />
+                    {/* <input id="file" type="file" accept=".xml, .xlsx, .xls" className="hidden" onChange={handleFileChange} /> */}
                 </label>
             </div>
 

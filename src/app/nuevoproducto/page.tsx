@@ -8,6 +8,7 @@ import { storeProduct } from '@/stores/store.product'
 import { useRouter } from 'next/navigation'
 import XmlFileUploader from '@/components/XML-upload'
 import { useFileStore } from '@/stores/store.file'
+import { generateUUID } from '@/utils/uuid'
 
 type Variant = {
     sizeNumber: number
@@ -24,6 +25,7 @@ interface StatusProducts {
 }
 
 export default function NuevoProductoPage() {
+    const noImage = 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt'
     const router = useRouter()
     const { jsonFile } = useFileStore()
     const { setGlobalProducts, setProducts: setProductsStore, globalProducts } = storeProduct()
@@ -32,7 +34,7 @@ export default function NuevoProductoPage() {
     const [products, setProducts] = useState<StatusProducts[]>([
         {
             name: '',
-            image: 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt',
+            image: noImage,
             sizes: [
                 {
                     sizeNumber: 0,
@@ -60,8 +62,10 @@ export default function NuevoProductoPage() {
             }
 
             product.sizes.forEach((variant, variantIndex) => {
-                if (!variant.sku.trim()) {
-                    validationErrors.push(`El SKU de la variante #${variantIndex + 1} del producto #${productIndex + 1} está vacío.`)
+                if (!variant.sku) {
+                    validationErrors.push(
+                        `El SKU de la variante #${variantIndex + 1} del producto #${products[productIndex].name} está vacío.`
+                    )
                 }
                 if (!variant.stockQuantity.trim()) {
                     validationErrors.push(
@@ -94,7 +98,7 @@ export default function NuevoProductoPage() {
             ...products,
             {
                 name: '',
-                image: 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt',
+                image: noImage,
                 sizes: [
                     {
                         sizeNumber: 0,
@@ -198,24 +202,56 @@ export default function NuevoProductoPage() {
 
     useEffect(() => {
         if (jsonFile) {
-            const { Documento } = jsonFile
+            if (Array.isArray(jsonFile)) {
+                const groupedProducts = jsonFile.reduce<Record<string, StatusProducts>>((acc, item) => {
+                    const parts = item.NmbItem.split(' - ')
+                    const parentName = parts[0].trim()
+                    const variant = parts[1] ? parts[1].trim() : '0'
+                    const sku = item.CdgItem.VlrCodigo || generateUUID()
+                    if (!acc[parentName]) {
+                        acc[parentName] = {
+                            image: noImage,
+                            name: parentName,
+                            sizes: [],
+                        }
+                    }
+
+                    // Agregamos la variante a la lista de tallas
+                    acc[parentName].sizes.push({
+                        priceCost: (Number(item.PrcItem) / 1.8).toString(),
+                        priceList: item.PrcItem,
+                        sizeNumber: Number(variant || 0),
+                        sku: String(sku),
+                        stockQuantity: item.QtyItem.toString(),
+                    })
+
+                    return acc
+                }, {})
+
+                const products: StatusProducts[] = Object.values(groupedProducts)
+                setProducts(products)
+            } else {
+                if (jsonFile.hasOwnProperty('NmbItem')) {
+                    setProducts([
+                        {
+                            image: noImage,
+                            name: jsonFile.NmbItem,
+                            sizes: [
+                                {
+                                    priceCost: (Number(jsonFile.PrcItem) / 1.8).toString(),
+                                    priceList: jsonFile.PrcItem,
+                                    sizeNumber: 0,
+                                    sku: jsonFile.CdgItem.VlrCodigo,
+                                    stockQuantity: jsonFile.QtyItem.toString(),
+                                },
+                            ],
+                        },
+                    ])
+                }
+            }
             // const findProduct = globalProducts.find((p) =>
             //     p.ProductVariations.some((v) => Documento.Detalle.some((d) => d.CdgItem.VlrCodigo === v.sku))
             // )
-            const products: StatusProducts[] = Documento.Detalle.map((p) => ({
-                image: 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt',
-                name: p.NmbItem,
-                sizes: [
-                    {
-                        priceCost: p.PrcItem,
-                        priceList: p.PrcItem,
-                        sizeNumber: 0,
-                        sku: p.CdgItem.VlrCodigo,
-                        stockQuantity: p.QtyItem.toString(),
-                    },
-                ],
-            }))
-            setProducts(products)
         }
     }, [jsonFile])
     return (
@@ -224,7 +260,7 @@ export default function NuevoProductoPage() {
                 <BiPackage className="w-6 h-6" />
                 Crear Productos
             </h1>
-            {/* <XmlFileUploader /> */}
+            <XmlFileUploader />
             {products.map((product, productIndex) => (
                 <Card key={productIndex} className="mb-6">
                     <CardHeader className="flex gap-3">
