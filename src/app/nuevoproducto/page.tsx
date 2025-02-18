@@ -218,8 +218,8 @@ export default function NuevoProductoPage() {
 
                     // Agregamos la variante a la lista de tallas
                     acc[parentName].sizes.push({
-                        priceCost: (Number(item.PrcItem) / 1.8).toString(),
-                        priceList: item.PrcItem,
+                        priceCost: (Number(item.PrcItem) / 1.8).toFixed(2),
+                        priceList: Number(item.PrcItem).toFixed(2),
                         sizeNumber: Number(variant || 0),
                         sku: String(sku),
                         stockQuantity: item.QtyItem.toString(),
@@ -238,8 +238,8 @@ export default function NuevoProductoPage() {
                             name: jsonFile.NmbItem,
                             sizes: [
                                 {
-                                    priceCost: (Number(jsonFile.PrcItem) / 1.8).toString(),
-                                    priceList: jsonFile.PrcItem,
+                                    priceCost: (Number(jsonFile.PrcItem) / 1.8).toFixed(2),
+                                    priceList: Number(jsonFile.PrcItem).toFixed(2),
                                     sizeNumber: 0,
                                     sku: jsonFile.CdgItem.VlrCodigo,
                                     stockQuantity: jsonFile.QtyItem.toString(),
@@ -254,6 +254,7 @@ export default function NuevoProductoPage() {
             // )
         }
     }, [jsonFile])
+
     return (
         <div className="p-4 max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -336,7 +337,7 @@ export default function NuevoProductoPage() {
                                             />
                                             <Input
                                                 type="number"
-                                                label="Precio Neto"
+                                                label="Precio Plaza"
                                                 placeholder="0"
                                                 startContent={
                                                     <div className="pointer-events-none flex items-center">
@@ -350,7 +351,7 @@ export default function NuevoProductoPage() {
                                             />
                                             <Input
                                                 type="number"
-                                                label="Precio Costo"
+                                                label="Costo Neto"
                                                 placeholder="0"
                                                 startContent={
                                                     <div className="pointer-events-none flex items-center">
@@ -419,7 +420,7 @@ export default function NuevoProductoPage() {
                     startContent={<BiSend size={20} />}
                     onPress={handleSubmit}
                     isLoading={loading}
-                    disabled={loading}
+                    isDisabled={loading}
                 >
                     Crear Productos
                 </Button>
