@@ -26,8 +26,6 @@ const XmlFileUploader: React.FC = () => {
         }
 
         if (fileType === 'xml') {
-            setError('Tipo de archivo no soportado. Debe ser EXCEL')
-            return
             try {
                 const xmlContent = await file.text()
                 const DTE = await xmlToJson<DTE>(xmlContent)
@@ -139,7 +137,7 @@ const XmlFileUploader: React.FC = () => {
                                 <p className="mb-2 text-sm text-gray-500">
                                     <span className="font-semibold">Suelta el archivo aquí</span>
                                 </p>
-                                <p className="text-xs text-gray-500">XML (máx. 1MB)</p>
+                                <p className="text-xs text-gray-500">(máx. 1MB)</p>
                             </>
                         ) : (
                             <>
@@ -147,11 +145,11 @@ const XmlFileUploader: React.FC = () => {
                                 <p className="mb-2 text-sm text-gray-500">
                                     <span className="font-semibold">Haga clic para cargar</span> o arrastra y suelta el archivo EXCEL
                                 </p>
-                                <p className="text-xs text-gray-500">XML (máx. 1MB)</p>
+                                <p className="text-xs text-gray-500">(máx. 1MB)</p>
                             </>
                         )}
                     </div>
-                    <input id="file" type="file" accept=".xlsx, .xls" className="hidden" onChange={handleFileChange} />
+                    <input id="file" type="file" accept=".xlsx, .xls, .xml" className="hidden" onChange={handleFileChange} />
                 </label>
             </div>
 
