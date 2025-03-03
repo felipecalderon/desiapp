@@ -37,6 +37,7 @@ const TablaPedidosVenta = () => {
     const handleSendVta = async () => {
         try {
             setLoading(true)
+            console.log(products)
             if (!store) return console.log('Falta ID para store')
             if (!products) return console.log('Faltan productos')
             const res = await fetch(`${url.backend}/sale`, {
@@ -74,8 +75,9 @@ const TablaPedidosVenta = () => {
     useEffect(() => {
         if (pedidoVta && pedidoVta.length > 0) {
             const transformedArray = pedidoVta?.map((item) => {
+                const [variation] = item.ProductVariations
                 return {
-                    storeProductID: item.ProductVariations[0]?.storeProductID,
+                    storeProductID: variation?.storeProductID || variation?.Stores?.[0]?.StoreProduct?.storeProductID || '',
                     quantitySold: item.cantidad,
                 }
             })

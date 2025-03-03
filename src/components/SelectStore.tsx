@@ -117,7 +117,7 @@ const SelectStore = () => {
                     )
 
                     setOrders(orders)
-                    setSales(ventasUnificadas)
+                    setSales(ventas)
                 }
             } catch (error: any) {
                 if (error.name !== 'AbortError') {
