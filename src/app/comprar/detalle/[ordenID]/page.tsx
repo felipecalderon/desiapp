@@ -21,7 +21,7 @@ import {
     Select,
     SelectItem,
     useDisclosure,
-} from "@heroui/react"
+} from '@heroui/react'
 import CardDataSale from '@/components/CardDataSale'
 import { FaShop, FaCashRegister } from 'react-icons/fa6'
 import storeCpra from '@/stores/store.pedidCpra'
@@ -325,16 +325,16 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                             color="primary"
                             label="Estado del Pago"
                         >
-                            <SelectItem key={'Pendiente'} value={'Pendiente'}>
+                            <SelectItem key={'Pendiente'} textValue={'Pendiente'}>
                                 Pendiente
                             </SelectItem>
-                            <SelectItem key={'Enviado'} value={'Enviado'}>
+                            <SelectItem key={'Enviado'} textValue={'Enviado'}>
                                 Enviado
                             </SelectItem>
-                            <SelectItem key={'Anulado'} value={'Anulado'}>
+                            <SelectItem key={'Anulado'} textValue={'Anulado'}>
                                 Anulado
                             </SelectItem>
-                            <SelectItem className="pointer-events-none" key={'Pagado'} value={'Pagado'}>
+                            <SelectItem className="pointer-events-none" key={'Pagado'} textValue={'Pagado'}>
                                 Pagado
                             </SelectItem>
                         </Select>
@@ -358,16 +358,16 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                 }
                             }}
                         >
-                            <SelectItem key="OCD" value="OCD">
+                            <SelectItem key="OCD" textValue="OCD">
                                 Compra Directa
                             </SelectItem>
-                            <SelectItem key="OCR" value="OCR">
+                            <SelectItem key="OCR" textValue="OCR">
                                 Reposición Automática
                             </SelectItem>
-                            <SelectItem key="OCC" value="OCC">
+                            <SelectItem key="OCC" textValue="OCC">
                                 Compra por Consignación
                             </SelectItem>
-                            <SelectItem key="OCP" value="OCP">
+                            <SelectItem key="OCP" textValue="OCP">
                                 Primera Carga
                             </SelectItem>
                         </Select>

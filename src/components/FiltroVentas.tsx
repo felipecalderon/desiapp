@@ -1,6 +1,6 @@
 import { Sales } from '@/config/interfaces'
 import storeSales from '@/stores/store.sales'
-import { Autocomplete, AutocompleteItem } from "@heroui/react"
+import { Autocomplete, AutocompleteItem } from '@heroui/react'
 import { useEffect, useMemo, useState } from 'react'
 
 const FiltroVentas = () => {
@@ -60,7 +60,7 @@ const FiltroVentas = () => {
                 color="primary"
             >
                 {months.map((month) => (
-                    <AutocompleteItem key={month} value={month}>
+                    <AutocompleteItem key={month} textValue={month}>
                         {month}
                     </AutocompleteItem>
                 ))}
@@ -74,7 +74,7 @@ const FiltroVentas = () => {
                 color="primary"
             >
                 {years.map((year) => (
-                    <AutocompleteItem key={year} value={year.toString()}>
+                    <AutocompleteItem key={year} textValue={year.toString()}>
                         {year.toString()}
                     </AutocompleteItem>
                 ))}

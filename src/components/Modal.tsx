@@ -1,6 +1,6 @@
 'use client'
 import { Role, Store } from '@/config/interfaces'
-import { Select, SelectItem, Tab, Tabs } from "@heroui/react"
+import { Select, SelectItem, Tab, Tabs } from '@heroui/react'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 
 type RequiredProps = Pick<Store, 'storeID' | 'name'>
@@ -30,11 +30,11 @@ export default function ModalUI({ stores, onChange }: Props) {
     // Memorizar las opciones para evitar recalcularlas en cada render
     const renderSelectItems = useCallback(
         (items: CustomStore[]) => [
-            <SelectItem key="todos" value="">
+            <SelectItem key="todos" textValue="">
                 Ver Todo
             </SelectItem>,
             ...items.map((store) => (
-                <SelectItem key={store.storeID} value={store.storeID}>
+                <SelectItem key={store.storeID} textValue={store.storeID}>
                     {store.name}
                 </SelectItem>
             )),
