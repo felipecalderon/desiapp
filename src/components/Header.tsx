@@ -8,7 +8,7 @@ import { formatoRut } from '@/utils/rut'
 import storeSales from '@/stores/store.sales'
 import { formatoPrecio } from '@/utils/price'
 import { useEffect, useState } from 'react'
-import { Button } from '@nextui-org/react'
+import { Button } from "@heroui/react"
 
 const Header = () => {
     const { user } = storeAuth()

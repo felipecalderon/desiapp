@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Button, Input, Card, CardBody, CardHeader, Divider } from '@nextui-org/react'
+import { Button, Input, Card, CardBody, CardHeader, Divider } from "@heroui/react"
 import { BiCloudUpload, BiMinusCircle, BiPackage, BiPlusCircle, BiSend, BiTrash } from 'react-icons/bi'
 import { url } from '@/config/constants'
 import { fetchData } from '@/utils/fetchData'

@@ -3,7 +3,7 @@ import { User } from "@/config/interfaces";
 import storeAuth from "@/stores/store.auth";
 import storeDataStore from "@/stores/store.dataStore";
 import { fetchData, fetchDelete, fetchPost, fetchUpdate } from "@/utils/fetchData";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@heroui/react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 
 const AgregarUsuariosATienda = () => {

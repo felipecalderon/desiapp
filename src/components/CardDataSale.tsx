@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import {Card, CardHeader, CardBody, Divider} from "@nextui-org/react";
+import {Card, CardHeader, CardBody, Divider} from "@heroui/react";
 import { IconType } from "react-icons/lib";
 
 export default function CardDataSale({icon: Icon, children, title}: {icon: IconType, children: React.ReactNode, title: string}) {

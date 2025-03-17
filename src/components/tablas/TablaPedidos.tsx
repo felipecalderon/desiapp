@@ -8,7 +8,7 @@ import { storeProduct } from '@/stores/store.product'
 import storeSales from '@/stores/store.sales'
 import { fetchData } from '@/utils/fetchData'
 import { formatoPrecio } from '@/utils/price'
-import { Button } from '@nextui-org/react'
+import { Button } from "@heroui/react"
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { BsFillCartPlusFill } from 'react-icons/bs'
@@ -87,9 +87,9 @@ const TablaPedidosVenta = () => {
 
     if (!pedidoVta || pedidoVta.length === 0) return null
     return (
-        <div className="p-4 dark:bg-gray-800">
+        <div className="p-4">
             {message ? (
-                <div className="bg-white text-center p-4 dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
+                <div className="bg-white text-center p-4 shadow-md rounded my-6 overflow-x-auto">
                     <p className="text-center text-2xl">{message}</p>
                     <button
                         className="my-4 items-center px-5 py-5 bg-blue-500 text-white font-semibold text-xs uppercase tracking-widest hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200 disabled:opacity-25 transition ease-in-out duration-150"
@@ -103,10 +103,10 @@ const TablaPedidosVenta = () => {
                 </div>
             ) : (
                 <div>
-                    <div className="bg-white dark:bg-gray-900 shadow-md rounded my-6 overflow-x-auto">
+                    <div className="bg-white shadow-md rounded my-6 overflow-x-auto">
                         <table className="min-w-full table-auto">
                             <thead>
-                                <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
+                                <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                     <th className="py-3 px-6 text-center">SKU</th>
                                     <th className="py-3 px-6 text-center">Nombre - Talla</th>
                                     <th className="py-3 px-3 text-center">Cantidad</th>
@@ -115,7 +115,7 @@ const TablaPedidosVenta = () => {
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody className="hover:bg-gray-100 dark:hover:bg-slate-800">
+                            <tbody className="hover:bg-gray-100">
                                 {pedidoVta.map((producto) => {
                                     if (producto.ProductVariations.length === 0 || Object.keys(producto).length === 0) return null
                                     const { priceList, sizeNumber, sku, stockQuantity, variationID } = producto?.ProductVariations[0]

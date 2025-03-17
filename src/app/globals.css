@@ -3,77 +3,68 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
 @media print {
-  *, ::before, ::after {
-    box-sizing: border-box;
-    border-width: 0;
-    border-style: solid;
-    border-color: #e5e7eb;
-  }
+    *,
+    ::before,
+    ::after {
+        box-sizing: border-box;
+        border-width: 0;
+        border-style: solid;
+        border-color: #e5e7eb;
+    }
 
-  p {
-    visibility: visible;
-  }
+    p {
+        visibility: visible;
+    }
 
-  table,
-  table * {
-    visibility: visible;
-  }
+    table,
+    table * {
+        visibility: visible;
+    }
 
-  table {
-    position: relative;
-    left: 0;
-    top: 0;
-    width: 100%;
-    font-size: 12px;
-    /* Ajuste según sea necesario */
-  }
+    table {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 100%;
+        font-size: 12px;
+        /* Ajuste según sea necesario */
+    }
 
-  table th,
-  table td {
-    padding: 10px;
-    /* Ajuste el espaciado según sea necesario */
-    border: 1px solid black;
-    /* Añade bordes para definir claramente las celdas */
-  }
+    table th,
+    table td {
+        padding: 10px;
+        /* Ajuste el espaciado según sea necesario */
+        border: 1px solid black;
+        /* Añade bordes para definir claramente las celdas */
+    }
 
-  table thead {
-    background-color: #f9fafb;
-    /* O el color que prefiera */
-  }
+    table thead {
+        background-color: #f9fafb;
+        /* O el color que prefiera */
+    }
 
-  table tbody tr:nth-child(even) {
-    background-color: #f1f1f1;
-    /* Para bandas de filas, si lo desea */
-  }
+    table tbody tr:nth-child(even) {
+        background-color: #f1f1f1;
+        /* Para bandas de filas, si lo desea */
+    }
 
-  mb-4 {
-    margin-bottom: 1rem;
-  }
+    mb-4 {
+        margin-bottom: 1rem;
+    }
 }
 
-
 .react-icons {
-  fill: currentColor;
-  color: inherit;
+    fill: currentColor;
+    color: inherit;
 }

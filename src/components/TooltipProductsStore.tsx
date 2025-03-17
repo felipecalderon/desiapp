@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { Tooltip, Button, Table, TableHeader, TableBody, TableColumn, TableCell, TableRow } from "@nextui-org/react";
+import { Tooltip, Button, Table, TableHeader, TableBody, TableColumn, TableCell, TableRow } from "@heroui/react";
 import { Role, Variacion } from "@/config/interfaces";
 
 export default function TooltipProducts({ variation }: { variation: Variacion }) {

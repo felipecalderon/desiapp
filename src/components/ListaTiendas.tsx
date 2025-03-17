@@ -3,7 +3,7 @@ import { Role, Store } from '@/config/interfaces'
 import { fetchData, fetchDelete, fetchUpdate } from '@/utils/fetchData';
 import React, { useEffect, useState } from 'react'
 import RoleVista from './RolesComponent';
-import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem, Switch } from "@nextui-org/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Select, SelectItem, Switch } from "@heroui/react";
 import storeDataStore from '@/stores/store.dataStore';
 
 const ListaTiendas = () => {

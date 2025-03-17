@@ -4,7 +4,7 @@ import storeSales from '@/stores/store.sales'
 import { getFecha } from '@/utils/fecha'
 import { formatoPrecio } from '@/utils/price'
 import { useRouter } from 'next/navigation'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react"
 import FiltroVentas from './FiltroVentas'
 
 const SalesResumeTable = () => {
@@ -46,11 +46,7 @@ const SalesResumeTable = () => {
                                 key={saleID}
                                 onClick={() => redireccionVenta(saleID, esOC)}
                                 className={`${noEsDelFinal && 'border-b-4 border-lime-300'}
-                                ${
-                                    esOC
-                                        ? 'bg-blue-100 hover:bg-blue-300 hover:cursor-pointer'
-                                        : 'hover:bg-gray-100 dark:hover:bg-blue-700 hover:cursor-pointer'
-                                }`}
+                                ${esOC ? 'bg-blue-100 hover:bg-blue-300 hover:cursor-pointer' : 'hover:bg-gray-100 hover:cursor-pointer'}`}
                             >
                                 <TableCell> {store && store.name} </TableCell>
                                 <TableCell>

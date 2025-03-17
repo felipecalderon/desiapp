@@ -21,7 +21,7 @@ import {
     Select,
     SelectItem,
     useDisclosure,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import CardDataSale from '@/components/CardDataSale'
 import { FaShop, FaCashRegister } from 'react-icons/fa6'
 import storeCpra from '@/stores/store.pedidCpra'
@@ -479,53 +479,35 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             <div className="mt-2">
                 <p className="text-xl font-semibold mb-2">Productos:</p>
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50 dark:bg-blue-950">
+                    <thead className="bg-gray-50">
                         <tr>
-                            <th
-                                scope="col"
-                                className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 #
                             </th>
-                            <th
-                                scope="col"
-                                className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Detalle
                             </th>
-                            <th
-                                scope="col"
-                                className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Talla
                             </th>
-                            <th
-                                scope="col"
-                                className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Costo
                             </th>
-                            <th
-                                scope="col"
-                                className="px-0 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-0 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Cantidad
                             </th>
-                            <th
-                                scope="col"
-                                className="px-2 py-3 text-center text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Subtotal
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-blue-800 divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200">
                         {products.map(({ priceList, sizeNumber, sku, OrderProduct, Product }, i) => {
                             // Comparar el nombre actual con el nombre de la fila anterior
                             let isDifferentGroup = i === 0 || Product.name !== products[i - 1].Product.name
                             const barra = isDifferentGroup && 'border-t-2 border-blue-300'
                             return (
-                                <tr key={sku} className={`hover:bg-gray-100 dark:hover:bg-blue-700`}>
+                                <tr key={sku} className={`hover:bg-gray-100`}>
                                     <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{i + 1}</td>
                                     <td className={`${barra} px-2 py-2 text-left whitespace-nowrap`}>
                                         <span className="text-sm font-thin">({sku})</span> {Product.name}
@@ -582,7 +564,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                 <ScrollShadow>
                                     <table className="min-w-full table-auto">
                                         <thead className="sticky top-0 z-10">
-                                            <tr className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
+                                            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                                 <th className="py-3 px-3 text-left">Nombre</th>
                                                 <th className="py-3 px-6 text-center">Código EAN</th>
                                                 <th className="py-3 px-2 text-center">Disponible Central</th>
@@ -593,7 +575,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                 <th className="py-3 px-2 text-center">Subtotal Neto</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="text-gray-700 dark:text-gray-200 text-sm font-light">
+                                        <tbody className="text-gray-700 text-sm font-light">
                                             {globalProducts.map((producto: Producto) => {
                                                 return producto.ProductVariations?.map((variation, index) => {
                                                     const variationID = variation.variationID
@@ -605,7 +587,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                             key={variation.variationID}
                                                             className={`${
                                                                 esPrimero ? 'border-t-4 border-t-blue-300' : 'border-t'
-                                                            } text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300`}
+                                                            } text-base border-gray-200 text-gray-800`}
                                                         >
                                                             {esPrimero && (
                                                                 <>
@@ -624,17 +606,15 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                                     </td>
                                                                 </>
                                                             )}
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                                                                {variation.sku}
-                                                            </td>
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100">{variation.sku}</td>
                                                             {getStockCentralBySku(variation.sku) === 0 ? (
-                                                                <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                                <td className="py-3 px-2 text-center hover:bg-gray-100">
                                                                     <span className="text-red-500">
                                                                         {getStockCentralBySku(variation.sku)}
                                                                     </span>
                                                                 </td>
                                                             ) : (
-                                                                <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                                <td className="py-3 px-2 text-center hover:bg-gray-100">
                                                                     <span className="font-bold text-green-600">
                                                                         {getStockCentralBySku(variation.sku) >= 10
                                                                             ? '+10'
@@ -642,16 +622,16 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                                     </span>
                                                                 </td>
                                                             )}
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100">
                                                                 {formatoPrecio(variation.priceCost)}
                                                             </td>
                                                             <td className="py-3 px-2 text-center bg-blue-200">
                                                                 {formatoPrecio(variation.priceList)}
                                                             </td>
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100">
                                                                 {variation.sizeNumber}
                                                             </td>
-                                                            <td className="py-3 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                            <td className="py-3 text-center hover:bg-gray-100">
                                                                 <input
                                                                     type="text"
                                                                     pattern="[0-9]*"
@@ -661,10 +641,10 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                                                     name={variation.sku}
                                                                     value={cantidades[variation.variationID] || ''}
                                                                     onChange={(e) => handleInputChange(e, variation)}
-                                                                    className="text-center w-[5rem] dark:text-green-950 font-bold border border-gray-400 px-1 rounded-lg py-1"
+                                                                    className="text-center w-[5rem] font-bold border border-gray-400 px-1 rounded-lg py-1"
                                                                 />
                                                             </td>
-                                                            <td className="py-3 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                                            <td className="py-3 px-2 text-center hover:bg-gray-100">
                                                                 {formatoPrecio(subtotal)}
                                                             </td>
                                                         </tr>

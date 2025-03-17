@@ -5,7 +5,7 @@ import storeDataStore from '@/stores/store.dataStore'
 import storeCpra from '@/stores/store.pedidCpra'
 import { storeProduct } from '@/stores/store.product'
 import { formatoPrecio } from '@/utils/price'
-import { Button, Input, Select, SelectItem } from '@nextui-org/react'
+import { Button, Input, Select, SelectItem } from "@heroui/react"
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -46,9 +46,7 @@ const DetalleCompra = () => {
     return (
         <>
             {' '}
-            <h2 className="text-xl my-3 font-bold">
-                Resumen de su orden de compra
-            </h2>
+            <h2 className="text-xl my-3 font-bold">Resumen de su orden de compra</h2>
             {/*
             <div>
                 <Select defaultSelectedKeys={'OCD'} onSelect={(e) => e.currentTarget.value}>
@@ -60,31 +58,21 @@ const DetalleCompra = () => {
         */}
             <div className="flex flex-col gap-5 text-base my-3">
                 <div className="flex gap-2 justify-between">
-                    <h6 className="font-medium text-right">
-                        Total de productos:
-                    </h6>
-                    <p className="font-medium text-end tracking-wider">
-                        {totalProductos} pares
-                    </p>
+                    <h6 className="font-medium text-right">Total de productos:</h6>
+                    <p className="font-medium text-end tracking-wider">{totalProductos} pares</p>
                 </div>
                 <ul className="flex flex-col items-end text-base">
                     <li className="flex w-full justify-between">
                         <h6 className="font-medium">Total Neto:</h6>
-                        <p className="font-medium text-end tracking-wider">
-                            {formatoPrecio(totalNeto)}
-                        </p>
+                        <p className="font-medium text-end tracking-wider">{formatoPrecio(totalNeto)}</p>
                     </li>
                     <li className="flex w-full justify-between">
                         <h6 className="font-medium">IVA:</h6>
-                        <p className="font-medium text-end tracking-wider">
-                            {formatoPrecio(totalNeto * 0.19)}
-                        </p>
+                        <p className="font-medium text-end tracking-wider">{formatoPrecio(totalNeto * 0.19)}</p>
                     </li>
                     <li className="flex w-full justify-between">
                         <h6 className="font-medium">Total:</h6>
-                        <p className="font-medium text-end tracking-wider">
-                            {formatoPrecio(totalNeto * 1.19)}
-                        </p>
+                        <p className="font-medium text-end tracking-wider">{formatoPrecio(totalNeto * 1.19)}</p>
                     </li>
                 </ul>
             </div>
@@ -92,22 +80,13 @@ const DetalleCompra = () => {
                 <table className="min-w-full divide-y divide-gray-800">
                     <thead className="bg-gray-900 text-white">
                         <tr>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                 Detalle
                             </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                 Talla
                             </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                            >
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                 Costo neto
                             </th>
                         </tr>
@@ -115,48 +94,30 @@ const DetalleCompra = () => {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {productos.map(({ variationID, quantityOrdered }) => {
                             // Buscar el producto que contiene la variación con el variationID
-                            const productoConVariacion = products.find(
-                                (producto) =>
-                                    producto.ProductVariations.some(
-                                        (variacion) =>
-                                            variacion.variationID ===
-                                            variationID
-                                    )
+                            const productoConVariacion = products.find((producto) =>
+                                producto.ProductVariations.some((variacion) => variacion.variationID === variationID)
                             )
 
                             // Verificar si se encontró el producto
                             if (!productoConVariacion) return null
-                            const variacionEncontrada =
-                                productoConVariacion.ProductVariations.find(
-                                    (variacion) =>
-                                        variacion.variationID === variationID
-                                )
+                            const variacionEncontrada = productoConVariacion.ProductVariations.find(
+                                (variacion) => variacion.variationID === variationID
+                            )
 
                             if (!variacionEncontrada) return null
 
                             return (
-                                <tr
-                                    key={variationID}
-                                    className="dark:bg-gray-300 dark:text-white"
-                                >
+                                <tr key={variationID}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm font-medium text-gray-900">
-                                            {quantityOrdered} x{' '}
-                                            {productoConVariacion.name}
+                                            {quantityOrdered} x {productoConVariacion.name}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">
-                                            Talla{' '}
-                                            {variacionEncontrada.sizeNumber}
-                                        </div>
+                                        <div className="text-sm text-gray-900">Talla {variacionEncontrada.sizeNumber}</div>
                                     </td>
                                     <td className="px-6 py-4 text-center whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">
-                                            {formatoPrecio(
-                                                variacionEncontrada.priceCost
-                                            )}
-                                        </div>
+                                        <div className="text-sm text-gray-900">{formatoPrecio(variacionEncontrada.priceCost)}</div>
                                     </td>
                                 </tr>
                             )

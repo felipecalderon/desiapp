@@ -16,7 +16,7 @@ const XmlFileUploader: React.FC = () => {
 
     // Función que procesa el archivo (ya sea obtenido por input o drop)
     const processFile = async (file: File) => {
-        const fileType = file.name.split('.').pop()?.toLowerCase() as 'xml' | 'xlsx' | 'xls'
+        const fileType = file.name.split('.').pop()?.toLowerCase() as 'xml' | 'xlsx' | 'xls' | 'pdf'
 
         if (file.size > 1000000) {
             setError('El archivo supera el tamaño máximo permitido (1MB).')
@@ -25,13 +25,41 @@ const XmlFileUploader: React.FC = () => {
             return
         }
 
-        if (fileType === 'xml') {
+        if (fileType === 'pdf') {
             try {
-                const xmlContent = await file.text()
-                const DTE = await xmlToJson<DTE>(xmlContent)
                 setFile(file)
-                setJsonFile(DTE.Documento.Detalle)
-                setError(null)
+                const formData = new FormData()
+                formData.append('file', file)
+                // const res = await fetch('/api/cdn', {
+                //     method: 'POST',
+                //     body: formData,
+                // })
+                // const { secure_url: url } = await res.json()
+
+                const res2 = await fetch('/api/img', {
+                    method: 'POST',
+                    body: formData,
+                })
+                const data = await res2.json()
+                console.log({ data })
+                // const xmlContent = await file.text()
+                // const DTE = await xmlToJson<DTE>(xmlContent)
+                // setFile(file)
+                // setJsonFile(DTE.Documento.Detalle)
+                // setError('PDF')
+            } catch (err) {
+                console.log(err)
+                setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
+                setFile(null)
+                setJsonFile(null)
+            }
+        } else if (fileType === 'xml') {
+            try {
+                // const xmlContent = await file.text()
+                // const DTE = await xmlToJson<DTE>(xmlContent)
+                // setFile(file)
+                // setJsonFile(DTE.Documento.Detalle)
+                setError('El archivo XML no es compatible.') // Por el momento error, a futuro implementar lógica para XML
             } catch (err) {
                 setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
                 setFile(null)
@@ -149,7 +177,7 @@ const XmlFileUploader: React.FC = () => {
                             </>
                         )}
                     </div>
-                    <input id="file" type="file" accept=".xlsx, .xls, .xml" className="hidden" onChange={handleFileChange} />
+                    <input id="file" type="file" accept=".xlsx, .xls, .xml, .pdf" className="hidden" onChange={handleFileChange} />
                 </label>
             </div>
 

@@ -5,7 +5,7 @@ import { Producto, ProductosdeOrden } from '@/config/interfaces'
 import { storeProduct } from '@/stores/store.product'
 import { fetchData } from '@/utils/fetchData'
 import { formatoPrecio } from '@/utils/price'
-import { Button } from '@nextui-org/react'
+import { Button } from "@heroui/react"
 import React, { ChangeEvent, FocusEvent, FormEvent, useEffect, useState } from 'react'
 import { BiSolidAddToQueue } from 'react-icons/bi'
 interface FormType {

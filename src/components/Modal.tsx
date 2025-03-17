@@ -1,6 +1,6 @@
 'use client'
 import { Role, Store } from '@/config/interfaces'
-import { Select, SelectItem, Tab, Tabs } from '@nextui-org/react'
+import { Select, SelectItem, Tab, Tabs } from "@heroui/react"
 import { useEffect, useState, useMemo, useCallback } from 'react'
 
 type RequiredProps = Pick<Store, 'storeID' | 'name'>

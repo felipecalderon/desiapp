@@ -96,7 +96,7 @@ export default function Navbar() {
     }, [])
     if (!user) return null
     return (
-        <nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center dark:bg-gray-900 lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">
+        <nav className="bg-gray-900 text-white h-auto p-4 block justify-between items-center lg:flex lg:flex-col lg:items-center lg:justify-start md:w-1/5">
             <Image src="/media/two-brands.png" alt="logo" width={200} height={100} />
             <button className="lg:hidden block mb-2 bg-gray-700 hover:bg-gray-600 p-2 rounded" onClick={() => setIsOpen(!isOpen)}>
                 Menú
@@ -109,7 +109,7 @@ export default function Navbar() {
                             <li
                                 key={name}
                                 className={`hover:bg-blue-900 ${
-                                    currentPath === path ? 'bg-blue-700 dark:bg-blue-800' : 'bg-blue-950'
+                                    currentPath === path ? 'bg-blue-700' : 'bg-blue-950'
                                 } transition duration-200 rounded text-center font-semibold`}
                             >
                                 <Link href={path} className="block py-1 px-8">

@@ -4,7 +4,7 @@ import CrearTienda from '@/components/CrearTienda'
 import CrearUsuarios from '@/components/CrearUsuarios'
 import ListaTiendas from '@/components/ListaTiendas'
 import ListaDeUsuarios from '@/components/ListaUsuarios'
-import { Card, CardBody, Tab, Tabs } from '@nextui-org/react'
+import { Card, CardBody, Tab, Tabs } from "@heroui/react"
 
 const UsuariosPage = () => {
     return (

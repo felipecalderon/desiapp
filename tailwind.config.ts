@@ -1,10 +1,10 @@
-import { nextui } from '@nextui-org/react'
+import { heroui } from "@heroui/react"
 import { Config } from 'tailwindcss/types/config'
 
 const config: Config = {
-    content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'],
+    content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"],
     darkMode: ['class'],
-    plugins: [nextui()],
+    plugins: [heroui()],
 }
 
 export default config

@@ -1,6 +1,6 @@
 import { Sales } from '@/config/interfaces'
 import storeSales from '@/stores/store.sales'
-import { Autocomplete, AutocompleteItem } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem } from "@heroui/react"
 import { useEffect, useMemo, useState } from 'react'
 
 const FiltroVentas = () => {

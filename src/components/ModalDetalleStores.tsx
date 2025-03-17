@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@heroui/react";
 
 export default function ModalDetalleStores() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();

@@ -5,7 +5,7 @@ import { decodeJWT, isTokenExpired } from '@/utils/jwt'
 import storeAuth from '@/stores/store.auth'
 import { url } from '@/config/constants'
 import Image from 'next/image'
-import { Button } from '@nextui-org/react'
+import { Button } from "@heroui/react"
 
 // tipo para el estado del formulario
 type FormState = {
@@ -73,14 +73,14 @@ export default function LoginForm() {
     }
 
     return (
-        <div className="bg-blue-900 dark:bg-gray-900 py-10 mt-20">
+        <div className="bg-blue-900 py-10 mt-20">
             <section className="shadow-md px-10">
                 <Image src="/media/two-brands.png" alt="logo" width={200} height={100} className="mx-auto" />
                 {error && <p className="bg-red-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1">{error}</p>}
                 {message && <p className="bg-green-700 text-sm italic font-light text-white px-2 text-center rounded-lg py-1">{message}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-200 dark:text-gray-400 mb-2">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
                             Usuario:
                         </label>
                         <input
@@ -90,12 +90,12 @@ export default function LoginForm() {
                             name="email"
                             value={form.email}
                             onChange={handleChange}
-                            className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-gray-300"
+                            className="w-full p-2 border rounded-md"
                         />
                     </div>
 
                     <div className="mb-4">
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-200 dark:text-gray-400 mb-2">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
                             Contraseña:
                         </label>
                         <input
@@ -105,7 +105,7 @@ export default function LoginForm() {
                             name="password"
                             value={form.password}
                             onChange={handleChange}
-                            className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-gray-300"
+                            className="w-full p-2 border rounded-md"
                         />
                     </div>
                     <Button type="submit" isLoading={loading} disabled={loading} color="primary">

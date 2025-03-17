@@ -1,5 +1,5 @@
 import { Role } from "@/config/interfaces";
-import { Chip } from "@nextui-org/react";
+import { Chip } from "@heroui/react";
 
 export default function RoleVista({ role }: { role: string }) {
     switch (role) {

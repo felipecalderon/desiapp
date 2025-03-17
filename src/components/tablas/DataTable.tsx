@@ -5,9 +5,9 @@ import { formatoPrecio } from '@/utils/price'
 import { FaShoePrints } from 'react-icons/fa6'
 import TooltipProducts from '../TooltipProductsStore'
 import storeDataStore from '@/stores/store.dataStore'
-import { Button, useDisclosure } from '@nextui-org/react'
+import { Button, useDisclosure } from "@heroui/react"
 import { IoTrashBin } from 'react-icons/io5'
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@nextui-org/react'
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react"
 import { useState } from 'react'
 import { url } from '@/config/constants'
 import { fetchData } from '@/utils/fetchData'
@@ -54,9 +54,9 @@ export default function DataTable({ message, products }: { message: string; prod
 
     if (!products || products.length === 0)
         return (
-            <tbody className="text-gray-600 dark:text-gray-400">
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <td colSpan={6} className="py-3 px-6 text-left hover:bg-gray-100 dark:hover:bg-blue-900">
+            <tbody className="text-gray-600">
+                <tr className="border-b border-gray-200">
+                    <td colSpan={6} className="py-3 px-6 text-left hover:bg-gray-100">
                         {message}
                     </td>
                 </tr>
@@ -65,7 +65,7 @@ export default function DataTable({ message, products }: { message: string; prod
 
     return (
         <>
-            <tbody className="text-gray-600 dark:text-gray-200 text-sm font-light">
+            <tbody className="text-gray-600 text-sm font-light">
                 {products.map((producto) => {
                     const totalStockQuantity =
                         producto.ProductVariations?.reduce((total, variation) => total + variation.stockQuantity, 0) || 0
@@ -76,7 +76,7 @@ export default function DataTable({ message, products }: { message: string; prod
                                 key={variation.variationID}
                                 className={`group ${
                                     esPrimero ? 'border-t-4 border-t-blue-300' : 'border-t'
-                                } text-base border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300`}
+                                } text-base border-gray-200 text-gray-800`}
                             >
                                 {esPrimero && (
                                     <>
@@ -92,28 +92,24 @@ export default function DataTable({ message, products }: { message: string; prod
                                         </td>
                                     </>
                                 )}
-                                <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sku}</td>
-                                <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">{variation.sizeNumber}</td>
-                                <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                                    {formatoPrecio(variation.priceCost)}
-                                </td>
-                                <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
-                                    {formatoPrecio(variation.priceList)}
-                                </td>
+                                <td className="py-1 px-2 text-center hover:bg-gray-100">{variation.sku}</td>
+                                <td className="py-1 px-2 text-center hover:bg-gray-100">{variation.sizeNumber}</td>
+                                <td className="py-1 px-2 text-center hover:bg-gray-100">{formatoPrecio(variation.priceCost)}</td>
+                                <td className="py-1 px-2 text-center hover:bg-gray-100">{formatoPrecio(variation.priceList)}</td>
                                 {variation.stockQuantity === 0
                                     ? store?.role !== Role.Tercero && (
-                                          <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                          <td className="py-1 px-2 text-center hover:bg-gray-100">
                                               <span className="text-red-500">{variation.stockQuantity}</span>
                                           </td>
                                       )
                                     : store?.role !== Role.Tercero && (
-                                          <td className="py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                          <td className="py-1 px-2 text-center hover:bg-gray-100">
                                               <span className="font-bold text-green-600">{variation.stockQuantity}</span>
                                           </td>
                                       )}
                                 {!store && user && user.role === Role.Admin && (
                                     <>
-                                        <td className="relative py-1 px-2 text-center hover:bg-gray-100 dark:hover:bg-blue-900">
+                                        <td className="relative py-1 px-2 text-center hover:bg-gray-100">
                                             <TooltipProducts variation={variation} />
                                             <div
                                                 onClick={() => handleOpen(producto.productID)}
