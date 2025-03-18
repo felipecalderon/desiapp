@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import PDFParser from 'pdf2json'
+import { Detalle } from '@/config/interfaces'
 
 // const gptKey = process.env.OPENAIKEY
 // const gptUrl = `https://api.openai.com/v1/chat/completions`
@@ -118,26 +119,29 @@ interface TableProduct {
     total: number
 }
 
-const processTable = (table: string[][]): TableProduct[] => {
-    const products: TableProduct[] = []
-
+const processTable = (table: string[][]): Detalle[] => {
+    const newProducts: Detalle[] = []
     for (let i = 1; i < table.length; i++) {
         const row = table[i]
-        const product: TableProduct = {
-            cantidad: parseInt(row[0]),
-            codigo: row[1],
-            descripcion: row[2],
-            talla: row[3] || null,
-            color: row[4] || null,
-            precio_unitario: parseFormattedNumber(row[5]),
-            descuento: row[6],
-            total: parseFormattedNumber(row[7]),
+        const precio = parseFormattedNumber(row[5]) * 1.8
+        const newProduct: Detalle = {
+            CdgItem: {
+                VlrCodigo: row[1],
+                TpoCodigo: '',
+            },
+            MontoItem: '',
+            NmbItem: `${row[2]} - ${row[3] || ''}`,
+            NroLinDet: '',
+            PrcItem: precio.toString(),
+            PrcRef: '',
+            QtyItem: row[0],
+            UnmdItem: '',
         }
 
-        products.push(product)
+        newProducts.push(newProduct)
     }
 
-    return products
+    return newProducts
 }
 
 function parseFormattedNumber(input: string): number {

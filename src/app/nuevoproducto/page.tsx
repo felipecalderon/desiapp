@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Button, Input, Card, CardBody, CardHeader, Divider } from "@heroui/react"
+import { Button, Input, Card, CardBody, CardHeader, Divider } from '@heroui/react'
 import { BiCloudUpload, BiMinusCircle, BiPackage, BiPlusCircle, BiSend, BiTrash } from 'react-icons/bi'
 import { url } from '@/config/constants'
 import { fetchData } from '@/utils/fetchData'
@@ -11,7 +11,7 @@ import { useFileStore } from '@/stores/store.file'
 import { generateUUID } from '@/utils/uuid'
 
 type Variant = {
-    sizeNumber: number
+    sizeNumber: string
     priceList: string
     priceCost: string
     sku: string
@@ -37,7 +37,7 @@ export default function NuevoProductoPage() {
             image: noImage,
             sizes: [
                 {
-                    sizeNumber: 0,
+                    sizeNumber: '0',
                     priceList: '',
                     priceCost: '',
                     sku: '',
@@ -101,7 +101,7 @@ export default function NuevoProductoPage() {
                 image: noImage,
                 sizes: [
                     {
-                        sizeNumber: 0,
+                        sizeNumber: '0',
                         priceList: '',
                         priceCost: '',
                         sku: '',
@@ -148,7 +148,7 @@ export default function NuevoProductoPage() {
     const addVariant = (productIndex: number) => {
         const updatedProducts = [...products]
         updatedProducts[productIndex].sizes.push({
-            sizeNumber: 0,
+            sizeNumber: '0',
             priceList: '',
             priceCost: '',
             sku: '',
@@ -220,7 +220,7 @@ export default function NuevoProductoPage() {
                     acc[parentName].sizes.push({
                         priceCost: (Number(item.PrcItem) / 1.8).toFixed(2),
                         priceList: Number(item.PrcItem).toFixed(2),
-                        sizeNumber: Number(variant || 0),
+                        sizeNumber: variant || '0',
                         sku: String(sku),
                         stockQuantity: item.QtyItem.toString(),
                     })
@@ -240,7 +240,7 @@ export default function NuevoProductoPage() {
                                 {
                                     priceCost: (Number(jsonFile.PrcItem) / 1.8).toFixed(2),
                                     priceList: Number(jsonFile.PrcItem).toFixed(2),
-                                    sizeNumber: 0,
+                                    sizeNumber: '0',
                                     sku: jsonFile.CdgItem.VlrCodigo,
                                     stockQuantity: jsonFile.QtyItem.toString(),
                                 },
@@ -373,12 +373,11 @@ export default function NuevoProductoPage() {
                                                 }
                                             />
                                             <Input
-                                                type="number"
                                                 label="Talla"
                                                 placeholder="0"
                                                 value={variant.sizeNumber.toString()}
                                                 onChange={(e) =>
-                                                    handleVariantChange(productIndex, variantIndex, 'sizeNumber', Number(e.target.value))
+                                                    handleVariantChange(productIndex, variantIndex, 'sizeNumber', e.target.value)
                                                 }
                                             />
                                         </div>

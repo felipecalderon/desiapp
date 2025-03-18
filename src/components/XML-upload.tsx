@@ -30,23 +30,12 @@ const XmlFileUploader: React.FC = () => {
                 setFile(file)
                 const formData = new FormData()
                 formData.append('file', file)
-                // const res = await fetch('/api/cdn', {
-                //     method: 'POST',
-                //     body: formData,
-                // })
-                // const { secure_url: url } = await res.json()
-
                 const res2 = await fetch('/api/img', {
                     method: 'POST',
                     body: formData,
                 })
-                const data = await res2.json()
-                console.log({ data })
-                // const xmlContent = await file.text()
-                // const DTE = await xmlToJson<DTE>(xmlContent)
-                // setFile(file)
-                // setJsonFile(DTE.Documento.Detalle)
-                // setError('PDF')
+                const data: Detalle[] = await res2.json()
+                setJsonFile(data)
             } catch (err) {
                 console.log(err)
                 setError('Error al procesar el archivo XML. Por favor, asegúrese de que es un archivo XML válido.')
