@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button, Input, Card, CardBody, CardHeader, Divider } from '@heroui/react'
 import { BiCloudUpload, BiMinusCircle, BiPackage, BiPlusCircle, BiSend, BiTrash } from 'react-icons/bi'
 import { url } from '@/config/constants'
@@ -9,8 +9,10 @@ import { useRouter } from 'next/navigation'
 import XmlFileUploader from '@/components/XML-upload'
 import { useFileStore } from '@/stores/store.file'
 import { generateUUID } from '@/utils/uuid'
+import { VariantCard } from '@/components/variantCard'
+import { debounce } from 'lodash'
 
-type Variant = {
+export type Variant = {
     sizeNumber: string
     priceList: string
     priceCost: string
@@ -166,12 +168,50 @@ export default function NuevoProductoPage() {
         }
     }
 
-    const handleVariantChange = <K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K]) => {
-        const updatedProducts = [...products]
-        const updatedVariant = updatedProducts[productIndex].sizes[variantIndex]
-        updatedVariant[field] = value
-        setProducts(updatedProducts)
-    }
+    const handleVariantChange = useCallback(
+        <K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K]) => {
+            setProducts((prevProducts) => {
+                const newProducts = [...prevProducts]
+                const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
+
+                // ✅ Actualiza inmediatamente el valor que el usuario está escribiendo
+                newVariant[field] = value
+                newProducts[productIndex].sizes[variantIndex] = newVariant
+
+                return newProducts
+            })
+
+            // ✅ Aplica debounce solo en la lógica de cálculo para evitar recálculos innecesarios
+            debouncedCalculatePrices(productIndex, variantIndex, field, value)
+        },
+        []
+    )
+
+    // ✅ Debounce solo en el cálculo derivado
+    const debouncedCalculatePrices = useCallback(
+        debounce(<K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K]) => {
+            setProducts((prevProducts) => {
+                const newProducts = [...prevProducts]
+                const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
+
+                if (field === 'priceList') {
+                    newVariant.priceCost = (Number(value) / 1.8).toFixed(0)
+                } else if (field === 'priceCost') {
+                    newVariant.priceList = (Number(value) * 1.8).toFixed(0)
+                }
+
+                newProducts[productIndex].sizes[variantIndex] = newVariant
+                return newProducts
+            })
+        }, 300),
+        []
+    )
+
+    useEffect(() => {
+        return () => {
+            debouncedCalculatePrices.cancel()
+        }
+    }, [])
 
     const handleSubmit = async () => {
         if (validateProducts()) {
@@ -218,8 +258,8 @@ export default function NuevoProductoPage() {
 
                     // Agregamos la variante a la lista de tallas
                     acc[parentName].sizes.push({
-                        priceCost: (Number(item.PrcItem) / 1.8).toFixed(2),
-                        priceList: Number(item.PrcItem).toFixed(2),
+                        priceCost: (Number(item.PrcItem) / 1.8).toFixed(0),
+                        priceList: Number(item.PrcItem).toFixed(0),
                         sizeNumber: variant || '0',
                         sku: String(sku),
                         stockQuantity: item.QtyItem.toString(),
@@ -238,8 +278,8 @@ export default function NuevoProductoPage() {
                             name: jsonFile.NmbItem,
                             sizes: [
                                 {
-                                    priceCost: (Number(jsonFile.PrcItem) / 1.8).toFixed(2),
-                                    priceList: Number(jsonFile.PrcItem).toFixed(2),
+                                    priceCost: (Number(jsonFile.PrcItem) / 1.8).toFixed(0),
+                                    priceList: Number(jsonFile.PrcItem).toFixed(0),
                                     sizeNumber: '0',
                                     sku: jsonFile.CdgItem.VlrCodigo,
                                     stockQuantity: jsonFile.QtyItem.toString(),
@@ -312,77 +352,14 @@ export default function NuevoProductoPage() {
                             </div>
 
                             {product.sizes.map((variant, variantIndex) => (
-                                <Card key={variantIndex} className="bg-gray-50">
-                                    <CardBody>
-                                        <div className="flex justify-between items-center mb-4">
-                                            <p className="text-sm">Variante #{variantIndex + 1}</p>
-                                            {product.sizes.length > 1 && (
-                                                <Button
-                                                    color="danger"
-                                                    variant="light"
-                                                    isIconOnly
-                                                    size="sm"
-                                                    onPress={() => removeVariant(productIndex, variantIndex)}
-                                                >
-                                                    <BiTrash size={20} />
-                                                </Button>
-                                            )}
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <Input
-                                                label="SKU"
-                                                placeholder="ABC123"
-                                                value={variant.sku}
-                                                onChange={(e) => handleVariantChange(productIndex, variantIndex, 'sku', e.target.value)}
-                                            />
-                                            <Input
-                                                type="number"
-                                                label="Precio Plaza"
-                                                placeholder="0"
-                                                startContent={
-                                                    <div className="pointer-events-none flex items-center">
-                                                        <span className="text-default-400 text-small">$</span>
-                                                    </div>
-                                                }
-                                                value={variant.priceList}
-                                                onChange={(e) =>
-                                                    handleVariantChange(productIndex, variantIndex, 'priceList', e.target.value)
-                                                }
-                                            />
-                                            <Input
-                                                type="number"
-                                                label="Costo Neto"
-                                                placeholder="0"
-                                                startContent={
-                                                    <div className="pointer-events-none flex items-center">
-                                                        <span className="text-default-400 text-small">$</span>
-                                                    </div>
-                                                }
-                                                value={variant.priceCost}
-                                                onChange={(e) =>
-                                                    handleVariantChange(productIndex, variantIndex, 'priceCost', e.target.value)
-                                                }
-                                            />
-                                            <Input
-                                                type="number"
-                                                label="Stock de entrada"
-                                                placeholder="0"
-                                                value={variant.stockQuantity}
-                                                onChange={(e) =>
-                                                    handleVariantChange(productIndex, variantIndex, 'stockQuantity', e.target.value)
-                                                }
-                                            />
-                                            <Input
-                                                label="Talla"
-                                                placeholder="0"
-                                                value={variant.sizeNumber.toString()}
-                                                onChange={(e) =>
-                                                    handleVariantChange(productIndex, variantIndex, 'sizeNumber', e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                    </CardBody>
-                                </Card>
+                                <VariantCard // Componente usa React.memo
+                                    key={variantIndex}
+                                    productIndex={productIndex}
+                                    variant={variant}
+                                    variantIndex={variantIndex}
+                                    onVariantChange={handleVariantChange}
+                                    onRemove={removeVariant}
+                                />
                             ))}
                             <div className="flex justify-end">
                                 <Button

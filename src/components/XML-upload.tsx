@@ -175,7 +175,7 @@ const XmlFileUploader: React.FC = () => {
                             <>
                                 <Upload className="w-10 h-10 mb-3 text-gray-400" />
                                 <p className="mb-2 text-sm text-gray-500">
-                                    <span className="font-semibold">Haga clic para cargar</span> o arrastra y suelta el archivo EXCEL
+                                    <span className="font-semibold">Haga clic para cargar</span> o arrastra y suelta el archivo.
                                 </p>
                                 <p className="text-xs text-gray-500">(máx. 1MB)</p>
                             </>
