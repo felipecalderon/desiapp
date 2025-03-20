@@ -10,6 +10,8 @@ import { MdOutlineLibraryAdd } from 'react-icons/md'
 import { formatoPrecio } from '@/utils/price'
 import { formatoRut } from '@/utils/formatoRut'
 import { FileIcon, Loader2, Upload } from 'lucide-react'
+import { pdf, renderToStream } from '@react-pdf/renderer'
+import MyDocument from './CotizacionPDF'
 
 interface ClientForm {
     rut: string
@@ -25,7 +27,19 @@ interface QuoteItem extends Producto {
     availableModels: string
 }
 
+interface ImageOrientation {
+    [key: string]: 'horizontal' | 'vertical'
+}
+interface ImageWidth {
+    naturalWidth: number
+    naturalHeight: number
+}
+
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
+const HORIZONTAL_THRESHOLD = 1.4
+const DISCOUNT_PERCENTAGE = 0.05
+const DISPATCH_CHARGE_PERCENTAGE = 0.01
+const IVA_PERCENTAGE = 0.19
 
 export default function Cotizacion() {
     const { products } = storeProduct()
@@ -44,11 +58,16 @@ export default function Cotizacion() {
     const [isDragActive, setIsDragActive] = useState(false)
     const [dragCounter, setDragCounter] = useState(0)
     const [loading, setLoading] = useState(false)
+    const [orientations, setOrientations] = useState<ImageOrientation>({})
 
-    // Constantes para descuentos y cargos
-    const DISCOUNT_PERCENTAGE = 0.05
-    const DISPATCH_CHARGE_PERCENTAGE = 0.01
-    const IVA_PERCENTAGE = 0.19
+    // Función para determinar la orientación una vez que la imagen se ha cargado
+    const handleImageLoad = (id: string, { naturalWidth, naturalHeight }: ImageWidth) => {
+        const ratio = naturalWidth / naturalHeight
+        setOrientations((prev) => ({
+            ...prev,
+            [id]: ratio >= HORIZONTAL_THRESHOLD ? 'horizontal' : 'vertical',
+        }))
+    }
 
     const handleChangeProducts = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
@@ -236,7 +255,26 @@ export default function Cotizacion() {
         setTotals({ netAmount, discount, dispatchCharge, subtotal, IVA, total })
     }, [quoteItems])
 
-    const submitCotizacion = useCallback(() => {
+    const submitCotizacion = useCallback(async () => {
+        const totals = {
+            netAmount: 120,
+            IVA: 120,
+            total: 120,
+            discount: 120,
+            discountPercentage: 120,
+            dispatchCharge: 120,
+            dispatchChargePercentage: 120,
+            IVAPercentage: 120,
+        }
+        const blob = await pdf(<MyDocument clientData={clientForm} quoteItems={quoteItems} totals={totals} />).toBlob()
+
+        // Crea un URL a partir del Blob y fuerza la descarga
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'cotizacion'
+        a.click()
+        URL.revokeObjectURL(url)
         if (!isValidClientData()) {
             toast.error('Faltan datos del cliente')
             return
@@ -245,12 +283,25 @@ export default function Cotizacion() {
             toast.error('Agrega al menos un producto a la cotización')
             return
         }
-        // Aquí se procesaría la lógica de envío de datos
-        console.log('Datos del cliente:', clientForm)
-        console.log('Productos en cotización:', quoteItems)
-        console.log('Totales calculados:', totals)
-        toast.success('Cotización generada con éxito')
+
+        toast.success('Cotización generada con éxito, descargando PDF')
     }, [clientForm, quoteItems, totals, isValidClientData])
+
+    const allImages = [
+        ...customImages.map((img, index) => ({
+            id: `custom-${index}`,
+            src: img,
+            alt: 'Imagen personalizada',
+        })),
+        ...quoteItems.map((item) => ({
+            id: item.productID,
+            src: item.image,
+            alt: item.name,
+        })),
+    ]
+
+    const horizontalImages = allImages.filter((img) => orientations[img.id] === 'horizontal')
+    const gridImages = allImages.filter((img) => !orientations[img.id] || orientations[img.id] === 'vertical')
 
     if (products.length === 0) {
         return (
@@ -378,22 +429,49 @@ export default function Cotizacion() {
                     {filterProducts.length > 0 && (
                         <div className="absolute z-10 top-12 flex flex-col gap-1 bg-white rounded-md shadow">
                             {filterProducts.map((p) => (
-                                <Button size="sm" key={p.productID} color="success" onPress={() => handleAddFilterProduct(p)}>
+                                <Button size="sm" key={p.productID} color="primary" onPress={() => handleAddFilterProduct(p)}>
                                     {p.name} ({p.totalProducts} disponibles)
                                 </Button>
                             ))}
                         </div>
                     )}
                 </div>
-                <div className="overflow-x-auto flex flex-row flex-wrap gap-2 justify-center items-center">
-                    {quoteItems.map((item) => (
-                        <Image key={item.productID} src={item.image} alt={item.name} width={200} height={200} />
+                <div className="space-y-4">
+                    {horizontalImages.map((img) => (
+                        <div key={img.id} className="w-full">
+                            <Image
+                                src={img.src}
+                                alt={img.alt}
+                                layout="responsive"
+                                width={16} // Proporción ejemplo 16:9
+                                height={6}
+                                objectFit="cover"
+                                onLoadingComplete={({ naturalWidth, naturalHeight }) =>
+                                    handleImageLoad(img.id, { naturalWidth, naturalHeight })
+                                }
+                                className="rounded-md max-h-96 object-cover object-center"
+                            />
+                        </div>
                     ))}
-                    {customImages.map((img) => (
-                        <Image key={img} src={img} alt={img} width={200} height={200} />
-                    ))}
+
+                    <div className="grid grid-cols-6 gap-2">
+                        {gridImages.map((img) => (
+                            <div key={img.id} className="relative aspect-square">
+                                <Image
+                                    src={img.src}
+                                    alt={img.alt}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    onLoadingComplete={({ naturalWidth, naturalHeight }) =>
+                                        handleImageLoad(img.id, { naturalWidth, naturalHeight })
+                                    }
+                                    className="rounded-md"
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <h2 className="font-bold text-lg bg-gray-200 p-2 mb-2">Detalle de la cotización</h2>
+                <h2 className="font-bold text-lg bg-gray-200 p-2 my-2">Detalle de la cotización</h2>
                 <div className="overflow-x-auto">
                     <table className="min-w-full border border-gray-300">
                         <thead>

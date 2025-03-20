@@ -11,7 +11,7 @@ const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 const processPDF = async (file: File, setJsonFile: (data: any) => void) => {
     const formData = new FormData()
     formData.append('file', file)
-    const res = await fetch('/api/img', {
+    const res = await fetch('/api/pdf', {
         method: 'POST',
         body: formData,
     })
