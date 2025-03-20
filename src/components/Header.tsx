@@ -4,11 +4,11 @@ import FechaFormateada from '@/components/FechaFormat'
 import HoraFormateada from '@/components/HoraFormateada'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
-import { formatoRut } from '@/utils/rut'
+import { formatoRut } from '@/utils/formatoRut'
 import storeSales from '@/stores/store.sales'
 import { formatoPrecio } from '@/utils/price'
 import { useEffect, useState } from 'react'
-import { Button } from "@heroui/react"
+import { Button } from '@heroui/react'
 
 const Header = () => {
     const { user } = storeAuth()

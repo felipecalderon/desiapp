@@ -8,6 +8,8 @@ import { Producto } from '@/config/interfaces'
 import { IoCloseCircle, IoTrash } from 'react-icons/io5'
 import { MdOutlineLibraryAdd } from 'react-icons/md'
 import { formatoPrecio } from '@/utils/price'
+import { formatoRut } from '@/utils/formatoRut'
+import { FileIcon, Loader2, Upload } from 'lucide-react'
 
 interface ClientForm {
     rut: string
@@ -20,11 +22,14 @@ interface ClientForm {
 interface QuoteItem extends Producto {
     quantity: number
     price: number
+    availableModels: string
 }
+
+const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 
 export default function Cotizacion() {
     const { products } = storeProduct()
-    const refInputFilter = useRef<HTMLInputElement>(null)
+    const [inputFilterProduct, setInputFilterProduct] = useState('')
     const [filterProducts, setFilterProducts] = useState<Producto[]>([])
     const [clientForm, setClientForm] = useState<ClientForm>({
         rut: '',
@@ -34,6 +39,11 @@ export default function Cotizacion() {
         email: '',
     })
     const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([])
+    const [customImages, setCustomImages] = useState<string[]>([])
+    const [file, setFile] = useState<File | null>(null)
+    const [isDragActive, setIsDragActive] = useState(false)
+    const [dragCounter, setDragCounter] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     // Constantes para descuentos y cargos
     const DISCOUNT_PERCENTAGE = 0.05
@@ -43,6 +53,7 @@ export default function Cotizacion() {
     const handleChangeProducts = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
             const searchTerm = e.target.value
+            setInputFilterProduct(searchTerm)
             if (searchTerm.length < 3) {
                 setFilterProducts([])
                 return
@@ -54,34 +65,32 @@ export default function Cotizacion() {
     )
 
     const handleAddCustomProduct = useCallback(() => {
-        if (refInputFilter.current && refInputFilter.current.value.trim()) {
-            const name = refInputFilter.current.value.trim()
-            const customProduct: QuoteItem = {
-                productID: Date.now().toString(),
-                name: name,
-                quantity: 0,
-                price: 0,
-                cantidad: 0,
-                image: '',
-                ProductVariations: [],
-                totalProducts: 0,
-            }
-            setQuoteItems((prev) => {
-                const exists = prev.find((item) => name.includes(item.name))
-                if (exists) {
-                    return prev.map((item) => {
-                        if (name.includes(item.name)) {
-                            return { ...item, quantity: item.quantity + 1 }
-                        }
-                        return item
-                    })
-                }
-                return [...prev, customProduct]
-            })
-            toast.success(`Producto "${customProduct.name}" agregado como personalizado`)
-            refInputFilter.current.value = ''
-            setFilterProducts([])
+        const customProduct: QuoteItem = {
+            productID: Date.now().toString(),
+            name: inputFilterProduct,
+            quantity: 0,
+            price: 0,
+            cantidad: 0,
+            image: '',
+            ProductVariations: [],
+            availableModels: '',
+            totalProducts: 0,
         }
+        setQuoteItems((prev) => {
+            const exists = prev.find((item) => inputFilterProduct.includes(item.name))
+            if (exists) {
+                return prev.map((item) => {
+                    if (inputFilterProduct.includes(item.name)) {
+                        return { ...item, quantity: item.quantity + 1 }
+                    }
+                    return item
+                })
+            }
+            return [...prev, customProduct]
+        })
+        toast.success(`Producto "${customProduct.name}" agregado como personalizado`)
+        setInputFilterProduct('')
+        setFilterProducts([])
     }, [])
 
     const handleAddFilterProduct = useCallback((product: Producto) => {
@@ -93,14 +102,13 @@ export default function Cotizacion() {
             const newItem: QuoteItem = {
                 ...product,
                 quantity: 1,
+                availableModels: product.ProductVariations.reduce((prev, curr) => prev + curr.sizeNumber + ' ', ''),
                 price: product.ProductVariations[0].priceList, // Se asume que todas las variantes tienen el mismo precio
             }
             return [...prev, newItem]
         })
         toast.success(`Producto "${product.name}" agregado`)
-        if (refInputFilter.current) {
-            refInputFilter.current.value = ''
-        }
+        setInputFilterProduct('')
         setFilterProducts([])
     }, [])
 
@@ -111,17 +119,103 @@ export default function Cotizacion() {
 
     const handleChangeClientData = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        setClientForm((prev) => ({ ...prev, [name]: value }))
+        if (name === 'rut') {
+            const rut = formatoRut(value)
+            setClientForm((prev) => ({ ...prev, [name]: rut }))
+        } else {
+            setClientForm((prev) => ({ ...prev, [name]: value }))
+        }
     }, [])
+
+    const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (file) {
+            await processFile(file)
+        }
+    }, [])
+
+    const handleDragEnter = (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setDragCounter((prev) => prev + 1)
+        setIsDragActive(true)
+    }
+
+    const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setDragCounter((prev) => {
+            const newCount = prev - 1
+            if (newCount === 0) setIsDragActive(false)
+            return newCount
+        })
+    }
+
+    const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+
+    const handleDrop = async (event: React.DragEvent<HTMLLabelElement>) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setDragCounter(0)
+        setIsDragActive(false)
+        const droppedFile = event.dataTransfer.files?.[0]
+        if (droppedFile) {
+            await processFile(droppedFile)
+        }
+    }
+    const uploadImage = async (file: File) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        try {
+            const response = await fetch('/api/img', {
+                method: 'POST',
+                body: formData,
+            })
+            if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+                setCustomImages((prev) => [...prev, data.secure_url])
+                toast.success('Imagen cargada con éxito')
+            } else {
+                toast.error('Error al cargar la imagen')
+            }
+        } catch (error) {
+            console.error('Error al cargar la imagen:', error)
+            toast.error('Error al cargar la imagen')
+        }
+    }
+
+    const processFile = async (file: File) => {
+        try {
+            setFile(null)
+            setLoading(true)
+            if (file.size > MAX_FILE_SIZE) {
+                toast.error('El archivo supera el tamaño máximo permitido (1MB).')
+                setLoading(false)
+                return
+            }
+            await uploadImage(file)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const isValidClientData = useCallback(() => {
         const { rut, razonsocial, giro, comuna, email } = clientForm
         return Boolean(rut && razonsocial && giro && comuna && email)
     }, [clientForm])
 
-    const handleUpdateQuoteItem = useCallback((productID: string, field: 'quantity' | 'price', value: number) => {
-        setQuoteItems((prev) => prev.map((item) => (item.productID === productID ? { ...item, [field]: value } : item)))
-    }, [])
+    const handleUpdateQuoteItem = useCallback(
+        (productID: string, field: 'quantity' | 'price' | 'availableModels', value: number | string) => {
+            setQuoteItems((prev) => prev.map((item) => (item.productID === productID ? { ...item, [field]: value } : item)))
+        },
+        []
+    )
 
     const [totals, setTotals] = useState({
         netAmount: 0,
@@ -192,38 +286,89 @@ export default function Cotizacion() {
                     <div className="flex flex-col gap-1">
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">R.U.T.:</span>
-                            <Input type="text" name="rut" color="primary" onChange={handleChangeClientData} />
+                            <Input type="text" name="rut" color="primary" value={clientForm.rut} onChange={handleChangeClientData} />
                         </p>
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">RAZÓN SOCIAL:</span>
-                            <Input type="text" name="razonsocial" color="primary" onChange={handleChangeClientData} />
+                            <Input
+                                type="text"
+                                name="razonsocial"
+                                color="primary"
+                                value={clientForm.razonsocial}
+                                onChange={handleChangeClientData}
+                            />
                         </p>
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">GIRO:</span>
-                            <Input type="text" name="giro" color="primary" onChange={handleChangeClientData} />
+                            <Input type="text" name="giro" color="primary" value={clientForm.giro} onChange={handleChangeClientData} />
                         </p>
                     </div>
                     <div className="flex flex-col gap-1">
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">COMUNA:</span>
-                            <Input type="text" name="comuna" color="primary" onChange={handleChangeClientData} />
+                            <Input type="text" name="comuna" color="primary" value={clientForm.comuna} onChange={handleChangeClientData} />
                         </p>
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">EMAIL:</span>
-                            <Input type="text" name="email" color="primary" onChange={handleChangeClientData} />
+                            <Input type="text" name="email" color="primary" value={clientForm.email} onChange={handleChangeClientData} />
                         </p>
                     </div>
                 </form>
             </div>
 
             <div className="mb-6">
+                <label
+                    htmlFor="file"
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    className={`relative flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer transition duration-300 ease-in-out ${
+                        isDragActive ? 'bg-gray-200 border-blue-500 shadow-lg' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        {file ? (
+                            <>
+                                <FileIcon className="w-10 h-10 mb-3 text-gray-400" />
+                                <p className="mb-2 text-sm text-gray-500">
+                                    Archivo cargado: <span className="font-semibold">{file.name}</span>
+                                </p>
+                                <p className="text-xs text-gray-500">{(file.size / 1000).toFixed(1)} Kb</p>
+                            </>
+                        ) : isDragActive ? (
+                            <>
+                                <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                                <p className="mb-2 text-sm text-gray-500">
+                                    <span className="font-semibold">Suelta el archivo aquí</span>
+                                </p>
+                                <p className="text-xs text-gray-500">(máx. 1MB)</p>
+                            </>
+                        ) : (
+                            <>
+                                <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                                <p className="mb-2 text-sm text-gray-500">
+                                    <span className="font-semibold">Haga clic para cargar</span> o arrastra y suelta el archivo.
+                                </p>
+                                <p className="text-xs text-gray-500">(máx. 1MB)</p>
+                            </>
+                        )}
+                    </div>
+                    {loading && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-75 rounded-lg">
+                            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+                            <span className="text-blue-500 font-medium">Procesando imagen...</span>
+                        </div>
+                    )}
+                    <input id="file" type="file" accept=".jpg, .jpeg, .png" className="hidden" onChange={handleFileChange} />
+                </label>
                 <div className="relative mb-2">
                     <Input
-                        ref={refInputFilter}
                         type="text"
                         placeholder="Ingrese producto"
                         color="primary"
                         onChange={handleChangeProducts}
+                        value={inputFilterProduct}
                         endContent={
                             <Button isIconOnly radius="lg" className="translate-x-3" color="primary" onPress={handleAddCustomProduct}>
                                 <MdOutlineLibraryAdd className="text-2xl" />
@@ -240,25 +385,41 @@ export default function Cotizacion() {
                         </div>
                     )}
                 </div>
+                <div className="overflow-x-auto flex flex-row flex-wrap gap-2 justify-center items-center">
+                    {quoteItems.map((item) => (
+                        <Image key={item.productID} src={item.image} alt={item.name} width={200} height={200} />
+                    ))}
+                    {customImages.map((img) => (
+                        <Image key={img} src={img} alt={img} width={200} height={200} />
+                    ))}
+                </div>
                 <h2 className="font-bold text-lg bg-gray-200 p-2 mb-2">Detalle de la cotización</h2>
                 <div className="overflow-x-auto">
                     <table className="min-w-full border border-gray-300">
                         <thead>
                             <tr className="bg-gray-100">
-                                <th className="border border-gray-300 px-4 py-2 text-left">N°</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Item</th>
+                                <th className="border border-gray-300 px-4 py-2 text-left">Modelos Disponibles</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Cantidad</th>
-                                <th className="border border-gray-300 px-4 py-2 text-left">Precio Neto</th>
+                                <th className="border border-gray-300 px-4 py-2 text-left">Precio Neto Unitario</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Subtotal Neto</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left"> </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {quoteItems.map((item, index) => (
+                            {quoteItems.map((item) => (
                                 <tr key={item.productID}>
-                                    <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                                     <td className="border border-gray-300 px-4 py-2">{item.name}</td>
                                     <td className="border border-gray-300 px-4 py-2">
+                                        <Input
+                                            type="text"
+                                            value={item.availableModels}
+                                            onChange={(e) =>
+                                                handleUpdateQuoteItem(item.availableModels, 'availableModels', e.target.value || '')
+                                            }
+                                        />
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2 w-20">
                                         <Input
                                             type="number"
                                             value={item.quantity.toString()}
