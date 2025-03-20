@@ -3,7 +3,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import Header from '@/components/Header'
-import { HeroUIProvider } from "@heroui/react"
+import { HeroUIProvider } from '@heroui/react'
+import { Toaster } from 'sonner'
 
 const font = Montserrat({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             <Header />
                             {children}
                         </main>
+                        <Toaster />
                     </div>
                 </HeroUIProvider>
             </body>
