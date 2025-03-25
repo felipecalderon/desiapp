@@ -102,6 +102,30 @@ const styles = StyleSheet.create({
         marginTop: 12,
         borderRadius: 4,
     },
+    // Contenedor para las imágenes horizontales
+    horizontalImageContainer: {
+        marginBottom: 10,
+    },
+    horizontalImage: {
+        width: '100%',
+        height: 150, // Puedes ajustar la altura para lograr la proporción deseada (ej. 16:9)
+        objectFit: 'cover', // Nota: react-pdf interpreta esto de forma limitada
+    },
+    // Contenedor de grilla para imágenes cuadradas
+    gridContainer: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    gridItem: {
+        width: '32%', // Si usas tres columnas, ajusta este porcentaje
+        marginBottom: 10,
+    },
+    gridImage: {
+        width: '100%',
+        height: 100, // Fija la altura para que se vea cuadrada, o calcula según el ancho
+        objectFit: 'cover',
+    },
 })
 
 interface ClientForm {
@@ -118,13 +142,10 @@ interface QuoteItem extends Producto {
     availableModels: string
 }
 
-interface ImageOrientation {
-    [key: string]: 'horizontal' | 'vertical'
-}
-
-interface ImageWidth {
-    naturalWidth: number
-    naturalHeight: number
+interface Images {
+    id: string
+    src: string
+    alt: string
 }
 
 interface Totals {
@@ -142,6 +163,8 @@ interface MyPDFDocumentProps {
     clientData: ClientForm
     quoteItems: QuoteItem[]
     totals: Totals
+    horizontalImages: Images[]
+    gridImages: Images[]
     companyInfo?: {
         name: string
         address: string
@@ -162,6 +185,8 @@ const MyPDFDocument = ({
     clientData,
     quoteItems,
     totals,
+    horizontalImages,
+    gridImages,
     companyInfo = {
         name: 'D3SI SPA',
         address: 'ALMAGRO 593, PURÉN, LA ARAUCANÍA',
@@ -176,144 +201,163 @@ const MyPDFDocument = ({
         email: 'alejandro.contreras@d3si.cl',
     },
     logoSrc = '/media/two-brands-color.png',
-}: MyPDFDocumentProps) => (
-    <Document>
-        <Page size="A4" style={styles.page}>
-            {/* Encabezado */}
-            <View style={styles.headerContainer}>
-                <View style={styles.companyInfo}>
-                    <View style={styles.logoContainer}>
-                        <Image src={logoSrc} style={styles.logo} />
-                        <Text style={styles.companyName}>{companyInfo.name}</Text>
+}: MyPDFDocumentProps) => {
+    return (
+        <Document>
+            <Page size="A4" style={styles.page}>
+                {/* Encabezado */}
+                <View style={styles.headerContainer}>
+                    <View style={styles.companyInfo}>
+                        <View style={styles.logoContainer}>
+                            <Image src={logoSrc} style={styles.logo} />
+                            <Text style={styles.companyName}>{companyInfo.name}</Text>
+                        </View>
+                        <View style={styles.companyDetails}>
+                            <Text>VENTA AL POR MAYOR DE VESTUARIO, CALZADO, TECNOLOGÍA Y ACCESORIOS</Text>
+                            <Text>{companyInfo.address}</Text>
+                            <Text>{companyInfo.email}</Text>
+                        </View>
                     </View>
-                    <View style={styles.companyDetails}>
-                        <Text>VENTA AL POR MAYOR DE VESTUARIO, CALZADO, TECNOLOGÍA Y ACCESORIOS</Text>
-                        <Text>{companyInfo.address}</Text>
-                        <Text>{companyInfo.email}</Text>
+                    <View style={styles.quoteInfoContainer}>
+                        <Text style={styles.quoteInfoText}>R.U.T.: {companyInfo.rut}</Text>
+                        <Text style={styles.quoteInfoText}>COTIZACIÓN ELECTRÓNICA</Text>
                     </View>
                 </View>
-                <View style={styles.quoteInfoContainer}>
-                    <Text style={styles.quoteInfoText}>R.U.T.: {companyInfo.rut}</Text>
-                    <Text style={styles.quoteInfoText}>COTIZACIÓN ELECTRÓNICA</Text>
+
+                {/* Datos del Cliente */}
+                <View style={styles.section}>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4 }}>Datos del Cliente</Text>
+                    <Text>R.U.T.: {clientData.rut}</Text>
+                    <Text>RAZÓN SOCIAL: {clientData.razonsocial}</Text>
+                    <Text>GIRO: {clientData.giro}</Text>
+                    <Text>COMUNA: {clientData.comuna}</Text>
+                    <Text>EMAIL: {clientData.email}</Text>
                 </View>
-            </View>
-
-            {/* Datos del Cliente */}
-            <View style={styles.section}>
-                <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4 }}>Datos del Cliente</Text>
-                <Text>R.U.T.: {clientData.rut}</Text>
-                <Text>RAZÓN SOCIAL: {clientData.razonsocial}</Text>
-                <Text>GIRO: {clientData.giro}</Text>
-                <Text>COMUNA: {clientData.comuna}</Text>
-                <Text>EMAIL: {clientData.email}</Text>
-            </View>
-
-            {/* Detalle de Productos */}
-            <View style={styles.section}>
-                <Text style={{ marginBottom: 4, fontSize: 12, fontWeight: 'bold' }}>Detalle de Productos</Text>
-                <View style={styles.table}>
-                    {/* Encabezado de la tabla */}
-                    <View style={[styles.tableRow, styles.tableHeader]}>
-                        <Text style={styles.tableCell}>Item</Text>
-                        <Text style={styles.tableCell}>Modelos disponibles</Text>
-                        <Text style={styles.tableCell}>Cantidad</Text>
-                        <Text style={styles.tableCell}>Precio</Text>
-                        <Text style={[styles.tableCell, styles.lastCell]}>Subtotal</Text>
-                    </View>
-                    {quoteItems.map((item: any) => (
-                        <View style={styles.tableRow} key={item.productID}>
-                            <Text style={styles.tableCell}>{item.name}</Text>
-                            <Text style={styles.tableCell}>{item.availableModels}</Text>
-                            <Text style={styles.tableCell}>{item.quantity}</Text>
-                            <Text style={styles.tableCell}>{item.price}</Text>
-                            <Text style={[styles.tableCell, styles.lastCell]}>{(item.price * item.quantity).toFixed(2)}</Text>
+                {/* Grilla de imágenes */}
+                <Page size="A4" style={styles.page}>
+                    {/* Renderizado de imágenes horizontales */}
+                    {horizontalImages.map((img) => (
+                        <View key={img.id} style={styles.horizontalImageContainer}>
+                            <Image style={styles.horizontalImage} src={img.src} />
                         </View>
                     ))}
-                </View>
-            </View>
 
-            {/* Descuentos y Cargos */}
-            <View style={styles.section}>
-                <Text style={{ marginBottom: 4, fontSize: 12, fontWeight: 'bold' }}>Descuentos/Cargos</Text>
-                <View style={styles.table}>
-                    <View style={[styles.tableRow, styles.tableHeader]}>
-                        <Text style={styles.tableCell}>Tipo (descuento/cargo)</Text>
-                        <Text style={styles.tableCell}>Porcentaje</Text>
-                        <Text style={[styles.tableCell, styles.lastCell]}>Monto</Text>
+                    {/* Renderizado de imágenes en grilla */}
+                    <View style={styles.gridContainer}>
+                        {gridImages.map((img) => (
+                            <View key={img.id} style={styles.gridItem}>
+                                <Image style={styles.gridImage} src={img.src} />
+                            </View>
+                        ))}
                     </View>
-                    <View style={styles.tableRow}>
-                        <Text style={styles.tableCell}>Descuento por volumen</Text>
-                        <Text style={styles.tableCell}>{(totals.discountPercentage * 100).toFixed(0)}%</Text>
-                        <Text style={[styles.tableCell, styles.lastCell]}>-{totals.discount.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <Text style={styles.tableCell}>Cargo por despacho</Text>
-                        <Text style={styles.tableCell}>{(totals.dispatchChargePercentage * 100).toFixed(0)}%</Text>
-                        <Text style={[styles.tableCell, styles.lastCell]}>+{totals.dispatchCharge.toFixed(2)}</Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* Totales */}
-            <View style={styles.section}>
-                <View style={styles.totalsTable}>
-                    <View style={styles.totalsRow}>
-                        <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>MONTO NETO:</Text>
-                        <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.netAmount.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.totalsRow}>
-                        <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>
-                            IVA: {(totals.IVAPercentage * 100).toFixed(0)}%
-                        </Text>
-                        <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.IVA.toFixed(2)}</Text>
-                    </View>
-                    <View style={[styles.totalsRow, { backgroundColor: '#e2e8f0' }]}>
-                        <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>MONTO TOTAL:</Text>
-                        <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>
-                            {totals.total.toFixed(2)}
-                        </Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* Datos de Transferencia Bancaria y Resumen */}
-            <View style={[styles.section, { flexDirection: 'row' }]}>
-                <View style={{ flex: 1, paddingRight: 6 }}>
-                    <View style={{ border: '1px solid #ccc', padding: 6 }}>
-                        <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Datos de Transferencia Bancaria</Text>
-                        <Text>{bankInfo.bank}</Text>
-                        <Text>{bankInfo.account}</Text>
-                        <Text>Razón Social: {bankInfo.companyName}</Text>
-                        <Text>Rut: {bankInfo.rut}</Text>
-                        <Text>{bankInfo.email}</Text>
-                    </View>
-                </View>
-                <View style={{ flex: 1 }}>
-                    <View style={{ border: '1px solid #ccc', padding: 6 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                            <Text style={{ fontWeight: 'bold' }}>MONTO NETO:</Text>
-                            <Text>{totals.netAmount.toFixed(2)}</Text>
+                </Page>
+                {/* Detalle de Productos */}
+                <View style={styles.section}>
+                    <Text style={{ marginBottom: 4, fontSize: 12, fontWeight: 'bold' }}>Detalle de Productos</Text>
+                    <View style={styles.table}>
+                        {/* Encabezado de la tabla */}
+                        <View style={[styles.tableRow, styles.tableHeader]}>
+                            <Text style={styles.tableCell}>Item</Text>
+                            <Text style={styles.tableCell}>Modelos disponibles</Text>
+                            <Text style={styles.tableCell}>Cantidad</Text>
+                            <Text style={styles.tableCell}>Precio</Text>
+                            <Text style={[styles.tableCell, styles.lastCell]}>Subtotal</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                            <Text style={{ fontWeight: 'bold' }}>IVA: {(totals.IVAPercentage * 100).toFixed(0)}%</Text>
-                            <Text>{totals.IVA.toFixed(2)}</Text>
+                        {quoteItems.map((item: any) => (
+                            <View style={styles.tableRow} key={item.productID}>
+                                <Text style={styles.tableCell}>{item.name}</Text>
+                                <Text style={styles.tableCell}>{item.availableModels}</Text>
+                                <Text style={styles.tableCell}>{item.quantity}</Text>
+                                <Text style={styles.tableCell}>{item.price}</Text>
+                                <Text style={[styles.tableCell, styles.lastCell]}>{(item.price * item.quantity).toFixed(2)}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+
+                {/* Descuentos y Cargos */}
+                <View style={styles.section}>
+                    <Text style={{ marginBottom: 4, fontSize: 12, fontWeight: 'bold' }}>Descuentos/Cargos</Text>
+                    <View style={styles.table}>
+                        <View style={[styles.tableRow, styles.tableHeader]}>
+                            <Text style={styles.tableCell}>Tipo (descuento/cargo)</Text>
+                            <Text style={styles.tableCell}>Porcentaje</Text>
+                            <Text style={[styles.tableCell, styles.lastCell]}>Monto</Text>
                         </View>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                backgroundColor: '#e2e8f0',
-                                padding: 4,
-                            }}
-                        >
-                            <Text style={{ fontWeight: 'bold' }}>MONTO TOTAL:</Text>
-                            <Text style={{ fontWeight: 'bold' }}>{totals.total.toFixed(2)}</Text>
+                        <View style={styles.tableRow}>
+                            <Text style={styles.tableCell}>Descuento por volumen</Text>
+                            <Text style={styles.tableCell}>{(totals.discountPercentage * 100).toFixed(0)}%</Text>
+                            <Text style={[styles.tableCell, styles.lastCell]}>-{totals.discount.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <Text style={styles.tableCell}>Cargo por despacho</Text>
+                            <Text style={styles.tableCell}>{(totals.dispatchChargePercentage * 100).toFixed(0)}%</Text>
+                            <Text style={[styles.tableCell, styles.lastCell]}>+{totals.dispatchCharge.toFixed(2)}</Text>
                         </View>
                     </View>
                 </View>
-            </View>
-        </Page>
-    </Document>
-)
+
+                {/* Totales */}
+                <View style={styles.section}>
+                    <View style={styles.totalsTable}>
+                        <View style={styles.totalsRow}>
+                            <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>MONTO NETO:</Text>
+                            <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.netAmount.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.totalsRow}>
+                            <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>
+                                IVA: {(totals.IVAPercentage * 100).toFixed(0)}%
+                            </Text>
+                            <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.IVA.toFixed(2)}</Text>
+                        </View>
+                        <View style={[styles.totalsRow, { backgroundColor: '#e2e8f0' }]}>
+                            <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>MONTO TOTAL:</Text>
+                            <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>
+                                {totals.total.toFixed(2)}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Datos de Transferencia Bancaria y Resumen */}
+                <View style={[styles.section, { flexDirection: 'row' }]}>
+                    <View style={{ flex: 1, paddingRight: 6 }}>
+                        <View style={{ border: '1px solid #ccc', padding: 6 }}>
+                            <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Datos de Transferencia Bancaria</Text>
+                            <Text>{bankInfo.bank}</Text>
+                            <Text>{bankInfo.account}</Text>
+                            <Text>Razón Social: {bankInfo.companyName}</Text>
+                            <Text>Rut: {bankInfo.rut}</Text>
+                            <Text>{bankInfo.email}</Text>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ border: '1px solid #ccc', padding: 6 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                                <Text style={{ fontWeight: 'bold' }}>MONTO NETO:</Text>
+                                <Text>{totals.netAmount.toFixed(2)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                                <Text style={{ fontWeight: 'bold' }}>IVA: {(totals.IVAPercentage * 100).toFixed(0)}%</Text>
+                                <Text>{totals.IVA.toFixed(2)}</Text>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    backgroundColor: '#e2e8f0',
+                                    padding: 4,
+                                }}
+                            >
+                                <Text style={{ fontWeight: 'bold' }}>MONTO TOTAL:</Text>
+                                <Text style={{ fontWeight: 'bold' }}>{totals.total.toFixed(2)}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Page>
+        </Document>
+    )
+}
 
 export default MyPDFDocument

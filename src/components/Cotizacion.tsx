@@ -266,7 +266,15 @@ export default function Cotizacion() {
             dispatchChargePercentage: 120,
             IVAPercentage: 120,
         }
-        const blob = await pdf(<MyDocument clientData={clientForm} quoteItems={quoteItems} totals={totals} />).toBlob()
+        const blob = await pdf(
+            <MyDocument
+                clientData={clientForm}
+                quoteItems={quoteItems}
+                totals={totals}
+                horizontalImages={horizontalImages}
+                gridImages={gridImages}
+            />
+        ).toBlob()
 
         // Crea un URL a partir del Blob y fuerza la descarga
         const url = URL.createObjectURL(blob)
