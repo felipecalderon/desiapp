@@ -95,7 +95,6 @@ export default function Cotizacion() {
             availableModels: '',
             totalProducts: 0,
         }
-        console.log({ customProduct, inputFilterProduct })
         setQuoteItems((prev) => {
             const exists = prev.find((item) => inputFilterProduct.includes(item.name))
             if (exists) {
@@ -219,7 +218,7 @@ export default function Cotizacion() {
             }
             await uploadImage(file)
         } catch (error) {
-            console.log(error)
+            console.error(error)
         } finally {
             setLoading(false)
         }
