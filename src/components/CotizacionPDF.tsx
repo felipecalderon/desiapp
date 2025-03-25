@@ -1,6 +1,7 @@
 import React from 'react'
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer'
 import { Producto } from '@/config/interfaces'
+import { formatoPrecio } from '@/utils/price'
 
 const styles = StyleSheet.create({
     page: {
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: '#ccc',
+        breakInside: 'avoid',
     },
     tableRow: {
         flexDirection: 'row',
@@ -74,10 +76,25 @@ const styles = StyleSheet.create({
         borderRight: '1px solid #ccc',
         borderBottom: '1px solid #ccc',
         fontSize: 8,
-        flex: 1,
     },
     lastCell: {
         borderRight: 0,
+    },
+    // Estilos para cada columna
+    cellItem: {
+        flex: 2, // mayor ancho
+    },
+    cellModels: {
+        flex: 2, // mayor ancho
+    },
+    cellQuantity: {
+        flex: 1, // más estrecha
+    },
+    cellPrice: {
+        flex: 1, // más estrecha
+    },
+    cellSubtotal: {
+        flex: 1, // más estrecha
     },
     totalsTable: {
         width: '100%',
@@ -94,36 +111,18 @@ const styles = StyleSheet.create({
         borderBottom: '1px solid #ccc',
         fontSize: 10,
     },
-    button: {
-        backgroundColor: '#0284c7',
-        padding: 6,
-        textAlign: 'center',
-        color: '#fff',
-        marginTop: 12,
-        borderRadius: 4,
-    },
-    // Contenedor para las imágenes horizontales
     horizontalImageContainer: {
         marginBottom: 10,
+        breakInside: 'avoid',
     },
     horizontalImage: {
         width: '100%',
-        height: 150, // Puedes ajustar la altura para lograr la proporción deseada (ej. 16:9)
-        objectFit: 'cover', // Nota: react-pdf interpreta esto de forma limitada
-    },
-    // Contenedor de grilla para imágenes cuadradas
-    gridContainer: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-    },
-    gridItem: {
-        width: '32%', // Si usas tres columnas, ajusta este porcentaje
-        marginBottom: 10,
+        height: 150,
+        objectFit: 'cover',
     },
     gridImage: {
         width: '100%',
-        height: 100, // Fija la altura para que se vea cuadrada, o calcula según el ancho
+        height: 80,
         objectFit: 'cover',
     },
 })
@@ -202,9 +201,17 @@ const MyPDFDocument = ({
     },
     logoSrc = '/media/two-brands-color.png',
 }: MyPDFDocumentProps) => {
+    const chunkArray = (arr: Images[], size: number) => {
+        const chunked = []
+        for (let i = 0; i < arr.length; i += size) {
+            chunked.push(arr.slice(i, i + size))
+        }
+        return chunked
+    }
+    const gridRows = chunkArray(gridImages, 4)
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
+            <Page size={[612, 1200]} style={styles.page}>
                 {/* Encabezado */}
                 <View style={styles.headerContainer}>
                     <View style={styles.companyInfo}>
@@ -233,46 +240,57 @@ const MyPDFDocument = ({
                     <Text>COMUNA: {clientData.comuna}</Text>
                     <Text>EMAIL: {clientData.email}</Text>
                 </View>
+
                 {/* Grilla de imágenes */}
-                <Page size="A4" style={styles.page}>
-                    {/* Renderizado de imágenes horizontales */}
-                    {horizontalImages.map((img) => (
-                        <View key={img.id} style={styles.horizontalImageContainer}>
-                            <Image style={styles.horizontalImage} src={img.src} />
+                {/* Renderizado de imágenes horizontales */}
+                {horizontalImages.map((img) => (
+                    <View key={img.id} style={styles.horizontalImageContainer}>
+                        <Image style={styles.horizontalImage} src={img.src} />
+                    </View>
+                ))}
+
+                {/* Renderizado de imágenes en grilla */}
+                <View>
+                    {gridRows.map((row, rowIndex) => (
+                        <View
+                            key={rowIndex}
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                marginBottom: 10,
+                            }}
+                        >
+                            {row.map((img) => (
+                                <View key={img.id} style={{ width: '24%' }}>
+                                    <Image style={styles.gridImage} src={img.src} />
+                                </View>
+                            ))}
                         </View>
                     ))}
+                </View>
 
-                    {/* Renderizado de imágenes en grilla */}
-                    <View style={styles.gridContainer}>
-                        {gridImages.map((img) => (
-                            <View key={img.id} style={styles.gridItem}>
-                                <Image style={styles.gridImage} src={img.src} />
-                            </View>
-                        ))}
-                    </View>
-                </Page>
                 {/* Detalle de Productos */}
-                <View style={styles.section}>
-                    <Text style={{ marginBottom: 4, fontSize: 12, fontWeight: 'bold' }}>Detalle de Productos</Text>
-                    <View style={styles.table}>
-                        {/* Encabezado de la tabla */}
-                        <View style={[styles.tableRow, styles.tableHeader]}>
-                            <Text style={styles.tableCell}>Item</Text>
-                            <Text style={styles.tableCell}>Modelos disponibles</Text>
-                            <Text style={styles.tableCell}>Cantidad</Text>
-                            <Text style={styles.tableCell}>Precio</Text>
-                            <Text style={[styles.tableCell, styles.lastCell]}>Subtotal</Text>
-                        </View>
-                        {quoteItems.map((item: any) => (
-                            <View style={styles.tableRow} key={item.productID}>
-                                <Text style={styles.tableCell}>{item.name}</Text>
-                                <Text style={styles.tableCell}>{item.availableModels}</Text>
-                                <Text style={styles.tableCell}>{item.quantity}</Text>
-                                <Text style={styles.tableCell}>{item.price}</Text>
-                                <Text style={[styles.tableCell, styles.lastCell]}>{(item.price * item.quantity).toFixed(2)}</Text>
-                            </View>
-                        ))}
+                <View style={styles.table}>
+                    {/* Encabezado de la tabla */}
+                    <View style={[styles.tableRow, styles.tableHeader]}>
+                        <Text style={[styles.tableCell, styles.cellItem]}>Item</Text>
+                        <Text style={[styles.tableCell, styles.cellModels]}>Modelos disponibles</Text>
+                        <Text style={[styles.tableCell, styles.cellQuantity]}>Cantidad</Text>
+                        <Text style={[styles.tableCell, styles.cellPrice]}>Precio</Text>
+                        <Text style={[styles.tableCell, styles.lastCell, styles.cellSubtotal]}>Subtotal</Text>
                     </View>
+                    {quoteItems.map((item) => (
+                        <View style={styles.tableRow} key={item.productID}>
+                            <Text style={[styles.tableCell, styles.cellItem]}>{item.name}</Text>
+                            <Text style={[styles.tableCell, styles.cellModels]}>{item.availableModels}</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity]}>{item.quantity}</Text>
+                            <Text style={[styles.tableCell, styles.cellPrice]}>{formatoPrecio(item.price)}</Text>
+                            <Text style={[styles.tableCell, styles.lastCell, styles.cellSubtotal]}>
+                                {formatoPrecio(item.price * item.quantity)}
+                            </Text>
+                        </View>
+                    ))}
                 </View>
 
                 {/* Descuentos y Cargos */}

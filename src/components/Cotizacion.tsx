@@ -87,14 +87,15 @@ export default function Cotizacion() {
         const customProduct: QuoteItem = {
             productID: Date.now().toString(),
             name: inputFilterProduct,
-            quantity: 0,
+            quantity: 1,
             price: 0,
-            cantidad: 0,
+            cantidad: 1,
             image: '',
             ProductVariations: [],
             availableModels: '',
             totalProducts: 0,
         }
+        console.log({ customProduct, inputFilterProduct })
         setQuoteItems((prev) => {
             const exists = prev.find((item) => inputFilterProduct.includes(item.name))
             if (exists) {
@@ -110,7 +111,7 @@ export default function Cotizacion() {
         toast.success(`Producto "${customProduct.name}" agregado como personalizado`)
         setInputFilterProduct('')
         setFilterProducts([])
-    }, [])
+    }, [inputFilterProduct])
 
     const handleAddFilterProduct = useCallback((product: Producto) => {
         setQuoteItems((prev) => {
@@ -185,6 +186,7 @@ export default function Cotizacion() {
             await processFile(droppedFile)
         }
     }
+
     const uploadImage = async (file: File) => {
         const formData = new FormData()
         formData.append('file', file)
@@ -195,7 +197,6 @@ export default function Cotizacion() {
             })
             if (response.ok) {
                 const data = await response.json()
-                console.log(data)
                 setCustomImages((prev) => [...prev, data.secure_url])
                 toast.success('Imagen cargada con éxito')
             } else {
@@ -306,7 +307,7 @@ export default function Cotizacion() {
             src: item.image,
             alt: item.name,
         })),
-    ]
+    ].filter((img) => img.src)
 
     const horizontalImages = allImages.filter((img) => orientations[img.id] === 'horizontal')
     const gridImages = allImages.filter((img) => !orientations[img.id] || orientations[img.id] === 'vertical')
@@ -421,7 +422,42 @@ export default function Cotizacion() {
                     )}
                     <input id="file" type="file" accept=".jpg, .jpeg, .png" className="hidden" onChange={handleFileChange} />
                 </label>
-                <div className="relative mb-2">
+                <div className="space-y-4">
+                    {horizontalImages.map((img) => (
+                        <div key={img.id} className="w-full">
+                            <Image
+                                src={img.src}
+                                alt={img.alt}
+                                layout="responsive"
+                                width={16} // Proporción ejemplo 16:9
+                                height={6}
+                                objectFit="cover"
+                                onLoadingComplete={({ naturalWidth, naturalHeight }) =>
+                                    handleImageLoad(img.id, { naturalWidth, naturalHeight })
+                                }
+                                className="rounded-md max-h-96 object-cover object-center"
+                            />
+                        </div>
+                    ))}
+
+                    <div className="grid grid-cols-4 gap-2">
+                        {gridImages.map((img) => (
+                            <div key={img.id} className="relative aspect-square">
+                                <Image
+                                    src={img.src}
+                                    alt={img.alt}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    onLoadingComplete={({ naturalWidth, naturalHeight }) =>
+                                        handleImageLoad(img.id, { naturalWidth, naturalHeight })
+                                    }
+                                    className="rounded-md"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="relative my-2">
                     <Input
                         type="text"
                         placeholder="Ingrese producto"
@@ -443,41 +479,6 @@ export default function Cotizacion() {
                             ))}
                         </div>
                     )}
-                </div>
-                <div className="space-y-4">
-                    {horizontalImages.map((img) => (
-                        <div key={img.id} className="w-full">
-                            <Image
-                                src={img.src}
-                                alt={img.alt}
-                                layout="responsive"
-                                width={16} // Proporción ejemplo 16:9
-                                height={6}
-                                objectFit="cover"
-                                onLoadingComplete={({ naturalWidth, naturalHeight }) =>
-                                    handleImageLoad(img.id, { naturalWidth, naturalHeight })
-                                }
-                                className="rounded-md max-h-96 object-cover object-center"
-                            />
-                        </div>
-                    ))}
-
-                    <div className="grid grid-cols-6 gap-2">
-                        {gridImages.map((img) => (
-                            <div key={img.id} className="relative aspect-square">
-                                <Image
-                                    src={img.src}
-                                    alt={img.alt}
-                                    layout="fill"
-                                    objectFit="cover"
-                                    onLoadingComplete={({ naturalWidth, naturalHeight }) =>
-                                        handleImageLoad(img.id, { naturalWidth, naturalHeight })
-                                    }
-                                    className="rounded-md"
-                                />
-                            </div>
-                        ))}
-                    </div>
                 </div>
                 <h2 className="font-bold text-lg bg-gray-200 p-2 my-2">Detalle de la cotización</h2>
                 <div className="overflow-x-auto">
