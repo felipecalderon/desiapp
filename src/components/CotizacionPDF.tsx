@@ -2,6 +2,7 @@ import React from 'react'
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer'
 import { Producto } from '@/config/interfaces'
 import { formatoPrecio } from '@/utils/price'
+import { CotizacionProps, Images } from '@/stores/store.cotizacion'
 
 const styles = StyleSheet.create({
     page: {
@@ -127,80 +128,16 @@ const styles = StyleSheet.create({
     },
 })
 
-interface ClientForm {
-    rut: string
-    razonsocial: string
-    giro: string
-    comuna: string
-    email: string
-}
-
-interface QuoteItem extends Producto {
-    quantity: number
-    price: number
-    availableModels: string
-}
-
-interface Images {
-    id: string
-    src: string
-    alt: string
-}
-
-interface Totals {
-    netAmount: number
-    IVA: number
-    total: number
-    discount: number
-    discountPercentage: number
-    dispatchCharge: number
-    dispatchChargePercentage: number
-    IVAPercentage: number
-}
-
-interface MyPDFDocumentProps {
-    clientData: ClientForm
-    quoteItems: QuoteItem[]
-    totals: Totals
-    horizontalImages: Images[]
-    gridImages: Images[]
-    companyInfo?: {
-        name: string
-        address: string
-        email: string
-        rut: string
-    }
-    bankInfo?: {
-        bank: string
-        account: string
-        companyName: string
-        rut: string
-        email: string
-    }
-    logoSrc?: string
-}
-
 const MyPDFDocument = ({
     clientData,
     quoteItems,
     totals,
     horizontalImages,
     gridImages,
-    companyInfo = {
-        name: 'D3SI SPA',
-        address: 'ALMAGRO 593, PURÉN, LA ARAUCANÍA',
-        email: 'alejandro.contreras@d3si.cl',
-        rut: '77.058.146-K',
-    },
-    bankInfo = {
-        bank: 'Banco de Chile',
-        account: 'Cta Cte 144 032 6403',
-        companyName: 'D3SI SpA',
-        rut: '77.058.146-K',
-        email: 'alejandro.contreras@d3si.cl',
-    },
-    logoSrc = '/media/two-brands-color.png',
-}: MyPDFDocumentProps) => {
+    companyInfo,
+    bankInfo,
+    facturaInfo,
+}: CotizacionProps) => {
     const chunkArray = (arr: Images[], size: number) => {
         const chunked = []
         for (let i = 0; i < arr.length; i += size) {
@@ -216,7 +153,7 @@ const MyPDFDocument = ({
                 <View style={styles.headerContainer}>
                     <View style={styles.companyInfo}>
                         <View style={styles.logoContainer}>
-                            <Image src={logoSrc} style={styles.logo} />
+                            <Image src={facturaInfo.logoSrc} style={styles.logo} />
                             <Text style={styles.companyName}>{companyInfo.name}</Text>
                         </View>
                         <View style={styles.companyDetails}>
@@ -228,6 +165,7 @@ const MyPDFDocument = ({
                     <View style={styles.quoteInfoContainer}>
                         <Text style={styles.quoteInfoText}>R.U.T.: {companyInfo.rut}</Text>
                         <Text style={styles.quoteInfoText}>COTIZACIÓN ELECTRÓNICA</Text>
+                        <Text style={styles.quoteInfoText}>N° {facturaInfo.nroFactura}</Text>
                     </View>
                 </View>
 
@@ -298,19 +236,23 @@ const MyPDFDocument = ({
                     <Text style={{ marginBottom: 4, fontSize: 12, fontWeight: 'bold' }}>Descuentos/Cargos</Text>
                     <View style={styles.table}>
                         <View style={[styles.tableRow, styles.tableHeader]}>
-                            <Text style={styles.tableCell}>Tipo (descuento/cargo)</Text>
-                            <Text style={styles.tableCell}>Porcentaje</Text>
-                            <Text style={[styles.tableCell, styles.lastCell]}>Monto</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity]}>Tipo (descuento/cargo)</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity]}>Porcentaje</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity, styles.lastCell]}>Monto</Text>
                         </View>
                         <View style={styles.tableRow}>
-                            <Text style={styles.tableCell}>Descuento por volumen</Text>
-                            <Text style={styles.tableCell}>{(totals.discountPercentage * 100).toFixed(0)}%</Text>
-                            <Text style={[styles.tableCell, styles.lastCell]}>-{totals.discount.toFixed(2)}</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity]}>Descuento por volumen</Text>
+                            {/* <Text style={[styles.tableCell, styles.cellQuantity]}>{(totals.discountPercentage * 100).toFixed(0)}%</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity, styles.lastCell]}>-{totals.discount.toFixed(2)}</Text> */}
                         </View>
                         <View style={styles.tableRow}>
-                            <Text style={styles.tableCell}>Cargo por despacho</Text>
-                            <Text style={styles.tableCell}>{(totals.dispatchChargePercentage * 100).toFixed(0)}%</Text>
-                            <Text style={[styles.tableCell, styles.lastCell]}>+{totals.dispatchCharge.toFixed(2)}</Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity]}>Cargo por despacho</Text>
+                            {/* <Text style={[styles.tableCell, styles.cellQuantity]}>
+                                {(totals.dispatchChargePercentage * 100).toFixed(0)}%
+                            </Text>
+                            <Text style={[styles.tableCell, styles.cellQuantity, styles.lastCell]}>
+                                +{totals.dispatchCharge.toFixed(2)}
+                            </Text> */}
                         </View>
                     </View>
                 </View>
@@ -323,9 +265,6 @@ const MyPDFDocument = ({
                             <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.netAmount.toFixed(2)}</Text>
                         </View>
                         <View style={styles.totalsRow}>
-                            <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>
-                                IVA: {(totals.IVAPercentage * 100).toFixed(0)}%
-                            </Text>
                             <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.IVA.toFixed(2)}</Text>
                         </View>
                         <View style={[styles.totalsRow, { backgroundColor: '#e2e8f0' }]}>
@@ -356,7 +295,6 @@ const MyPDFDocument = ({
                                 <Text>{totals.netAmount.toFixed(2)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                                <Text style={{ fontWeight: 'bold' }}>IVA: {(totals.IVAPercentage * 100).toFixed(0)}%</Text>
                                 <Text>{totals.IVA.toFixed(2)}</Text>
                             </View>
                             <View

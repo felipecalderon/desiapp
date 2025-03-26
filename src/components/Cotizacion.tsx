@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { ChangeEvent, useRef, useState, useCallback, useEffect } from 'react'
-import { Button, Input } from '@heroui/react'
+import { Button, Input, Select, SelectItem, SharedSelection } from '@heroui/react'
 import { toast } from 'sonner'
 import { storeProduct } from '@/stores/store.product'
 import { Producto } from '@/config/interfaces'
@@ -12,6 +12,7 @@ import { formatoRut } from '@/utils/formatoRut'
 import { FileIcon, Loader2, Upload } from 'lucide-react'
 import { pdf, renderToStream } from '@react-pdf/renderer'
 import MyDocument from './CotizacionPDF'
+import { useCotizacionStore } from '@/stores/store.cotizacion'
 
 interface ClientForm {
     rut: string
@@ -40,25 +41,61 @@ const HORIZONTAL_THRESHOLD = 1.4
 const DISCOUNT_PERCENTAGE = 0.05
 const DISPATCH_CHARGE_PERCENTAGE = 0.01
 const IVA_PERCENTAGE = 0.19
+interface DiscountCarge {
+    type: 'discount' | 'charge'
+    name: string
+    value: number
+}
 
 export default function Cotizacion() {
+    const {
+        quoteItems,
+        companyInfo,
+        bankInfo,
+        facturaInfo,
+        clientData,
+        gridImages,
+        horizontalImages,
+        totals,
+        setTotals,
+        setGridImages,
+        setHorizontalImages,
+        setClientData,
+        addQuoteItem,
+        updateQuoteItem,
+        removeQuoteItem,
+        resetCotizacion,
+    } = useCotizacionStore()
     const { products } = storeProduct()
     const [inputFilterProduct, setInputFilterProduct] = useState('')
     const [filterProducts, setFilterProducts] = useState<Producto[]>([])
-    const [clientForm, setClientForm] = useState<ClientForm>({
-        rut: '',
-        razonsocial: '',
-        giro: '',
-        comuna: '',
-        email: '',
-    })
-    const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([])
     const [customImages, setCustomImages] = useState<string[]>([])
     const [file, setFile] = useState<File | null>(null)
     const [isDragActive, setIsDragActive] = useState(false)
     const [dragCounter, setDragCounter] = useState(0)
     const [loading, setLoading] = useState(false)
     const [orientations, setOrientations] = useState<ImageOrientation>({})
+    const [discounts, setDiscounts] = useState<DiscountCarge[]>([])
+    const [currentDiscountForm, setCurrentDiscountForm] = useState<DiscountCarge>({
+        type: 'discount', // Valor inicial del select
+        name: '',
+        value: 0,
+    })
+
+    const handleSelectTypeChange = (e: SharedSelection) => {
+        const keys = e as SharedSelection
+        if (keys.currentKey) {
+            const [type] = Array.from(keys) as ['discount' | 'charge']
+            setCurrentDiscountForm({ ...currentDiscountForm, type })
+        }
+    }
+    const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setCurrentDiscountForm((prev) => ({
+            ...prev,
+            [name]: name === 'value' ? Number(value) : value,
+        }))
+    }
 
     // Función para determinar la orientación una vez que la imagen se ha cargado
     const handleImageLoad = (id: string, { naturalWidth, naturalHeight }: ImageWidth) => {
@@ -83,9 +120,12 @@ export default function Cotizacion() {
         [products]
     )
 
-    const handleAddCustomProduct = useCallback(() => {
+    const handleAddCustomProduct = useCallback((inputFilterProduct: string) => {
+        if (!inputFilterProduct) {
+            return toast.error('Ingresa el nombre del producto')
+        }
         const customProduct: QuoteItem = {
-            productID: Date.now().toString(),
+            productID: inputFilterProduct,
             name: inputFilterProduct,
             quantity: 1,
             price: 0,
@@ -95,44 +135,37 @@ export default function Cotizacion() {
             availableModels: '',
             totalProducts: 0,
         }
-        setQuoteItems((prev) => {
-            const exists = prev.find((item) => inputFilterProduct.includes(item.name))
-            if (exists) {
-                return prev.map((item) => {
-                    if (inputFilterProduct.includes(item.name)) {
-                        return { ...item, quantity: item.quantity + 1 }
-                    }
-                    return item
-                })
-            }
-            return [...prev, customProduct]
-        })
+        const findItem = quoteItems.find((item) => inputFilterProduct === item.name)
+        if (!findItem) {
+            addQuoteItem(customProduct)
+        } else {
+            updateQuoteItem(inputFilterProduct, { quantity: findItem.quantity + 1 })
+        }
         toast.success(`Producto "${customProduct.name}" agregado como personalizado`)
         setInputFilterProduct('')
         setFilterProducts([])
-    }, [inputFilterProduct])
+    }, [])
 
     const handleAddFilterProduct = useCallback((product: Producto) => {
-        setQuoteItems((prev) => {
-            const exists = prev.find((item) => item.productID === product.productID)
-            if (exists) {
-                return prev.map((item) => (item.productID === product.productID ? { ...item, quantity: item.quantity + 1 } : item))
-            }
+        const findItem = quoteItems.find((item) => item.productID === product.productID)
+        if (!findItem) {
             const newItem: QuoteItem = {
                 ...product,
                 quantity: 1,
                 availableModels: product.ProductVariations.reduce((prev, curr) => prev + curr.sizeNumber + ' ', ''),
                 price: product.ProductVariations[0].priceList, // Se asume que todas las variantes tienen el mismo precio
             }
-            return [...prev, newItem]
-        })
+            addQuoteItem(newItem)
+        } else {
+            updateQuoteItem(inputFilterProduct, { quantity: findItem.quantity + 1 })
+        }
         toast.success(`Producto "${product.name}" agregado`)
         setInputFilterProduct('')
         setFilterProducts([])
     }, [])
 
     const handleRemoveQuoteItem = useCallback((productID: string) => {
-        setQuoteItems((prev) => prev.filter((item) => item.productID !== productID))
+        removeQuoteItem(productID)
         toast('Producto removido')
     }, [])
 
@@ -140,9 +173,9 @@ export default function Cotizacion() {
         const { name, value } = e.target
         if (name === 'rut') {
             const rut = formatoRut(value)
-            setClientForm((prev) => ({ ...prev, [name]: rut }))
+            setClientData({ [name]: rut })
         } else {
-            setClientForm((prev) => ({ ...prev, [name]: value }))
+            setClientData({ [name]: value })
         }
     }, [])
 
@@ -209,7 +242,6 @@ export default function Cotizacion() {
 
     const processFile = async (file: File) => {
         try {
-            setFile(null)
             setLoading(true)
             if (file.size > MAX_FILE_SIZE) {
                 toast.error('El archivo supera el tamaño máximo permitido (1MB).')
@@ -221,54 +253,38 @@ export default function Cotizacion() {
             console.error(error)
         } finally {
             setLoading(false)
+            setFile(null)
         }
     }
 
     const isValidClientData = useCallback(() => {
-        const { rut, razonsocial, giro, comuna, email } = clientForm
+        const { rut, razonsocial, giro, comuna, email } = clientData
         return Boolean(rut && razonsocial && giro && comuna && email)
-    }, [clientForm])
+    }, [clientData])
 
     const handleUpdateQuoteItem = useCallback(
         (productID: string, field: 'quantity' | 'price' | 'availableModels', value: number | string) => {
-            setQuoteItems((prev) => prev.map((item) => (item.productID === productID ? { ...item, [field]: value } : item)))
+            updateQuoteItem(productID, { [field]: value })
         },
         []
     )
 
-    const [totals, setTotals] = useState({
-        netAmount: 0,
-        discount: 0,
-        dispatchCharge: 0,
-        subtotal: 0,
-        IVA: 0,
-        total: 0,
-    })
-
-    useEffect(() => {
-        const netAmount = quoteItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-        const discount = netAmount * DISCOUNT_PERCENTAGE
-        const dispatchCharge = netAmount * DISPATCH_CHARGE_PERCENTAGE
-        const subtotal = netAmount - discount + dispatchCharge
-        const IVA = subtotal * IVA_PERCENTAGE
-        const total = subtotal + IVA
-        setTotals({ netAmount, discount, dispatchCharge, subtotal, IVA, total })
-    }, [quoteItems])
-
     const submitCotizacion = useCallback(async () => {
-        const totals = {
-            netAmount: 120,
-            IVA: 120,
-            total: 120,
-            discount: 120,
-            discountPercentage: 120,
-            dispatchCharge: 120,
-            dispatchChargePercentage: 120,
-            IVAPercentage: 120,
+        if (!isValidClientData()) {
+            toast.error('Faltan datos del cliente')
+            return
         }
+        if (quoteItems.length === 0) {
+            toast.error('Agrega al menos un producto a la cotización')
+            return
+        }
+
         const blob = await pdf(
             <MyDocument
-                clientData={clientForm}
+                facturaInfo={facturaInfo}
+                bankInfo={bankInfo}
+                companyInfo={companyInfo}
+                clientData={clientData}
                 quoteItems={quoteItems}
                 totals={totals}
                 horizontalImages={horizontalImages}
@@ -280,36 +296,56 @@ export default function Cotizacion() {
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = 'cotizacion'
+        a.download = 'cotizacion' + '-' + facturaInfo.nroFactura + '-' + clientData.razonsocial + '.pdf'
         a.click()
         URL.revokeObjectURL(url)
-        if (!isValidClientData()) {
-            toast.error('Faltan datos del cliente')
-            return
-        }
-        if (quoteItems.length === 0) {
-            toast.error('Agrega al menos un producto a la cotización')
-            return
-        }
-
+        resetCotizacion()
+        setCustomImages([])
         toast.success('Cotización generada con éxito, descargando PDF')
-    }, [clientForm, quoteItems, totals, isValidClientData])
+    }, [clientData, quoteItems, totals, isValidClientData])
 
-    const allImages = [
-        ...customImages.map((img, index) => ({
-            id: `custom-${index}`,
-            src: img,
-            alt: 'Imagen personalizada',
-        })),
-        ...quoteItems.map((item) => ({
-            id: item.productID,
-            src: item.image,
-            alt: item.name,
-        })),
-    ].filter((img) => img.src)
+    useEffect(() => {
+        const totalDiscount = discounts.reduce((acc, curr) => {
+            if (curr.type === 'discount') {
+                return acc + curr.value
+            } else {
+                return acc
+            }
+        }, 0)
+        const totalCargo = discounts.reduce((acc, curr) => {
+            if (curr.type === 'charge') {
+                return acc + curr.value
+            } else {
+                return acc
+            }
+        }, 0)
+        console.log({ totalCargo, totalDiscount })
+        const netAmount = quoteItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+        const discount = netAmount * (totalDiscount / 100)
+        const cargo = netAmount * (totalCargo / 100)
+        const subtotal = netAmount - discount + cargo
+        const IVA = subtotal * IVA_PERCENTAGE
+        const total = subtotal + IVA
 
-    const horizontalImages = allImages.filter((img) => orientations[img.id] === 'horizontal')
-    const gridImages = allImages.filter((img) => !orientations[img.id] || orientations[img.id] === 'vertical')
+        setTotals({ netAmount, IVA, total, descuentos: discount, cargos: cargo })
+    }, [quoteItems, discounts])
+
+    useEffect(() => {
+        const allImages = [
+            ...customImages.map((img, index) => ({
+                id: `custom-${index}`,
+                src: img,
+                alt: 'Imagen personalizada',
+            })),
+            ...quoteItems.map((item) => ({
+                id: item.productID,
+                src: item.image,
+                alt: item.name,
+            })),
+        ].filter((img) => img.src)
+        setHorizontalImages(allImages.filter((img) => orientations[img.id] === 'horizontal'))
+        setGridImages(allImages.filter((img) => !orientations[img.id] || orientations[img.id] === 'vertical'))
+    }, [customImages, quoteItems, orientations])
 
     if (products.length === 0) {
         return (
@@ -318,6 +354,7 @@ export default function Cotizacion() {
             </Button>
         )
     }
+
     return (
         <>
             <div className="flex flex-col md:flex-row justify-between mb-6">
@@ -336,6 +373,7 @@ export default function Cotizacion() {
                     <div className="border-4 border-red-600 p-3">
                         <p className="font-bold">R.U.T.: 77.058.146-K</p>
                         <p className="font-bold">COTIZACIÓN ELECTRÓNICA</p>
+                        <p className="font-bold">N° {facturaInfo.nroFactura}</p>
                     </div>
                 </div>
             </div>
@@ -345,7 +383,7 @@ export default function Cotizacion() {
                     <div className="flex flex-col gap-1">
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">R.U.T.:</span>
-                            <Input type="text" name="rut" color="primary" value={clientForm.rut} onChange={handleChangeClientData} />
+                            <Input type="text" name="rut" color="primary" value={clientData.rut} onChange={handleChangeClientData} />
                         </p>
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">RAZÓN SOCIAL:</span>
@@ -353,23 +391,23 @@ export default function Cotizacion() {
                                 type="text"
                                 name="razonsocial"
                                 color="primary"
-                                value={clientForm.razonsocial}
+                                value={clientData.razonsocial}
                                 onChange={handleChangeClientData}
                             />
                         </p>
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">GIRO:</span>
-                            <Input type="text" name="giro" color="primary" value={clientForm.giro} onChange={handleChangeClientData} />
+                            <Input type="text" name="giro" color="primary" value={clientData.giro} onChange={handleChangeClientData} />
                         </p>
                     </div>
                     <div className="flex flex-col gap-1">
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">COMUNA:</span>
-                            <Input type="text" name="comuna" color="primary" value={clientForm.comuna} onChange={handleChangeClientData} />
+                            <Input type="text" name="comuna" color="primary" value={clientData.comuna} onChange={handleChangeClientData} />
                         </p>
                         <p className="flex flex-row gap-2 items-center">
                             <span className="font-semibold">EMAIL:</span>
-                            <Input type="text" name="email" color="primary" value={clientForm.email} onChange={handleChangeClientData} />
+                            <Input type="text" name="email" color="primary" value={clientData.email} onChange={handleChangeClientData} />
                         </p>
                     </div>
                 </form>
@@ -464,7 +502,13 @@ export default function Cotizacion() {
                         onChange={handleChangeProducts}
                         value={inputFilterProduct}
                         endContent={
-                            <Button isIconOnly radius="lg" className="translate-x-3" color="primary" onPress={handleAddCustomProduct}>
+                            <Button
+                                isIconOnly
+                                radius="lg"
+                                className="translate-x-3"
+                                color="primary"
+                                onPress={() => handleAddCustomProduct(inputFilterProduct)}
+                            >
                                 <MdOutlineLibraryAdd className="text-2xl" />
                             </Button>
                         }
@@ -538,6 +582,56 @@ export default function Cotizacion() {
 
             <div className="mb-6">
                 <h2 className="font-bold text-lg bg-gray-200 p-2 mb-2">Descuentos/Cargos</h2>
+                <label htmlFor="discount" className="italic">
+                    <div className="flex flex-row gap-2">
+                        <Input
+                            name="name"
+                            type="text"
+                            placeholder="Detalle del descuento o cargo"
+                            color="primary"
+                            value={currentDiscountForm.name}
+                            description="Ej: Descuento por volumen"
+                            onChange={handleDiscountChange}
+                        />
+                        <Select
+                            name="type"
+                            onSelectionChange={handleSelectTypeChange}
+                            color="primary"
+                            placeholder="Tipo"
+                            defaultSelectedKeys={['discount']}
+                            value={currentDiscountForm.type}
+                            description="Selecciona si es descuento o cargo"
+                        >
+                            <SelectItem key={'discount'} textValue="Descuento">
+                                Descuento
+                            </SelectItem>
+                            <SelectItem key={'charge'} textValue="Cargo">
+                                Cargo
+                            </SelectItem>
+                        </Select>
+                        <Input
+                            type="number"
+                            name="value"
+                            value={currentDiscountForm.value.toString()}
+                            onChange={handleDiscountChange}
+                            placeholder="Porcentaje"
+                            color="primary"
+                            min={0}
+                            max={100}
+                            description="Valor entre 0 y 100"
+                        />
+                        <Button
+                            color="primary"
+                            onPress={() => {
+                                const { type, value, name } = currentDiscountForm
+                                setDiscounts((prev) => [...prev, { type, value, name }])
+                                setCurrentDiscountForm({ ...currentDiscountForm, value: 0, name: '' })
+                            }}
+                        >
+                            Agregar
+                        </Button>
+                    </div>
+                </label>
                 <div className="overflow-x-auto">
                     <table className="min-w-full border border-gray-300">
                         <thead>
@@ -545,19 +639,33 @@ export default function Cotizacion() {
                                 <th className="border border-gray-300 px-4 py-2 text-left">Tipo (descuento/cargo)</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Porcentaje</th>
                                 <th className="border border-gray-300 px-4 py-2 text-left">Monto</th>
+                                <th className="border border-gray-300 px-4 py-2 text-left w-fit"> </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td className="border border-gray-300 px-4 py-2">Descuento por volumen</td>
-                                <td className="border border-gray-300 px-4 py-2">{(DISCOUNT_PERCENTAGE * 100).toFixed(0)}%</td>
-                                <td className="border border-gray-300 px-4 py-2">-{formatoPrecio(totals.discount)}</td>
-                            </tr>
-                            <tr>
-                                <td className="border border-gray-300 px-4 py-2">Cargo por despacho</td>
-                                <td className="border border-gray-300 px-4 py-2">{(DISPATCH_CHARGE_PERCENTAGE * 100).toFixed(0)}%</td>
-                                <td className="border border-gray-300 px-4 py-2">+{formatoPrecio(totals.dispatchCharge)}</td>
-                            </tr>
+                            {discounts.map((discount) => (
+                                <tr key={discount.name}>
+                                    <td className="border border-gray-300 px-4 py-2">{discount.name}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{discount.value}%</td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {discount.type === 'discount' ? '-' : '+'}
+                                        {formatoPrecio(
+                                            quoteItems
+                                                .map((item) => (item.price * item.quantity * discount.value) / 100)
+                                                .reduce((acc, curr) => acc + curr, 0)
+                                        )}
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2 w-11">
+                                        <Button
+                                            radius="full"
+                                            color="danger"
+                                            onPress={() => setDiscounts((prev) => prev.filter((d) => d.name !== discount.name))}
+                                        >
+                                            <IoTrash className="text-2xl" />
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -587,8 +695,18 @@ export default function Cotizacion() {
                         <table className="w-full">
                             <tbody>
                                 <tr>
+                                    <td className="border-b border-gray-300 px-4 py-2 font-semibold">DESCUENTOS:</td>
+                                    <td className="border-b border-gray-300 px-4 py-2 text-right">{formatoPrecio(totals.descuentos)}</td>
+                                </tr>
+                                <tr>
+                                    <td className="border-b border-gray-300 px-4 py-2 font-semibold">CARGOS:</td>
+                                    <td className="border-b border-gray-300 px-4 py-2 text-right">{formatoPrecio(totals.cargos)}</td>
+                                </tr>
+                                <tr>
                                     <td className="border-b border-gray-300 px-4 py-2 font-semibold">MONTO NETO:</td>
-                                    <td className="border-b border-gray-300 px-4 py-2 text-right">{formatoPrecio(totals.netAmount)}</td>
+                                    <td className="border-b border-gray-300 px-4 py-2 text-right">
+                                        {formatoPrecio(totals.netAmount - totals.descuentos - totals.cargos)}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td className="border-b border-gray-300 px-4 py-2 font-semibold">
