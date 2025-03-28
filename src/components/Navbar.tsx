@@ -66,7 +66,7 @@ export default function Navbar() {
     const currentPath = usePathname()
     const route = useRouter()
     const { clearPedido } = storeCpra()
-    const { setProducts } = storeProduct()
+    const { setProducts, products } = storeProduct()
     const { setSales } = storeSales()
 
     useEffect(() => {
@@ -108,9 +108,9 @@ export default function Navbar() {
                         return (
                             <li
                                 key={name}
-                                className={`hover:bg-blue-900 ${
-                                    currentPath === path ? 'bg-blue-700' : 'bg-blue-950'
-                                } transition duration-200 rounded text-center font-semibold`}
+                                className={`${currentPath === path ? 'bg-blue-700' : 'bg-blue-950'}
+                                ${products.length > 0 ? 'cursor-pointer' : 'pointer-events-none opacity-70'}
+                                hover:bg-blue-900 transition duration-200 rounded text-center font-semibold`}
                             >
                                 <Link href={path} className="block py-1 px-8">
                                     {name}
