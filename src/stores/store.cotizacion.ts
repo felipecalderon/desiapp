@@ -50,18 +50,30 @@ interface FacturaInfo {
     logoSrc: string
 }
 
+export interface DiscountCarge {
+    type: 'discount' | 'charge'
+    name: string
+    value: number
+}
+
 export interface CotizacionProps {
+    discounts: DiscountCarge[]
     quoteItems: QuoteItem[]
     horizontalImages: Images[]
     gridImages: Images[]
     clientData: ClientData
     totals: Totals
     companyInfo: CompanyInfo
-    bankInfo: BankInfo
+    bankInfo: BankInfo[]
     facturaInfo: FacturaInfo
+    notes: string
+    customImages: string[]
 }
 
 interface CotizacionActions {
+    setNotes: (notes: string) => void
+    setCustomImages: (images: string[]) => void
+    setDiscounts: (discounts: DiscountCarge[]) => void
     setClientData: (data: Partial<ClientData>) => void
     setQuoteItems: (quoteItems: QuoteItem[]) => void
     addQuoteItem: (quoteItem: QuoteItem) => void
@@ -73,51 +85,70 @@ interface CotizacionActions {
     setGridImages: (images: Images[]) => void
     setCompanyInfo: (info: CompanyInfo) => void
     updateCompanyInfo: (data: Partial<CompanyInfo>) => void
-    setBankInfo: (info: BankInfo) => void
+    setBankInfo: (info: BankInfo[]) => void
     updateBankInfo: (data: Partial<BankInfo>) => void
     setFacturaInfo: (data: Partial<FacturaInfo>) => void
     resetCotizacion: () => void
 }
 
+const defaultCotizacion: CotizacionProps = {
+    discounts: [],
+    clientData: {
+        comuna: '',
+        email: '',
+        giro: '',
+        razonsocial: '',
+        rut: '',
+    },
+    quoteItems: [],
+    totals: {
+        IVA: 0,
+        netAmount: 0,
+        total: 0,
+        descuentos: 0,
+        cargos: 0,
+    },
+    horizontalImages: [],
+    gridImages: [],
+    companyInfo: {
+        name: 'D3SI SPA',
+        address: 'ALMAGRO 593, PURÉN, LA ARAUCANÍA',
+        email: 'alejandro.contreras@d3si.cl',
+        rut: '77.058.146-K',
+    },
+    bankInfo: [
+        {
+            bank: 'Banco de Chile',
+            account: 'Cta Cte: 144 032 6403',
+            companyName: 'D3SI SpA',
+            rut: '77.058.146-K',
+            email: 'alejandro.contreras@d3si.cl',
+        },
+        {
+            bank: 'Banco Estado',
+            account: 'Cta Cte: 629 0034 9276',
+            companyName: 'D3SI SpA',
+            rut: '77.058.146-K',
+            email: 'alejandro.contreras@d3si.cl',
+        },
+    ],
+    facturaInfo: {
+        nroFactura: 5101,
+        logoSrc: '/media/two-brands-color.png',
+    },
+    notes: '',
+    customImages: [],
+}
+
 export const useCotizacionStore = create(
     persist<CotizacionProps & CotizacionActions>(
         (set) => ({
-            clientData: {
-                comuna: '',
-                email: '',
-                giro: '',
-                razonsocial: '',
-                rut: '',
-            },
-            quoteItems: [],
-            totals: {
-                IVA: 0,
-                netAmount: 0,
-                total: 0,
-                descuentos: 0,
-                cargos: 0,
-            },
-            horizontalImages: [],
-            gridImages: [],
-            companyInfo: {
-                name: 'D3SI SPA',
-                address: 'ALMAGRO 593, PURÉN, LA ARAUCANÍA',
-                email: 'alejandro.contreras@d3si.cl',
-                rut: '77.058.146-K',
-            },
-            bankInfo: {
-                bank: 'Banco de Chile',
-                account: 'Cta Cte 144 032 6403',
-                companyName: 'D3SI SpA',
-                rut: '77.058.146-K',
-                email: 'alejandro.contreras@d3si.cl',
-            },
-            facturaInfo: {
-                nroFactura: 5101,
-                logoSrc: '/media/two-brands-color.png',
-            },
+            ...defaultCotizacion,
 
             // Acciones para actualizar cada campo
+            setCustomImages: (images: string[]) => set({ customImages: images }),
+            setNotes: (notes: string) => set({ notes }),
+            setDiscounts: (discounts: DiscountCarge[]) => set({ discounts }),
             setClientData: (data: Partial<ClientData>) => set((state) => ({ clientData: { ...state.clientData, ...data } })),
             setQuoteItems: (quoteItems: QuoteItem[]) => set({ quoteItems }),
             addQuoteItem: (quoteItem: QuoteItem) => set((state) => ({ quoteItems: [...state.quoteItems, quoteItem] })),
@@ -138,7 +169,7 @@ export const useCotizacionStore = create(
                 set((state) => ({
                     companyInfo: { ...state.companyInfo, ...data },
                 })),
-            setBankInfo: (info: BankInfo) => set({ bankInfo: info }),
+            setBankInfo: (info: BankInfo[]) => set({ bankInfo: info }),
             updateBankInfo: (data: Partial<BankInfo>) =>
                 set((state) => ({
                     bankInfo: { ...state.bankInfo, ...data },
@@ -147,27 +178,8 @@ export const useCotizacionStore = create(
             resetCotizacion: () =>
                 set((state) => ({
                     ...state,
-                    facturaInfo: {
-                        ...state.facturaInfo,
-                        nroFactura: state.facturaInfo.nroFactura + 1,
-                    },
-                    clientData: {
-                        comuna: '',
-                        email: '',
-                        giro: '',
-                        razonsocial: '',
-                        rut: '',
-                    },
-                    quoteItems: [],
-                    horizontalImages: [],
-                    gridImages: [],
-                    totals: {
-                        IVA: 0,
-                        netAmount: 0,
-                        total: 0,
-                        cargos: 0,
-                        descuentos: 0,
-                    },
+                    ...defaultCotizacion,
+                    facturaInfo: { ...state.facturaInfo, nroFactura: state.facturaInfo.nroFactura + 1 },
                 })),
         }),
         {

@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image'
-import { ChangeEvent, useRef, useState, useCallback, useEffect } from 'react'
+import { ChangeEvent, useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import { Button, Input, Select, SelectItem, SharedSelection } from '@heroui/react'
 import { toast } from 'sonner'
 import { storeProduct } from '@/stores/store.product'
@@ -12,7 +12,7 @@ import { formatoRut } from '@/utils/formatoRut'
 import { FileIcon, Loader2, Upload } from 'lucide-react'
 import { pdf, renderToStream } from '@react-pdf/renderer'
 import MyDocument from './CotizacionPDF'
-import { useCotizacionStore } from '@/stores/store.cotizacion'
+import { DiscountCarge, useCotizacionStore } from '@/stores/store.cotizacion'
 
 interface ClientForm {
     rut: string
@@ -41,11 +41,6 @@ const HORIZONTAL_THRESHOLD = 1.4
 const DISCOUNT_PERCENTAGE = 0.05
 const DISPATCH_CHARGE_PERCENTAGE = 0.01
 const IVA_PERCENTAGE = 0.19
-interface DiscountCarge {
-    type: 'discount' | 'charge'
-    name: string
-    value: number
-}
 
 export default function Cotizacion() {
     const {
@@ -57,6 +52,12 @@ export default function Cotizacion() {
         gridImages,
         horizontalImages,
         totals,
+        discounts,
+        notes,
+        customImages,
+        setCustomImages,
+        setNotes,
+        setDiscounts,
         setTotals,
         setGridImages,
         setHorizontalImages,
@@ -69,13 +70,11 @@ export default function Cotizacion() {
     const { products } = storeProduct()
     const [inputFilterProduct, setInputFilterProduct] = useState('')
     const [filterProducts, setFilterProducts] = useState<Producto[]>([])
-    const [customImages, setCustomImages] = useState<string[]>([])
     const [file, setFile] = useState<File | null>(null)
     const [isDragActive, setIsDragActive] = useState(false)
     const [dragCounter, setDragCounter] = useState(0)
     const [loading, setLoading] = useState(false)
     const [orientations, setOrientations] = useState<ImageOrientation>({})
-    const [discounts, setDiscounts] = useState<DiscountCarge[]>([])
     const [currentDiscountForm, setCurrentDiscountForm] = useState<DiscountCarge>({
         type: 'discount', // Valor inicial del select
         name: '',
@@ -229,7 +228,7 @@ export default function Cotizacion() {
             })
             if (response.ok) {
                 const data = await response.json()
-                setCustomImages((prev) => [...prev, data.secure_url])
+                setCustomImages([...customImages, data.secure_url])
                 toast.success('Imagen cargada con éxito')
             } else {
                 toast.error('Error al cargar la imagen')
@@ -281,6 +280,9 @@ export default function Cotizacion() {
 
         const blob = await pdf(
             <MyDocument
+                customImages={customImages}
+                notes={notes}
+                discounts={discounts}
                 facturaInfo={facturaInfo}
                 bankInfo={bankInfo}
                 companyInfo={companyInfo}
@@ -300,7 +302,6 @@ export default function Cotizacion() {
         a.click()
         URL.revokeObjectURL(url)
         resetCotizacion()
-        setCustomImages([])
         toast.success('Cotización generada con éxito, descargando PDF')
     }, [clientData, quoteItems, totals, isValidClientData])
 
@@ -319,7 +320,6 @@ export default function Cotizacion() {
                 return acc
             }
         }, 0)
-        console.log({ totalCargo, totalDiscount })
         const netAmount = quoteItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
         const discount = netAmount * (totalDiscount / 100)
         const cargo = netAmount * (totalCargo / 100)
@@ -330,7 +330,7 @@ export default function Cotizacion() {
         setTotals({ netAmount, IVA, total, descuentos: discount, cargos: cargo })
     }, [quoteItems, discounts])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const allImages = [
             ...customImages.map((img, index) => ({
                 id: `custom-${index}`,
@@ -345,7 +345,7 @@ export default function Cotizacion() {
         ].filter((img) => img.src)
         setHorizontalImages(allImages.filter((img) => orientations[img.id] === 'horizontal'))
         setGridImages(allImages.filter((img) => !orientations[img.id] || orientations[img.id] === 'vertical'))
-    }, [customImages, quoteItems, orientations])
+    }, [customImages, quoteItems, orientations, setGridImages, setHorizontalImages])
 
     if (products.length === 0) {
         return (
@@ -544,14 +544,13 @@ export default function Cotizacion() {
                                         <Input
                                             type="text"
                                             value={item.availableModels}
-                                            onChange={(e) =>
-                                                handleUpdateQuoteItem(item.availableModels, 'availableModels', e.target.value || '')
-                                            }
+                                            onChange={(e) => handleUpdateQuoteItem(item.productID, 'availableModels', e.target.value || '')}
                                         />
                                     </td>
                                     <td className="border border-gray-300 px-4 py-2 w-20">
                                         <Input
                                             type="number"
+                                            min={1}
                                             value={item.quantity.toString()}
                                             onChange={(e) =>
                                                 handleUpdateQuoteItem(item.productID, 'quantity', parseInt(e.target.value) || 0)
@@ -624,7 +623,11 @@ export default function Cotizacion() {
                             color="primary"
                             onPress={() => {
                                 const { type, value, name } = currentDiscountForm
-                                setDiscounts((prev) => [...prev, { type, value, name }])
+                                if (!name) return toast.error('Ingresa el nombre del descuento')
+                                if (!value) return toast.error('Ingresa el porcentaje del descuento')
+                                if (totals.descuentos + (totals.netAmount * value) / 100 >= totals.netAmount)
+                                    return toast.error('El descuento excede el monto neto')
+                                setDiscounts([...discounts, { type, value, name }])
                                 setCurrentDiscountForm({ ...currentDiscountForm, value: 0, name: '' })
                             }}
                         >
@@ -659,7 +662,7 @@ export default function Cotizacion() {
                                         <Button
                                             radius="full"
                                             color="danger"
-                                            onPress={() => setDiscounts((prev) => prev.filter((d) => d.name !== discount.name))}
+                                            onPress={() => setDiscounts(discounts.filter((d) => d.name !== discount.name))}
                                         >
                                             <IoTrash className="text-2xl" />
                                         </Button>
@@ -674,7 +677,13 @@ export default function Cotizacion() {
             <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="font-semibold">Otras observaciones:</div>
                 <div className="md:col-span-3">
-                    <Input type="text" placeholder="Ingrese observaciones adicionales aquí" color="primary" />
+                    <Input
+                        type="text"
+                        placeholder="Ingrese observaciones adicionales aquí"
+                        color="primary"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -682,11 +691,17 @@ export default function Cotizacion() {
                 <div className="md:w-3/5 pr-4 mb-4 md:mb-0">
                     <div className="border border-gray-300 p-4">
                         <h3 className="font-bold mb-2">Datos de Transferencia Bancaria</h3>
-                        <p>Banco de Chile</p>
-                        <p>Cta Cte 144 032 6403</p>
-                        <p>Razón Social: D3SI SpA</p>
-                        <p>Rut: 77.058.146-K</p>
-                        <p>alejandro.contreras@d3si.cl</p>
+                        <div className="flex flex-row gap-6">
+                            {bankInfo.map((info) => (
+                                <div key={info.bank} className="flex flex-col gap-1">
+                                    <p>{info.bank}</p>
+                                    <p>{info.account}</p>
+                                    <p>Razón Social: {info.companyName}</p>
+                                    <p>Rut: {info.rut}</p>
+                                    <p>{info.email}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -694,6 +709,10 @@ export default function Cotizacion() {
                     <div className="border border-gray-300">
                         <table className="w-full">
                             <tbody>
+                                <tr>
+                                    <td className="border-b border-gray-300 px-4 py-2 font-semibold">MONTO NETO:</td>
+                                    <td className="border-b border-gray-300 px-4 py-2 text-right">{formatoPrecio(totals.netAmount)}</td>
+                                </tr>
                                 <tr>
                                     <td className="border-b border-gray-300 px-4 py-2 font-semibold">DESCUENTOS:</td>
                                     <td className="border-b border-gray-300 px-4 py-2 text-right">{formatoPrecio(totals.descuentos)}</td>
@@ -703,9 +722,9 @@ export default function Cotizacion() {
                                     <td className="border-b border-gray-300 px-4 py-2 text-right">{formatoPrecio(totals.cargos)}</td>
                                 </tr>
                                 <tr>
-                                    <td className="border-b border-gray-300 px-4 py-2 font-semibold">MONTO NETO:</td>
+                                    <td className="border-b border-gray-300 px-4 py-2 font-semibold">SUBTOTAL:</td>
                                     <td className="border-b border-gray-300 px-4 py-2 text-right">
-                                        {formatoPrecio(totals.netAmount - totals.descuentos - totals.cargos)}
+                                        {formatoPrecio(totals.netAmount - totals.descuentos + totals.cargos)}
                                     </td>
                                 </tr>
                                 <tr>

@@ -1,6 +1,5 @@
 import React from 'react'
-import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer'
-import { Producto } from '@/config/interfaces'
+import { Page, Text, View, Document, StyleSheet, Image, Link } from '@react-pdf/renderer'
 import { formatoPrecio } from '@/utils/price'
 import { CotizacionProps, Images } from '@/stores/store.cotizacion'
 
@@ -57,6 +56,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     section: {
+        marginTop: 6,
         marginBottom: 12,
     },
     table: {
@@ -128,7 +128,8 @@ const styles = StyleSheet.create({
     },
 })
 
-const MyPDFDocument = ({
+const CotizacionPDF = ({
+    discounts,
     clientData,
     quoteItems,
     totals,
@@ -137,6 +138,7 @@ const MyPDFDocument = ({
     companyInfo,
     bankInfo,
     facturaInfo,
+    notes,
 }: CotizacionProps) => {
     const chunkArray = (arr: Images[], size: number) => {
         const chunked = []
@@ -146,9 +148,11 @@ const MyPDFDocument = ({
         return chunked
     }
     const gridRows = chunkArray(gridImages, 4)
+    const pageSize = [612, 1200]
+    console.log({ horizontalImages })
     return (
         <Document>
-            <Page size={[612, 1200]} style={styles.page}>
+            <Page size="A4" style={styles.page}>
                 {/* Encabezado */}
                 <View style={styles.headerContainer}>
                     <View style={styles.companyInfo}>
@@ -240,62 +244,73 @@ const MyPDFDocument = ({
                             <Text style={[styles.tableCell, styles.cellQuantity]}>Porcentaje</Text>
                             <Text style={[styles.tableCell, styles.cellQuantity, styles.lastCell]}>Monto</Text>
                         </View>
-                        <View style={styles.tableRow}>
-                            <Text style={[styles.tableCell, styles.cellQuantity]}>Descuento por volumen</Text>
-                            {/* <Text style={[styles.tableCell, styles.cellQuantity]}>{(totals.discountPercentage * 100).toFixed(0)}%</Text>
-                            <Text style={[styles.tableCell, styles.cellQuantity, styles.lastCell]}>-{totals.discount.toFixed(2)}</Text> */}
-                        </View>
-                        <View style={styles.tableRow}>
-                            <Text style={[styles.tableCell, styles.cellQuantity]}>Cargo por despacho</Text>
-                            {/* <Text style={[styles.tableCell, styles.cellQuantity]}>
-                                {(totals.dispatchChargePercentage * 100).toFixed(0)}%
-                            </Text>
-                            <Text style={[styles.tableCell, styles.cellQuantity, styles.lastCell]}>
-                                +{totals.dispatchCharge.toFixed(2)}
-                            </Text> */}
-                        </View>
+                        {discounts.map((discount) => (
+                            <View style={styles.tableRow} key={discount.name}>
+                                <Text style={[styles.tableCell, styles.cellQuantity]}>
+                                    [{discount.type === 'discount' ? 'DESCUENTO' : 'CARGO'}] {discount.name}
+                                </Text>
+                                <Text style={[styles.tableCell, styles.cellQuantity]}>{discount.value}%</Text>
+                                <Text style={[styles.tableCell, styles.lastCell, styles.cellSubtotal]}>
+                                    {formatoPrecio(
+                                        quoteItems
+                                            .map((item) => (item.price * item.quantity * discount.value) / 100)
+                                            .reduce((acc, curr) => acc + curr, 0)
+                                    )}
+                                </Text>
+                            </View>
+                        ))}
                     </View>
                 </View>
 
-                {/* Totales */}
-                <View style={styles.section}>
-                    <View style={styles.totalsTable}>
-                        <View style={styles.totalsRow}>
-                            <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>MONTO NETO:</Text>
-                            <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.netAmount.toFixed(2)}</Text>
-                        </View>
-                        <View style={styles.totalsRow}>
-                            <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right' }]}>{totals.IVA.toFixed(2)}</Text>
-                        </View>
-                        <View style={[styles.totalsRow, { backgroundColor: '#e2e8f0' }]}>
-                            <Text style={[styles.totalsCell, { flex: 1, fontWeight: 'bold' }]}>MONTO TOTAL:</Text>
-                            <Text style={[styles.totalsCell, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>
-                                {totals.total.toFixed(2)}
-                            </Text>
-                        </View>
+                {/* Comentario opcional */}
+                {notes && (
+                    <View style={[styles.tableRow, styles.tableHeader]}>
+                        <Text style={[styles.tableCell, styles.cellQuantity]}>Otras observaciones:</Text>
+                        <Text style={[styles.tableCell, styles.cellModels]}>{notes}</Text>
                     </View>
-                </View>
+                )}
 
                 {/* Datos de Transferencia Bancaria y Resumen */}
                 <View style={[styles.section, { flexDirection: 'row' }]}>
-                    <View style={{ flex: 1, paddingRight: 6 }}>
-                        <View style={{ border: '1px solid #ccc', padding: 6 }}>
-                            <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Datos de Transferencia Bancaria</Text>
-                            <Text>{bankInfo.bank}</Text>
-                            <Text>{bankInfo.account}</Text>
-                            <Text>Razón Social: {bankInfo.companyName}</Text>
-                            <Text>Rut: {bankInfo.rut}</Text>
-                            <Text>{bankInfo.email}</Text>
+                    <View style={{ flex: 2 }}>
+                        <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Datos de Transferencia Bancaria</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                            {bankInfo.map((info) => (
+                                <View style={{ border: '1px solid #ccc', padding: 6 }} key={info.bank}>
+                                    <Text style={{ fontWeight: 'bold' }}>{info.bank}</Text>
+                                    <Text>{info.account}</Text>
+                                    <Text>Razón Social: {info.companyName}</Text>
+                                    <Text>Rut: {info.rut}</Text>
+                                    <Text>{info.email}</Text>
+                                </View>
+                            ))}
+                        </View>
+                        <View style={{ paddingVertical: 6 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Botón de Pago Transbank hasta 6 cuotas con tarjeta de crédito</Text>
+                            <Link href="https://www.webpay.cl/form-pay/157318">https://www.webpay.cl/form-pay/157318</Link>
                         </View>
                     </View>
                     <View style={{ flex: 1 }}>
                         <View style={{ border: '1px solid #ccc', padding: 6 }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                                 <Text style={{ fontWeight: 'bold' }}>MONTO NETO:</Text>
-                                <Text>{totals.netAmount.toFixed(2)}</Text>
+                                <Text>{formatoPrecio(totals.netAmount)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                                <Text>{totals.IVA.toFixed(2)}</Text>
+                                <Text style={{ fontWeight: 'bold' }}>DESCUENTOS:</Text>
+                                <Text>{formatoPrecio(totals.descuentos)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                                <Text style={{ fontWeight: 'bold' }}>CARGOS:</Text>
+                                <Text>{formatoPrecio(totals.cargos)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                                <Text style={{ fontWeight: 'bold' }}>SUBTOTAL:</Text>
+                                <Text>{formatoPrecio(totals.netAmount - totals.descuentos + totals.cargos)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                                <Text style={{ fontWeight: 'bold' }}>IVA 19%:</Text>
+                                <Text>{formatoPrecio(totals.IVA)}</Text>
                             </View>
                             <View
                                 style={{
@@ -306,7 +321,7 @@ const MyPDFDocument = ({
                                 }}
                             >
                                 <Text style={{ fontWeight: 'bold' }}>MONTO TOTAL:</Text>
-                                <Text style={{ fontWeight: 'bold' }}>{totals.total.toFixed(2)}</Text>
+                                <Text style={{ fontWeight: 'bold' }}>{formatoPrecio(totals.total)}</Text>
                             </View>
                         </View>
                     </View>
@@ -316,4 +331,4 @@ const MyPDFDocument = ({
     )
 }
 
-export default MyPDFDocument
+export default CotizacionPDF
