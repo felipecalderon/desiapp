@@ -24,8 +24,8 @@ const menu = {
     adminMenu: [
         { name: 'Inicio', path: '/' },
         { name: 'Stock', path: '/stock' },
-        { name: 'Agregar productos', path: '/nuevoproducto' },
         { name: 'Facturación', path: '/facturacion' },
+        { name: 'Cotización', path: '/cotizar' },
         { name: 'Crear OC', path: '/comprar' },
         // { name: 'Quote', path: '/none' },
         // { name: 'Returns', path: '/devoluciones' },

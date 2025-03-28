@@ -330,6 +330,7 @@ export default function Cotizacion() {
         setTotals({ netAmount, IVA, total, descuentos: discount, cargos: cargo })
     }, [quoteItems, discounts])
 
+    // Para asegurarse que se actualicen las imágenes cuando cargue el DOM
     useLayoutEffect(() => {
         const allImages = [
             ...customImages.map((img, index) => ({

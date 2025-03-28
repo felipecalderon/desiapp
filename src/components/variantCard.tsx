@@ -1,4 +1,4 @@
-import { Variant } from '@/app/nuevoproducto/page'
+import { Variant } from '@/app/stock/nuevoproducto/page'
 import { Button, Card, CardBody, Input } from '@heroui/react'
 import { memo } from 'react'
 import { BiTrash } from 'react-icons/bi'

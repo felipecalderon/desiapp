@@ -6,8 +6,11 @@ import { bajarExcel } from '@/utils/toExcel'
 import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Producto } from '@/config/interfaces'
 import InfoTotalStock from '../InfoTotalStock'
+import { useRouter } from 'next/navigation'
+import { MdLibraryAdd } from 'react-icons/md'
 
 const GenerarTabla = () => {
+    const router = useRouter()
     const { products } = storeProduct()
     const [productosOrdenados, setOrdenados] = useState<Producto[]>([])
     const [filtro, setFiltro] = useState<string>('')
@@ -49,6 +52,12 @@ const GenerarTabla = () => {
                     value={filtro}
                     onChange={handleFiltroChange}
                 />
+                <button
+                    onClick={() => router.push('/stock/nuevoproducto')}
+                    className="flex flex-row items-center bg-green-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
+                >
+                    Crear Producto <MdLibraryAdd className="text-2xl ml-2" />
+                </button>
                 <button
                     onClick={download}
                     className="flex flex-row items-center bg-blue-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
