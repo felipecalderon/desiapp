@@ -81,7 +81,7 @@ export default function Cotizacion() {
         value: 0,
     })
 
-    const handleSelectTypeChange = (e: SharedSelection) => {
+    const handleDiscountTypeChange = (e: SharedSelection) => {
         const keys = e as SharedSelection
         if (keys.currentKey) {
             const [type] = Array.from(keys) as ['discount' | 'charge']
@@ -152,7 +152,7 @@ export default function Cotizacion() {
                 ...product,
                 quantity: 1,
                 availableModels: product.ProductVariations.reduce((prev, curr) => prev + curr.sizeNumber + ' ', ''),
-                price: product.ProductVariations[0].priceList, // Se asume que todas las variantes tienen el mismo precio
+                price: Math.round(product.ProductVariations[0].priceList / 1.19), // Se asume que todas las variantes tienen el mismo precio
             }
             addQuoteItem(newItem)
         } else {
@@ -322,7 +322,7 @@ export default function Cotizacion() {
         }, 0)
         const netAmount = quoteItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
         const discount = netAmount * (totalDiscount / 100)
-        const cargo = netAmount * (totalCargo / 100)
+        const cargo = totalCargo
         const subtotal = netAmount - discount + cargo
         const IVA = subtotal * IVA_PERCENTAGE
         const total = subtotal + IVA
@@ -582,60 +582,60 @@ export default function Cotizacion() {
 
             <div className="mb-6">
                 <h2 className="font-bold text-lg bg-gray-200 p-2 mb-2">Descuentos/Cargos</h2>
-                <label htmlFor="discount" className="italic">
-                    <div className="flex flex-row gap-2">
-                        <Input
-                            name="name"
-                            type="text"
-                            placeholder="Detalle del descuento o cargo"
-                            color="primary"
-                            value={currentDiscountForm.name}
-                            description="Ej: Descuento por volumen"
-                            onChange={handleDiscountChange}
-                        />
-                        <Select
-                            name="type"
-                            onSelectionChange={handleSelectTypeChange}
-                            color="primary"
-                            placeholder="Tipo"
-                            defaultSelectedKeys={['discount']}
-                            value={currentDiscountForm.type}
-                            description="Selecciona si es descuento o cargo"
-                        >
-                            <SelectItem key={'discount'} textValue="Descuento">
-                                Descuento
-                            </SelectItem>
-                            <SelectItem key={'charge'} textValue="Cargo">
-                                Cargo
-                            </SelectItem>
-                        </Select>
-                        <Input
-                            type="number"
-                            name="value"
-                            value={currentDiscountForm.value.toString()}
-                            onChange={handleDiscountChange}
-                            placeholder="Porcentaje"
-                            color="primary"
-                            min={0}
-                            max={100}
-                            description="Valor entre 0 y 100"
-                        />
-                        <Button
-                            color="primary"
-                            onPress={() => {
-                                const { type, value, name } = currentDiscountForm
-                                if (!name) return toast.error('Ingresa el nombre del descuento')
-                                if (!value) return toast.error('Ingresa el porcentaje del descuento')
+                <div className="flex flex-row gap-2">
+                    <Input
+                        name="name"
+                        type="text"
+                        placeholder="Detalle del descuento o cargo"
+                        color="primary"
+                        value={currentDiscountForm.name}
+                        description="Ej: Descuento por volumen"
+                        onChange={handleDiscountChange}
+                    />
+                    <Select
+                        name="type"
+                        onSelectionChange={handleDiscountTypeChange}
+                        color="primary"
+                        placeholder="Tipo"
+                        defaultSelectedKeys={['discount']}
+                        value={currentDiscountForm.type}
+                        description="Selecciona si es descuento o cargo"
+                    >
+                        <SelectItem key={'discount'} textValue="Descuento (%)">
+                            Descuento (%)
+                        </SelectItem>
+                        <SelectItem key={'charge'} textValue="Cargo ($)">
+                            Cargo ($)
+                        </SelectItem>
+                    </Select>
+                    <Input
+                        type="number"
+                        name="value"
+                        value={currentDiscountForm.value.toString()}
+                        onChange={handleDiscountChange}
+                        placeholder="Porcentaje"
+                        color="primary"
+                        description={currentDiscountForm.type === 'charge' ? 'Valor en pesos ($)' : 'Valor entre 0 y 100 (%)'}
+                        startContent={currentDiscountForm.type === 'charge' ? <p>$</p> : undefined}
+                        endContent={currentDiscountForm.type === 'discount' ? <p>%</p> : undefined}
+                    />
+                    <Button
+                        color="primary"
+                        onPress={() => {
+                            const { type, value, name } = currentDiscountForm
+                            if (!name) return toast.error('Ingresa el nombre del descuento')
+                            if (!value) return toast.error('Ingresa el porcentaje del descuento')
+                            if (type === 'discount') {
                                 if (totals.descuentos + (totals.netAmount * value) / 100 >= totals.netAmount)
                                     return toast.error('El descuento excede el monto neto')
-                                setDiscounts([...discounts, { type, value, name }])
-                                setCurrentDiscountForm({ ...currentDiscountForm, value: 0, name: '' })
-                            }}
-                        >
-                            Agregar
-                        </Button>
-                    </div>
-                </label>
+                            }
+                            setDiscounts([...discounts, { type, value, name }])
+                            setCurrentDiscountForm({ ...currentDiscountForm, value: 0, name: '' })
+                        }}
+                    >
+                        Agregar
+                    </Button>
+                </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full border border-gray-300">
                         <thead>
@@ -650,14 +650,16 @@ export default function Cotizacion() {
                             {discounts.map((discount) => (
                                 <tr key={discount.name}>
                                     <td className="border border-gray-300 px-4 py-2">{discount.name}</td>
-                                    <td className="border border-gray-300 px-4 py-2">{discount.value}%</td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {discount.type === 'discount'
+                                            ? `${discount.value}%`
+                                            : `${((discount.value / totals.netAmount) * 100).toFixed(1)}%`}
+                                    </td>
                                     <td className="border border-gray-300 px-4 py-2">
                                         {discount.type === 'discount' ? '-' : '+'}
-                                        {formatoPrecio(
-                                            quoteItems
-                                                .map((item) => (item.price * item.quantity * discount.value) / 100)
-                                                .reduce((acc, curr) => acc + curr, 0)
-                                        )}
+                                        {discount.type === 'discount'
+                                            ? formatoPrecio((discount.value / 100) * totals.netAmount)
+                                            : formatoPrecio(discount.value)}
                                     </td>
                                     <td className="border border-gray-300 px-4 py-2 w-11">
                                         <Button

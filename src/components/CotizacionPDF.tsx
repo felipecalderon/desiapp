@@ -249,13 +249,15 @@ const CotizacionPDF = ({
                                 <Text style={[styles.tableCell, styles.cellQuantity]}>
                                     [{discount.type === 'discount' ? 'DESCUENTO' : 'CARGO'}] {discount.name}
                                 </Text>
-                                <Text style={[styles.tableCell, styles.cellQuantity]}>{discount.value}%</Text>
+                                <Text style={[styles.tableCell, styles.cellQuantity]}>
+                                    {discount.type === 'discount'
+                                        ? `${discount.value}%`
+                                        : `${((discount.value / totals.netAmount) * 100).toFixed(1)}%`}
+                                </Text>
                                 <Text style={[styles.tableCell, styles.lastCell, styles.cellSubtotal]}>
-                                    {formatoPrecio(
-                                        quoteItems
-                                            .map((item) => (item.price * item.quantity * discount.value) / 100)
-                                            .reduce((acc, curr) => acc + curr, 0)
-                                    )}
+                                    {discount.type === 'discount'
+                                        ? formatoPrecio((discount.value / 100) * totals.netAmount)
+                                        : formatoPrecio(discount.value)}
                                 </Text>
                             </View>
                         ))}
