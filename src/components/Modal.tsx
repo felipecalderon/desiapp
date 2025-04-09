@@ -34,7 +34,7 @@ export default function ModalUI({ stores, onChange }: Props) {
                 Ver Todo
             </SelectItem>,
             ...items.map((store) => (
-                <SelectItem key={store.storeID} textValue={store.storeID}>
+                <SelectItem key={store.storeID} textValue={store.name}>
                     {store.name}
                 </SelectItem>
             )),

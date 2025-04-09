@@ -2,12 +2,21 @@ import { Variant } from '@/app/stock/nuevoproducto/page'
 import { Button, Card, CardBody, Input } from '@heroui/react'
 import { memo } from 'react'
 import { BiTrash } from 'react-icons/bi'
-// <K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K])
+
+interface VariantWithMarkup extends Variant {
+    markup: number
+}
+
 interface CardProps {
     productIndex: number
-    variant: Variant
+    variant: VariantWithMarkup
     variantIndex: number
-    onVariantChange: <K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K]) => void
+    onVariantChange: <K extends keyof VariantWithMarkup>(
+        productIndex: number,
+        variantIndex: number,
+        field: K,
+        value: VariantWithMarkup[K]
+    ) => void
     onRemove: (productIndex: number, variantIndex: number) => void
 }
 export const VariantCard = memo(({ productIndex, variant, variantIndex, onVariantChange, onRemove }: CardProps) => {
@@ -45,6 +54,7 @@ export const VariantCard = memo(({ productIndex, variant, variantIndex, onVarian
                         type="number"
                         label="Costo Neto"
                         placeholder="0"
+                        isDisabled
                         startContent={
                             <div className="pointer-events-none flex items-center">
                                 <span className="text-default-400 text-small">$</span>
@@ -65,6 +75,14 @@ export const VariantCard = memo(({ productIndex, variant, variantIndex, onVarian
                         placeholder="0"
                         value={variant.sizeNumber.toString()}
                         onChange={(e) => onVariantChange(productIndex, variantIndex, 'sizeNumber', e.target.value)}
+                    />
+                    <Input
+                        label="Markup"
+                        type="number"
+                        step={0.1}
+                        placeholder="0"
+                        value={variant.markup.toString()}
+                        onChange={(e) => onVariantChange(productIndex, variantIndex, 'markup', Number(e.target.value))}
                     />
                 </div>
             </CardBody>

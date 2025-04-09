@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import PDFParser from 'pdf2json'
 import { Detalle } from '@/config/interfaces'
 
-// const gptKey = process.env.OPENAIKEY
-// const gptUrl = `https://api.openai.com/v1/chat/completions`
-
 export const POST = async (req: NextRequest) => {
     const formData = await req.formData()
     const file = formData.get('file') as File
@@ -13,7 +10,7 @@ export const POST = async (req: NextRequest) => {
     if (!file) {
         return NextResponse.json({ error: 'No File provided' }, { status: 400 })
     }
-
+    console.log(file)
     const pdfParser = new PDFParser()
 
     const parsedData = await new Promise((resolve, reject) => {
@@ -31,7 +28,6 @@ export const POST = async (req: NextRequest) => {
         pdfParser.on('pdfParser_dataError', (err) => {
             reject(err)
         })
-
         pdfParser.parseBuffer(fileBuffer)
     })
 
@@ -84,7 +80,7 @@ const extractTableFromPdf = (pdfData: any) => {
 const extractTable = (rows: string[][]): string[][] => {
     let startIndex = -1
     const table: string[][] = []
-
+    console.log(rows)
     // Buscar la fila de encabezado de la tabla
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].includes('Cantidad') && rows[i].includes('Código') && rows[i].includes('Descripción')) {

@@ -20,17 +20,21 @@ export type Variant = {
     stockQuantity: string
 }
 
+interface VariantWithMarkup extends Variant {
+    markup: number
+}
+
 interface StatusProducts {
     name: string
     image: string
-    sizes: Variant[]
+    sizes: VariantWithMarkup[]
 }
 
 export default function NuevoProductoPage() {
     const noImage = 'https://res.cloudinary.com/duwncbe8p/image/upload/f_auto,q_auto/uwgpp9xcnsjity5qknnt'
     const router = useRouter()
     const { jsonFile } = useFileStore()
-    const { setGlobalProducts, setProducts: setProductsStore, globalProducts } = storeProduct()
+    const { setGlobalProducts, setProducts: setProductsStore } = storeProduct()
     const [loading, setLoading] = useState(false)
     const [uploading, setUploading] = useState<{ [key: number]: boolean }>({})
     const [products, setProducts] = useState<StatusProducts[]>([
@@ -44,6 +48,7 @@ export default function NuevoProductoPage() {
                     priceCost: '',
                     sku: '',
                     stockQuantity: '',
+                    markup: 0,
                 },
             ],
         },
@@ -108,6 +113,7 @@ export default function NuevoProductoPage() {
                         priceCost: '',
                         sku: '',
                         stockQuantity: '',
+                        markup: 0,
                     },
                 ],
             },
@@ -155,6 +161,7 @@ export default function NuevoProductoPage() {
             priceCost: '',
             sku: '',
             stockQuantity: '',
+            markup: 0,
         })
         setProducts(updatedProducts)
     }
@@ -169,11 +176,15 @@ export default function NuevoProductoPage() {
     }
 
     const handleVariantChange = useCallback(
-        <K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K]) => {
+        <K extends keyof VariantWithMarkup>(productIndex: number, variantIndex: number, field: K, value: VariantWithMarkup[K]) => {
             setProducts((prevProducts) => {
                 const newProducts = [...prevProducts]
                 const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
-
+                if (field === 'priceCost' || field === 'priceList') {
+                    newVariant.markup = Number((Number(newVariant.priceList) / Number(newVariant.priceCost)).toFixed(2))
+                } else if (field === 'markup') {
+                    newVariant.priceList = (Number(newVariant.priceCost) * Number(newVariant.markup)).toFixed(0)
+                }
                 // ✅ Actualiza inmediatamente el valor que el usuario está escribiendo
                 newVariant[field] = value
                 newProducts[productIndex].sizes[variantIndex] = newVariant
@@ -189,16 +200,16 @@ export default function NuevoProductoPage() {
 
     // ✅ Debounce solo en el cálculo derivado
     const debouncedCalculatePrices = useCallback(
-        debounce(<K extends keyof Variant>(productIndex: number, variantIndex: number, field: K, value: Variant[K]) => {
+        debounce(<K extends keyof VariantWithMarkup>(productIndex: number, variantIndex: number, field: K, value: VariantWithMarkup[K]) => {
             setProducts((prevProducts) => {
                 const newProducts = [...prevProducts]
                 const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
 
-                if (field === 'priceList') {
-                    newVariant.priceCost = (Number(value) / 1.8).toFixed(0)
-                } else if (field === 'priceCost') {
-                    newVariant.priceList = (Number(value) * 1.8).toFixed(0)
-                }
+                // if (field === 'priceList') {
+                //     newVariant.priceCost = (Number(value) / 1.8).toFixed(0)
+                // } else if (field === 'priceCost') {
+                //     newVariant.priceList = (Number(value) * 1.8).toFixed(0)
+                // }
 
                 newProducts[productIndex].sizes[variantIndex] = newVariant
                 return newProducts
@@ -263,6 +274,7 @@ export default function NuevoProductoPage() {
                         sizeNumber: variant || '0',
                         sku: String(sku),
                         stockQuantity: item.QtyItem.toString(),
+                        markup: 1.8,
                     })
 
                     return acc
@@ -283,15 +295,13 @@ export default function NuevoProductoPage() {
                                     sizeNumber: '0',
                                     sku: jsonFile.CdgItem.VlrCodigo,
                                     stockQuantity: jsonFile.QtyItem.toString(),
+                                    markup: 1.8,
                                 },
                             ],
                         },
                     ])
                 }
             }
-            // const findProduct = globalProducts.find((p) =>
-            //     p.ProductVariations.some((v) => Documento.Detalle.some((d) => d.CdgItem.VlrCodigo === v.sku))
-            // )
         }
     }, [jsonFile])
 
