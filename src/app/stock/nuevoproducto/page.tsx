@@ -180,20 +180,20 @@ export default function NuevoProductoPage() {
             setProducts((prevProducts) => {
                 const newProducts = [...prevProducts]
                 const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
+
+                // Primero, asigna el nuevo valor
+                newVariant[field] = value
+
+                // Luego, recalcula los campos derivados usando los valores actualizados
                 if (field === 'priceCost' || field === 'priceList') {
                     newVariant.markup = Number((Number(newVariant.priceList) / Number(newVariant.priceCost)).toFixed(2))
                 } else if (field === 'markup') {
                     newVariant.priceList = (Number(newVariant.priceCost) * Number(newVariant.markup)).toFixed(0)
                 }
-                // ✅ Actualiza inmediatamente el valor que el usuario está escribiendo
-                newVariant[field] = value
-                newProducts[productIndex].sizes[variantIndex] = newVariant
 
+                newProducts[productIndex].sizes[variantIndex] = newVariant
                 return newProducts
             })
-
-            // ✅ Aplica debounce solo en la lógica de cálculo para evitar recálculos innecesarios
-            debouncedCalculatePrices(productIndex, variantIndex, field, value)
         },
         []
     )
@@ -204,13 +204,6 @@ export default function NuevoProductoPage() {
             setProducts((prevProducts) => {
                 const newProducts = [...prevProducts]
                 const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
-
-                // if (field === 'priceList') {
-                //     newVariant.priceCost = (Number(value) / 1.8).toFixed(0)
-                // } else if (field === 'priceCost') {
-                //     newVariant.priceList = (Number(value) * 1.8).toFixed(0)
-                // }
-
                 newProducts[productIndex].sizes[variantIndex] = newVariant
                 return newProducts
             })
