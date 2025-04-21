@@ -31,6 +31,19 @@ const styles = StyleSheet.create({
         height: 64,
         objectFit: 'contain',
     },
+    title: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+    },
+    column: {
+        flex: 1,
+        paddingRight: 10, // separación entre columnas
+    },
     companyName: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -45,7 +58,6 @@ const styles = StyleSheet.create({
     quoteInfoContainer: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
         width: '35%',
         border: '2px solid red',
         padding: 6,
@@ -126,8 +138,17 @@ const styles = StyleSheet.create({
         height: 80,
         objectFit: 'cover',
     },
+    text: {
+        fontSize: 10,
+        marginBottom: 2,
+    },
 })
-
+interface CotizacionPDFProps extends CotizacionProps {
+    fechas: {
+        ahora: Date
+        caduca: Date
+    }
+}
 const CotizacionPDF = ({
     discounts,
     clientData,
@@ -139,7 +160,8 @@ const CotizacionPDF = ({
     bankInfo,
     facturaInfo,
     notes,
-}: CotizacionProps) => {
+    fechas,
+}: CotizacionPDFProps) => {
     const chunkArray = (arr: Images[], size: number) => {
         const chunked = []
         for (let i = 0; i < arr.length; i += size) {
@@ -170,17 +192,44 @@ const CotizacionPDF = ({
                         <Text style={styles.quoteInfoText}>R.U.T.: {companyInfo.rut}</Text>
                         <Text style={styles.quoteInfoText}>COTIZACIÓN ELECTRÓNICA</Text>
                         <Text style={styles.quoteInfoText}>N° {facturaInfo.nroFactura}</Text>
+                        <Text style={{ ...styles.quoteInfoText, marginTop: 12, fontSize: 8 }}>
+                            Emisión:{' '}
+                            {fechas.ahora.toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </Text>
+                        <Text style={{ ...styles.quoteInfoText, fontSize: 8 }}>
+                            Vencimiento:{' '}
+                            {fechas.caduca.toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </Text>
                     </View>
                 </View>
 
                 {/* Datos del Cliente */}
                 <View style={styles.section}>
-                    <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4 }}>Datos del Cliente</Text>
-                    <Text>R.U.T.: {clientData.rut}</Text>
-                    <Text>RAZÓN SOCIAL: {clientData.razonsocial}</Text>
-                    <Text>GIRO: {clientData.giro}</Text>
-                    <Text>COMUNA: {clientData.comuna}</Text>
-                    <Text>EMAIL: {clientData.email}</Text>
+                    <Text style={styles.title}>Datos del Cliente</Text>
+                    <View style={styles.row}>
+                        {/* Columna 1 */}
+                        <View style={styles.column}>
+                            <Text style={styles.text}>R.U.T.: {clientData.rut}</Text>
+                            <Text style={styles.text}>RAZÓN SOCIAL: {clientData.razonsocial}</Text>
+                            <Text style={styles.text}>GIRO: {clientData.giro}</Text>
+                        </View>
+
+                        {/* Columna 2 */}
+                        <View style={styles.column}>
+                            <Text style={styles.text}>COMUNA: {clientData.comuna}</Text>
+                            <Text style={styles.text}>EMAIL: {clientData.email}</Text>
+                        </View>
+                    </View>
                 </View>
 
                 {/* Grilla de imágenes */}

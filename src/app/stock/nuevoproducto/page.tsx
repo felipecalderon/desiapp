@@ -177,21 +177,43 @@ export default function NuevoProductoPage() {
 
     const handleVariantChange = useCallback(
         <K extends keyof VariantWithMarkup>(productIndex: number, variantIndex: number, field: K, value: VariantWithMarkup[K]) => {
+            // 1. Defino qué campos son "globales"
+            const globalFields: Array<keyof VariantWithMarkup> = ['priceCost', 'priceList', 'markup']
+
             setProducts((prevProducts) => {
+                // Clono el array de productos
                 const newProducts = [...prevProducts]
-                const newVariant = { ...newProducts[productIndex].sizes[variantIndex] }
+                // Clono sólo el producto que voy a mutar
+                const product = { ...newProducts[productIndex] }
 
-                // Primero, asigna el nuevo valor
-                newVariant[field] = value
+                // 2. Mapeo sus variantes
+                product.sizes = product.sizes.map((variant, vIdx) => {
+                    // Caso A: campo global → afecta todas las variantes
+                    if (globalFields.includes(field)) {
+                        // Copio la variante y asigno el nuevo valor
+                        const updated = { ...variant, [field]: value }
 
-                // Luego, recalcula los campos derivados usando los valores actualizados
-                if (field === 'priceCost' || field === 'priceList') {
-                    newVariant.markup = Number((Number(newVariant.priceList) / Number(newVariant.priceCost)).toFixed(2))
-                } else if (field === 'markup') {
-                    newVariant.priceList = (Number(newVariant.priceCost) * Number(newVariant.markup)).toFixed(0)
-                }
+                        // Recalculo markup o priceList si corresponde
+                        if (field === 'priceCost' || field === 'priceList') {
+                            updated.markup = Number((Number(updated.priceList) / Number(updated.priceCost)).toFixed(2))
+                        } else if (field === 'markup') {
+                            updated.priceList = (Number(updated.priceCost) * Number(updated.markup)).toFixed(0)
+                        }
 
-                newProducts[productIndex].sizes[variantIndex] = newVariant
+                        return updated
+                    }
+
+                    // Caso B: campo individual → sólo si coincide el índice
+                    if (vIdx === variantIndex) {
+                        return { ...variant, [field]: value }
+                    }
+
+                    // Resto de variantes sin tocar
+                    return variant
+                })
+
+                // 3. Reemplazo el producto modificado e inyecto al estado
+                newProducts[productIndex] = product
                 return newProducts
             })
         },
@@ -306,8 +328,8 @@ export default function NuevoProductoPage() {
             </h1>
             <XmlFileUploader />
             {products.map((product, productIndex) => (
-                <Card key={productIndex} className="mb-6">
-                    <CardHeader className="flex gap-3">
+                <Card key={productIndex} className="mb-6 shadow-md shadow-sky-300" shadow="none">
+                    <CardHeader className="flex gap-3 bg-sky-300">
                         <div className="flex flex-col">
                             <p className="text-md">Producto #{productIndex + 1}</p>
                         </div>

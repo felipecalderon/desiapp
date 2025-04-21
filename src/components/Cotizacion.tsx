@@ -72,7 +72,7 @@ export default function Cotizacion() {
     const [filterProducts, setFilterProducts] = useState<Producto[]>([])
     const [file, setFile] = useState<File | null>(null)
     const [isDragActive, setIsDragActive] = useState(false)
-    const [dragCounter, setDragCounter] = useState(0)
+    const [_dragCounter, setDragCounter] = useState(0)
     const [loading, setLoading] = useState(false)
     const [orientations, setOrientations] = useState<ImageOrientation>({})
     const [currentDiscountForm, setCurrentDiscountForm] = useState<DiscountCarge>({
@@ -80,6 +80,12 @@ export default function Cotizacion() {
         name: '',
         value: 0,
     })
+    const [fechaNumber, setFechaNumber] = useState(30)
+    const [fechas, setFechas] = useState({
+        ahora: new Date(),
+        caduca: new Date(),
+    })
+    const [selectPeriodo, setSelectPeriodo] = useState<'dias' | 'semanas' | 'meses'>('dias')
 
     const handleDiscountTypeChange = (e: SharedSelection) => {
         const keys = e as SharedSelection
@@ -291,6 +297,7 @@ export default function Cotizacion() {
                 totals={totals}
                 horizontalImages={horizontalImages}
                 gridImages={gridImages}
+                fechas={fechas}
             />
         ).toBlob()
 
@@ -330,6 +337,24 @@ export default function Cotizacion() {
         setTotals({ netAmount, IVA, total, descuentos: discount, cargos: cargo })
     }, [quoteItems, discounts])
 
+    useEffect(() => {
+        let dias = 0
+        if (selectPeriodo === 'dias') {
+            dias = fechaNumber
+        } else if (selectPeriodo === 'semanas') {
+            dias = fechaNumber * 7
+        } else if (selectPeriodo === 'meses') {
+            dias = fechaNumber * 30
+        }
+        const nuevaCaduca = new Date(fechas.ahora)
+        nuevaCaduca.setDate(nuevaCaduca.getDate() + dias)
+
+        setFechas({
+            ...fechas,
+            caduca: nuevaCaduca,
+        })
+    }, [fechaNumber, selectPeriodo])
+
     // Para asegurarse que se actualicen las imágenes cuando cargue el DOM
     useLayoutEffect(() => {
         const allImages = [
@@ -368,13 +393,69 @@ export default function Cotizacion() {
                         <p className="uppercase">VENTA AL POR MAYOR DE VESTUARIO, CALZADO, TECNOLOGÍA Y ACCESORIOS</p>
                         <p>ALMAGRO 593, PURÉN, LA ARAUCANÍA</p>
                         <p>alejandro.contreras@d3si.cl</p>
+                        <p className="text-xs mt-6">
+                            Emisión:{' '}
+                            {fechas.ahora.toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </p>
+                        <p className="text-xs">
+                            Vencimiento:{' '}
+                            {fechas.caduca.toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </p>
                     </div>
                 </div>
-                <div className="md:w-2/5 flex flex-col md:flex-row justify-end">
-                    <div className="border-4 border-red-600 p-3">
+                <div className="md:w-1/4 flex flex-col gap-2 justify-end">
+                    <div className="border-4 border-red-600 p-3 text-center">
                         <p className="font-bold">R.U.T.: 77.058.146-K</p>
                         <p className="font-bold">COTIZACIÓN ELECTRÓNICA</p>
                         <p className="font-bold">N° {facturaInfo.nroFactura}</p>
+                    </div>
+                    <p className="italic">Vencimiento de la cotización:</p>
+                    <div className="flex flex-row gap-2 justify-center items-center">
+                        <Input
+                            color="primary"
+                            type="number"
+                            defaultValue={fechaNumber.toString()}
+                            min={1}
+                            description="Cantidad"
+                            onChange={(e) => {
+                                const value = parseInt(e.target.value)
+                                setFechaNumber(value)
+                            }}
+                        />
+                        <Select
+                            name="type"
+                            onSelectionChange={(p) => {
+                                const keys = p as SharedSelection
+                                if (keys.currentKey) {
+                                    const [periodo] = Array.from(keys) as ['dias' | 'semanas' | 'meses']
+                                    setSelectPeriodo(periodo)
+                                }
+                            }}
+                            color="primary"
+                            description="Periodo"
+                            defaultSelectedKeys={[selectPeriodo]}
+                            value={selectPeriodo}
+                        >
+                            <SelectItem key={'dias'} textValue="Días">
+                                Días
+                            </SelectItem>
+                            <SelectItem key={'semanas'} textValue="Semanas">
+                                Semanas
+                            </SelectItem>
+                            <SelectItem key={'meses'} textValue="Meses">
+                                Meses
+                            </SelectItem>
+                        </Select>
                     </div>
                 </div>
             </div>
