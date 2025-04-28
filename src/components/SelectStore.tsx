@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useEffect } from 'react'
-import { Role, Store } from '@/config/interfaces'
+import { Producto, Role, Store } from '@/config/interfaces'
 import storeAuth from '@/stores/store.auth'
 import storeDataStore from '@/stores/store.dataStore'
 import { storeProduct } from '@/stores/store.product'
@@ -35,8 +35,28 @@ const useCargarProductos = () => {
         async (storeId?: string) => {
             try {
                 if (storeId) {
-                    const productos = await fetchData(`products/?storeId=${storeId}`)
-                    setProducts(productos)
+                    console.log(storeId)
+                    const productos: Producto[] = await fetchData(`products/?storeID=${storeId}`)
+                    const storeProducts = productos.map((producto) => ({
+                        ...producto,
+                        ProductVariations: producto.ProductVariations.map((variacion) => {
+                            const store = variacion.StoreProducts.find((store) => store.storeID === storeId)
+                            if (store) {
+                                return {
+                                    ...variacion,
+                                    stockQuantity: store.quantity,
+                                }
+                            } else {
+                                return {
+                                    ...variacion,
+                                    stockQuantity: 0,
+                                }
+                            }
+                        }),
+                    }))
+
+                    setProducts(storeProducts)
+                    setGlobalProducts(storeProducts)
                 } else {
                     const globalProducts = await fetchData('products')
                     setGlobalProducts(globalProducts)
