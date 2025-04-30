@@ -161,7 +161,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             const cantidades: { [key: string]: number } = order.ProductVariations.reduce((acc, producto) => {
                 return {
                     ...acc,
-                    [producto.variationID]: producto.OrderProduct.quantityOrdered,
+                    [producto.variationID]: producto.quantityOrdered,
                 }
             }, {})
             setCantidades(cantidades)
@@ -502,7 +502,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {products.map(({ priceList, sizeNumber, sku, OrderProduct, Product }, i) => {
+                        {products.map(({ priceList, sizeNumber, sku, Product, quantityOrdered, total }, i) => {
                             // Comparar el nombre actual con el nombre de la fila anterior
                             let isDifferentGroup = i === 0 || Product.name !== products[i - 1].Product.name
                             const barra = isDifferentGroup && 'border-t-2 border-blue-300'
@@ -516,10 +516,8 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                     <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
                                         {formatoPrecio(Number(priceList) / Number(order.Store.markup))}
                                     </td>
-                                    <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{OrderProduct.quantityOrdered}</td>
-                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
-                                        {formatoPrecio(OrderProduct.subtotal)}
-                                    </td>
+                                    <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{quantityOrdered}</td>
+                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>{formatoPrecio(total)}</td>
                                 </tr>
                             )
                         })}
