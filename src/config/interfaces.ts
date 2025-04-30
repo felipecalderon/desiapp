@@ -90,7 +90,8 @@ export interface ProductosdeOrden {
     total: number
     name: string
     image: string
-    OrderProduct: ProductOrderDetail
+    quantityOrdered: number
+    // OrderProduct: ProductOrderDetail
     Product: Producto
 }
 

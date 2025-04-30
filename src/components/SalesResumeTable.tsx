@@ -4,7 +4,7 @@ import storeSales from '@/stores/store.sales'
 import { getFecha } from '@/utils/fecha'
 import { formatoPrecio } from '@/utils/price'
 import { useRouter } from 'next/navigation'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/react'
 import FiltroVentas from './FiltroVentas'
 
 const SalesResumeTable = () => {
