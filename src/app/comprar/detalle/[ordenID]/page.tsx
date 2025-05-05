@@ -104,6 +104,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             newProducts: [...variantesCompradas],
             status: cuotasPagadas ? 'Pagado' : order?.status === 'Pagado' ? 'Pendiente' : editOrder.status,
         }
+        console.log(formatoUpdateOrder)
         const data = await fetch(`${url.backend}/order`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -161,7 +162,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
             const cantidades: { [key: string]: number } = order.ProductVariations.reduce((acc, producto) => {
                 return {
                     ...acc,
-                    [producto.variationID]: producto.quantityOrdered,
+                    [producto.variationID]: producto.OrderProduct.quantityOrdered,
                 }
             }, {})
             setCantidades(cantidades)
@@ -459,19 +460,19 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                         />
                     </div>
                     <div className="flex flex-row justify-between mb-3 gap-3">
-                        <Button onClick={imprimirTabla} variant="solid" color="warning">
+                        <Button onPress={imprimirTabla} variant="solid" color="warning">
                             Imprimir
                         </Button>
-                        <Button onClick={actualizarOC} variant="solid" color="success">
+                        <Button onPress={actualizarOC} variant="solid" color="success">
                             Actualizar Orden
                         </Button>
-                        <Button onClick={deleteOrder} variant="solid" color="danger">
+                        <Button onPress={deleteOrder} variant="solid" color="danger">
                             Eliminar OC
                         </Button>
                     </div>
                 </div>
             ) : (
-                <Button onClick={imprimirTabla} variant="solid" color="warning">
+                <Button onPress={imprimirTabla} variant="solid" color="warning">
                     Imprimir
                 </Button>
             )}
@@ -502,7 +503,7 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {products.map(({ priceList, sizeNumber, sku, Product, quantityOrdered, total }, i) => {
+                        {products.map(({ priceList, sizeNumber, sku, Product, quantityOrdered, OrderProduct, total }, i) => {
                             // Comparar el nombre actual con el nombre de la fila anterior
                             let isDifferentGroup = i === 0 || Product.name !== products[i - 1].Product.name
                             const barra = isDifferentGroup && 'border-t-2 border-blue-300'
@@ -516,8 +517,10 @@ export default function DetalleOrden({ params }: { params: { ordenID: string } }
                                     <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
                                         {formatoPrecio(Number(priceList) / Number(order.Store.markup))}
                                     </td>
-                                    <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{quantityOrdered}</td>
-                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>{formatoPrecio(total)}</td>
+                                    <td className={`${barra} px-0 py-2 text-center whitespace-nowrap`}>{OrderProduct.quantityOrdered}</td>
+                                    <td className={`${barra} px-2 py-2 text-center  whitespace-nowrap`}>
+                                        {formatoPrecio(OrderProduct.subtotal)}
+                                    </td>
                                 </tr>
                             )
                         })}
