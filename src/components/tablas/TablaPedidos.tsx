@@ -8,11 +8,12 @@ import { storeProduct } from '@/stores/store.product'
 import storeSales from '@/stores/store.sales'
 import { fetchData } from '@/utils/fetchData'
 import { formatoPrecio } from '@/utils/price'
-import { Button } from "@heroui/react"
+import { Button } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { BsFillCartPlusFill } from 'react-icons/bs'
 import { CiSquareRemove } from 'react-icons/ci'
+import { toast } from 'sonner'
 
 interface Products {
     storeProductID: string
@@ -76,12 +77,17 @@ const TablaPedidosVenta = () => {
         if (pedidoVta && pedidoVta.length > 0) {
             const transformedArray = pedidoVta?.map((item) => {
                 const [variation] = item.ProductVariations
+                const findStoreProduct = variation.StoreProducts.find((storeProduct) => storeProduct.variationID === variation.variationID)
+                if (!findStoreProduct) {
+                    toast.error(`No se encontró ${item.name} talla ${variation.sizeNumber} en la tienda`)
+                    return null
+                }
                 return {
-                    storeProductID: variation?.storeProductID || variation?.Stores?.[0]?.StoreProduct?.storeProductID || '',
+                    storeProductID: findStoreProduct.storeProductID,
                     quantitySold: item.cantidad,
                 }
             })
-            setProducts(transformedArray)
+            setProducts(transformedArray.filter((item) => item !== null) as Products[])
         }
     }, [pedidoVta])
 
