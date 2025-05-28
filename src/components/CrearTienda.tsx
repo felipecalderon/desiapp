@@ -249,7 +249,7 @@ const CrearTienda = () => {
                     {usuarios && (
                         <Select name="userID" variant="flat" label="Gestor de la tienda" selectedKeys={[form.userID]} onChange={changeForm}>
                             {usuarios.map((usr) => (
-                                <SelectItem key={usr.userID} textValue={usr.userID}>
+                                <SelectItem key={usr.userID} textValue={usr.name}>
                                     {usr.name}
                                 </SelectItem>
                             ))}

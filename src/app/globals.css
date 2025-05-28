@@ -13,6 +13,11 @@ body {
     background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
+@page {
+    size: 90mm 29mm;
+    margin: 0;
+}
+
 @media print {
     *,
     ::before,
@@ -22,6 +27,33 @@ body {
         border-style: solid;
         border-color: #e5e7eb;
     }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 
+    #barcodes-container {
+        display: block;
+    }
+
+    #barcodes-container > div {
+        page-break-after: always;
+        width: 90mm;
+        height: 29mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    #barcodes-container > div > svg {
+        width: 90%;
+        height: auto;
+    } 
+    */
 
     p {
         visibility: visible;

@@ -7,7 +7,8 @@ import { RiFileExcel2Fill } from 'react-icons/ri'
 import { Producto } from '@/config/interfaces'
 import InfoTotalStock from '../InfoTotalStock'
 import { useRouter } from 'next/navigation'
-import { MdLibraryAdd } from 'react-icons/md'
+import { MdBarcodeReader, MdLibraryAdd } from 'react-icons/md'
+import ImprimirCodigos from '../ImprimirCodigos'
 
 const GenerarTabla = () => {
     const router = useRouter()
@@ -44,20 +45,18 @@ const GenerarTabla = () => {
     return (
         <div className="container mx-auto px-10">
             <div className="mb-4 flex flex-row gap-3 items-center">
-                <input
-                    className="px-2 py-1 bg-blue-200 mt-3 w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
-                    placeholder="Buscar producto aquí..."
-                    type="text"
-                    id="filtro"
-                    value={filtro}
-                    onChange={handleFiltroChange}
-                />
                 <button
                     onClick={() => router.push('/stock/nuevoproducto')}
                     className="flex flex-row items-center bg-green-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
                 >
                     Crear Producto <MdLibraryAdd className="text-2xl ml-2" />
                 </button>
+                {/* <button
+                    // onClick={() => router.push('/stock/nuevoproducto')}
+                    className="flex flex-row items-center bg-orange-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
+                >
+                    Códigos de barra <MdBarcodeReader className="text-2xl ml-2" />
+                </button> */}
                 <button
                     onClick={download}
                     className="flex flex-row items-center bg-blue-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
@@ -66,6 +65,15 @@ const GenerarTabla = () => {
                 </button>
                 <InfoTotalStock />
             </div>
+            <input
+                className="px-2 py-1 bg-blue-200 mt-3 w-1/3 border-gray-300 shadow-sm rounded-md placeholder:text-sm"
+                placeholder="Buscar producto aquí..."
+                type="text"
+                id="filtro"
+                value={filtro}
+                onChange={handleFiltroChange}
+            />
+            {/* <ImprimirCodigos /> */}
             <div className="bg-white shadow-md rounded my-6">
                 <TablaProductos products={productosOrdenados} />
             </div>
