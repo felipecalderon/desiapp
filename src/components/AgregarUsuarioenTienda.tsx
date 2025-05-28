@@ -101,7 +101,7 @@ const AgregarUsuariosATienda = () => {
                 <div className="mb-6">
                     <Select name="storeID" variant="flat" label="Selecciona tienda" selectedKeys={[form.storeID]} onChange={changeForm}>
                         {stores.map((tienda) => (
-                            <SelectItem key={tienda.storeID} textValue={tienda.storeID}>
+                            <SelectItem key={tienda.storeID} textValue={tienda.name}>
                                 {tienda.name}
                             </SelectItem>
                         ))}
