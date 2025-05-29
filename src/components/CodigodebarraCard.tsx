@@ -6,6 +6,7 @@ export type BarcodeItem = {
     title: string
     sku: string
     subtitle: string
+    quantity: number
 }
 
 export default function Barcode({ item }: { item: BarcodeItem }) {
@@ -23,7 +24,6 @@ export default function Barcode({ item }: { item: BarcodeItem }) {
         padding: 0,
     }
     const svgStyle: React.CSSProperties = {
-        width: '90%',
         height: 'auto',
         display: 'block',
         margin: '0 auto',

@@ -51,12 +51,8 @@ const GenerarTabla = () => {
                 >
                     Crear Producto <MdLibraryAdd className="text-2xl ml-2" />
                 </button>
-                {/* <button
-                    // onClick={() => router.push('/stock/nuevoproducto')}
-                    className="flex flex-row items-center bg-orange-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
-                >
-                    Códigos de barra <MdBarcodeReader className="text-2xl ml-2" />
-                </button> */}
+                <ImprimirCodigos />
+
                 <button
                     onClick={download}
                     className="flex flex-row items-center bg-blue-700 mt-3 px-3 py-2 text-white rounded-lg h-fit hover:bg-blue-500 transition-all"
@@ -73,7 +69,6 @@ const GenerarTabla = () => {
                 value={filtro}
                 onChange={handleFiltroChange}
             />
-            {/* <ImprimirCodigos /> */}
             <div className="bg-white shadow-md rounded my-6">
                 <TablaProductos products={productosOrdenados} />
             </div>
