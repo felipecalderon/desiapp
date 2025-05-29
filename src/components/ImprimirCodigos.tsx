@@ -1,11 +1,12 @@
 'use client'
 import printJS from 'print-js'
-import Barcode from './CodigodebarraCard'
 import { BarcodeItem } from './CodigodebarraCard'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react'
 import { useState } from 'react'
 import { MdBarcodeReader } from 'react-icons/md'
 import { formatoPrecio } from '@/utils/price'
+import dynamic from 'next/dynamic'
+const BarcodeClient = dynamic(() => import('./CodigodebarraCard'), { ssr: false })
 
 const demoProduct = {
     productID: '5d6ddf6b-6426-4590-a7ec-7b58fb979e88',
@@ -95,7 +96,7 @@ export default function ImprimirCodigos() {
                             <ModalBody>
                                 <div id="barcodes-container">
                                     {items.map((item) => (
-                                        <Barcode key={item.sku} item={item} />
+                                        <BarcodeClient key={item.sku} item={item} />
                                     ))}
                                 </div>
                             </ModalBody>

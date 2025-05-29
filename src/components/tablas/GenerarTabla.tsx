@@ -8,7 +8,8 @@ import { Producto } from '@/config/interfaces'
 import InfoTotalStock from '../InfoTotalStock'
 import { useRouter } from 'next/navigation'
 import { MdBarcodeReader, MdLibraryAdd } from 'react-icons/md'
-import ImprimirCodigos from '../ImprimirCodigos'
+import dynamic from 'next/dynamic'
+const ImprimirCodigosClient = dynamic(() => import('../ImprimirCodigos'), { ssr: false })
 
 const GenerarTabla = () => {
     const router = useRouter()
@@ -51,7 +52,7 @@ const GenerarTabla = () => {
                 >
                     Crear Producto <MdLibraryAdd className="text-2xl ml-2" />
                 </button>
-                <ImprimirCodigos />
+                <ImprimirCodigosClient />
 
                 <button
                     onClick={download}
