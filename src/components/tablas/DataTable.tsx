@@ -12,7 +12,8 @@ import { useState } from 'react'
 import { url } from '@/config/constants'
 import { fetchData } from '@/utils/fetchData'
 import { storeProduct } from '@/stores/store.product'
-import ImprimirCodigos from '../ImprimirCodigos'
+import dynamic from 'next/dynamic'
+const ImprimirCodigos = dynamic(() => import('../ImprimirCodigos'), { ssr: false })
 
 export default function DataTable({ message, products }: { message: string; products: Producto[] }) {
     const { user } = storeAuth()
