@@ -52,7 +52,6 @@ const GenerarTabla = () => {
                 >
                     Crear Producto <MdLibraryAdd className="text-2xl ml-2" />
                 </button>
-                <ImprimirCodigosClient />
 
                 <button
                     onClick={download}

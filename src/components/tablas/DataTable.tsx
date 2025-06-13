@@ -5,13 +5,14 @@ import { formatoPrecio } from '@/utils/price'
 import { FaShoePrints } from 'react-icons/fa6'
 import TooltipProducts from '../TooltipProductsStore'
 import storeDataStore from '@/stores/store.dataStore'
-import { Button, useDisclosure } from "@heroui/react"
+import { Button, useDisclosure } from '@heroui/react'
 import { IoTrashBin } from 'react-icons/io5'
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react"
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react'
 import { useState } from 'react'
 import { url } from '@/config/constants'
 import { fetchData } from '@/utils/fetchData'
 import { storeProduct } from '@/stores/store.product'
+import ImprimirCodigos from '../ImprimirCodigos'
 
 export default function DataTable({ message, products }: { message: string; products: Producto[] }) {
     const { user } = storeAuth()
@@ -93,6 +94,18 @@ export default function DataTable({ message, products }: { message: string; prod
                                     </>
                                 )}
                                 <td className="py-1 px-2 text-center hover:bg-gray-100">{variation.sku}</td>
+                                <td className="relative w-2">
+                                    <div className="absolute right-0 top-1/2 z-10 cursor-pointer -translate-y-1/2 hidden group-hover:block">
+                                        <ImprimirCodigos
+                                            producto={{
+                                                quantity: variation.stockQuantity,
+                                                sku: variation.sku,
+                                                subtitle: `${formatoPrecio(variation.priceList)}`,
+                                                title: `${producto.name} ${variation.sizeNumber}`,
+                                            }}
+                                        />
+                                    </div>
+                                </td>
                                 <td className="py-1 px-2 text-center hover:bg-gray-100">{variation.sizeNumber}</td>
                                 <td className="py-1 px-2 text-center hover:bg-gray-100">{formatoPrecio(variation.priceCost)}</td>
                                 <td className="py-1 px-2 text-center hover:bg-gray-100">{formatoPrecio(variation.priceList)}</td>

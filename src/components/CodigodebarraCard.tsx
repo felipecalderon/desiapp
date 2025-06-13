@@ -11,22 +11,22 @@ export type BarcodeItem = {
 
 export default function Barcode({ item }: { item: BarcodeItem }) {
     const svgRef = useRef<SVGSVGElement>(null)
+
     const wrapperStyle: React.CSSProperties = {
         pageBreakAfter: 'always',
-        width: '90mm',
+        width: '62mm',
         height: '29mm',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        margin: 0,
-        padding: 0,
     }
+
     const svgStyle: React.CSSProperties = {
         height: 'auto',
         display: 'block',
-        margin: '0 auto',
+        margin: 'auto',
     }
 
     useEffect(() => {
@@ -34,15 +34,15 @@ export default function Barcode({ item }: { item: BarcodeItem }) {
             JsBarcode(svgRef.current, item.sku, {
                 format: 'CODE128',
                 displayValue: true,
-                width: 2,
-                height: 80,
+                width: 3,
+                height: 70,
                 margin: 0,
             })
         }
     }, [item.sku])
 
     return (
-        <div style={wrapperStyle}>
+        <div id={item.title} style={wrapperStyle}>
             <div>{item.title}</div>
             <svg ref={svgRef} style={svgStyle}></svg>
             <div>{item.subtitle}</div>
