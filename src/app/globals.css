@@ -13,10 +13,10 @@ body {
     background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
-@page {
+/* @page {
     size: 62mm 29mm;
     margin: 0;
-}
+} */
 
 @media print {
     *,
