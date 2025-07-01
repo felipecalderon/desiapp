@@ -38,8 +38,6 @@ interface ImageWidth {
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 const HORIZONTAL_THRESHOLD = 1.4
-const DISCOUNT_PERCENTAGE = 0.05
-const DISPATCH_CHARGE_PERCENTAGE = 0.01
 const IVA_PERCENTAGE = 0.19
 
 export default function Cotizacion() {
@@ -283,7 +281,7 @@ export default function Cotizacion() {
             toast.error('Agrega al menos un producto a la cotización')
             return
         }
-
+        console.log(notes)
         const blob = await pdf(
             <MyDocument
                 customImages={customImages}

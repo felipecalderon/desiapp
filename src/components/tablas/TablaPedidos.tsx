@@ -77,7 +77,12 @@ const TablaPedidosVenta = () => {
         if (pedidoVta && pedidoVta.length > 0) {
             const transformedArray = pedidoVta?.map((item) => {
                 const [variation] = item.ProductVariations
-                const findStoreProduct = variation.StoreProducts.find((storeProduct) => storeProduct.variationID === variation.variationID)
+                const flatVars = variation.StoreProducts.flatMap((p) => p)
+
+                const findStoreProduct = flatVars.find(
+                    (storeProduct) => storeProduct.Store.storeID === store?.storeID || storeProduct.Store.isAdminStore
+                )
+                console.log(findStoreProduct)
                 if (!findStoreProduct) {
                     toast.error(`No se encontró ${item.name} talla ${variation.sizeNumber} en la tienda`)
                     return null
