@@ -30,6 +30,7 @@ export const bajarExcel = (productos: Producto[]): void => {
     const headers: string[] = [
         'tipo',
         'nombre',
+        'imagen',
         'variacion',
         'marca',
         'permite decimal',
@@ -53,6 +54,7 @@ export const bajarExcel = (productos: Producto[]): void => {
             const values = [
                 'Zapatilla',
                 producto.name,
+                producto.image,
                 variacion.sizeNumber,
                 'D3SI AVOCCO',
                 'Si',
